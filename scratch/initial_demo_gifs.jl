@@ -6,30 +6,15 @@ using POMDPs
 using ContinuousPOMDPTreeSearchExperiments
 using ParticleFilters
 using Reel
-
-function write_gif(pomdp, hist, title)
-    steps = length(hist)
-    film = roll(fps=1, duration=steps) do t, dt
-        print(".")
-        v = view(hist, 1:Int(t+1))
-        plot(pomdp, xlim=(-1,7), ylim=(-3,6))
-        plot!(v)
-        b = belief_hist(v)[end]
-        plot!(b)
-        plot!(title=title)
-    end
-    filename = string(tempname(), "_$title.gif")
-    write(filename, film)
-    println(filename)
-    return filename
-end
-
+using JLD
 
 pomdp = LightDark2DTarget(term_radius=0.1,
                     init_dist=SymmetricNormal2([2.0, 2.0], 5.0),
                     discount=0.95)
+titles = []
+hists = []
 
-rng_seed = 4
+rng_seed = 10 
 rng = MersenneTwister(rng_seed)
 
 ## VANILLA ##
@@ -63,8 +48,10 @@ POMCP.blink(node)
 
 hr = HistoryRecorder(max_steps=40, rng=MersenneTwister(rng_seed), initial_state=Vec2(2.0, 3.0), show_progress=true)
 hist = simulate(hr, pomdp, policy, updater)
+@show n_steps(hist)
 println(discounted_reward(hist))
-write_gif(pomdp, hist, "Vanilla_POMCP")
+push!(titles, "Vanilla_POMCP")
+push!(hists, hist)
 
 
 ## WITH FEEDBACK ##
@@ -133,5 +120,9 @@ POMCP.blink(node)
 
 hr = HistoryRecorder(max_steps=40, rng=MersenneTwister(rng_seed), initial_state=Vec2(2.0, 3.0), show_progress=true)
 hist = simulate(hr, pomdp, policy, updater)
+@show n_steps(hist)
 println(discounted_reward(hist))
-write_gif(pomdp, hist, "Modified_POMCP")
+push!(titles, "Modified_POMCP")
+push!(hists, hist)
+
+@save(joinpath(tempdir(), "gifplots.jld"), pomdp, titles, hists) 

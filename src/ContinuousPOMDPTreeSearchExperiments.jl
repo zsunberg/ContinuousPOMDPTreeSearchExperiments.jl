@@ -133,14 +133,24 @@ POMDPs.update(up::ObsAdaptiveParticleFilter, b, a, o) = update(up, resample(up.r
 
 function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.ParticleCollection, a, o)
     ps = particles(b)
-    pm = Array(S, n_particles(b))
-    wm = Array(Float64, n_particles(b))
+    pm = Array(S, 0)
+    wm = Array(Float64, 0)
+    sizehint!(pm, n_particles(b))
+    sizehint!(wm, n_particles(b))
+    all_terminal = true
     for i in 1:n_particles(b)
         s = ps[i]
-        sp = generate_s(up.pomdp, s, a, up.rng)
-        pm[i] = sp
-        od = observation(up.pomdp, s, a, sp)
-        wm[i] = pdf(od, o)
+        if !isterminal(up.pomdp, s)
+            all_terminal = false
+            sp = generate_s(up.pomdp, s, a, up.rng)
+            push!(pm, sp)
+            od = observation(up.pomdp, s, a, sp)
+            push!(wm, pdf(od, o))
+        end
+    end
+    if all_terminal
+        warn("All states in particle collection were terminal.")
+        return initialize_belief(up, initial_state_distribution(up.pomdp))
     end
 
     pc = resample(up.resample, WeightedParticleBelief{S}(pm, wm, sum(wm), nothing), up.rng)
