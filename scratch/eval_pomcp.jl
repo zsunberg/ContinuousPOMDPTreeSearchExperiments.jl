@@ -2,6 +2,7 @@ using POMDPs
 using ContinuousPOMDPTreeSearchExperiments
 using POMDPToolbox
 using POMCP
+using POMCPOW
 using LightDarkPOMDPs
 using ProgressMeter
 using PmapProgressMeter
@@ -16,6 +17,7 @@ N = 100
     using ContinuousPOMDPTreeSearchExperiments
     using POMDPToolbox
     using POMCP
+    using POMCPOW
     using ParticleFilters
 
     pomdp = LightDark2DTarget(term_radius=0.1,
@@ -32,12 +34,12 @@ N = 100
 
         "vanilla_pomcp" => begin
             rng3 = copy(p_rng)
-            action_gen = AdaptiveRadiusRandom(max_radius=10.0, to_zero_first=true, rng=rng3)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             rollout_policy = RadiusRandom(radius=10.0, rng=rng3)
             tree_queries = 50_000
             solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
-                                    c=20.0,
+                                    c=5.0,
                                     max_depth=40,
                                     k_action=10.0,
                                     alpha_action=1/8,
@@ -51,13 +53,14 @@ N = 100
 
         "modified_pomcp" => begin
             rng3 = copy(p_rng)
-            action_gen = AdaptiveRadiusRandom(max_radius=10.0, to_zero_first=true, rng=rng3)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             rollout_policy = SimpleFeedback(max_radius=10.0)
             tree_queries = 50_000
             node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            # node_updater = SimpleParticleFilter(pomdp, LowVarianceResampler(100), rng=rng3)
             solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
-                                    c=20,
+                                    c=5.0,
                                     max_depth=40,
                                     k_action=10.0,
                                     alpha_action=1/8,
@@ -70,15 +73,36 @@ N = 100
                                    )
         end,
 
+        "pomcpow" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            tree_queries = 1_000_000
+            node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(5.0),
+                                    final_criterion=MaxTries(),
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
+                                    node_belief_updater=node_updater,
+                                    rng=rng3
+                                   )
+        end,
+
         "greedy" => SimpleFeedback(gain=1.0, max_radius=10.0)
     )
 
     up_rng = MersenneTwister(5)
-    standard_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.05, up_rng)
+    standard_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100_000), 0.05, up_rng)
     updaters = Dict{String, Updater}(
         "vanilla_pomcp" => standard_up,
         "modified_pomcp" => standard_up,
         "greedy" => standard_up,
+        # "pomcpow" => standard_up,
         "heuristic" => updater(solvers["heuristic"])
     )
 end
@@ -96,7 +120,7 @@ for (j, sk) in enumerate(solver_keys)
         else
             policy = solve(solvers[sk], pomdp)
         end
-        up = updaters[sk]
+        up = deepcopy(updaters[sk])
         sim = RolloutSimulator(max_steps=40, rng=sim_rng)
         s_rewards[i] = simulate(sim, pomdp, policy, up)
     end
@@ -108,4 +132,4 @@ for k in solver_keys
 end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "compare_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
-@save(filename, pomdp, solver_keys, solvers, rewards, updaters)
+# @save(filename, pomdp, solver_keys, solvers, rewards, updaters)

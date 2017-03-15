@@ -25,7 +25,8 @@ export
     LightDarkLQRPolicy,
     ModeAugmentedBelief,
     InfoGatherHeur,
-    InfoGatherUpdater
+    InfoGatherUpdater,
+    OneStepValue
 
 
 @with_kw type RadiusRandom <: Policy
@@ -249,5 +250,7 @@ function POMDPs.update(up::InfoGatherUpdater, b::ModeAugmentedBelief, a, o)
     end
 end
 
+immutable OneStepValue end
+POMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
 
 end # module
