@@ -33,8 +33,6 @@ solver = POMCPDPWSolver(next_action=action_gen,
                         k_observation=4.0,
                         alpha_observation=1/8,
                         estimate_value=RolloutEstimator(rollout_policy),
-                        # estimate_value=PORolloutEstimator(rollout_policy, node_updater),
-                        # node_belief_updater=node_updater,
                         rng=rng3
                        )
 policy = solve(solver, pomdp)

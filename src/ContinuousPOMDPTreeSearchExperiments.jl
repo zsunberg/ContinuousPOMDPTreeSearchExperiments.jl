@@ -2,6 +2,7 @@ module ContinuousPOMDPTreeSearchExperiments
 
 using POMDPs
 using POMCP
+using POMCPOW
 using Parameters
 using LightDarkPOMDPs
 using StaticArrays
@@ -10,6 +11,8 @@ using ParticleFilters
 using GenerativeModels
 using ControlSystems
 using Plots
+
+import POMCPOW.n_children
 
 export
     RadiusRandom,
@@ -42,25 +45,33 @@ POMDPs.updater(p::RadiusRandom) = VoidUpdater()
 
 @with_kw type AdaptiveRadiusRandom <: Policy
     max_radius::Float64     = 1.0
-    radius_scale::Float64   = 2.0
     to_zero_first::Bool     = true
+    to_light_second::Bool   = true
     rng::AbstractRNG        = Base.GLOBAL_RNG
 end
 
-POMCP.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, b, h::BeliefNode) = next_action(gen, pomdp, mean(b), h)
-function POMCP.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, m::Vec2, h::BeliefNode)
-    n = norm(m)
-    if gen.to_zero_first && length(h.children) < 1
-        if n > gen.max_radius
-            return clip_to_max(-m, gen.max_radius)
-        else
-            return -m
-        end
+function POMCP.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, b, h::BeliefNode)
+    if gen.to_zero_first && n_children(h) < 1
+        m = mean(b)
+        n = norm(m)
+        return clip_to_max(-m, gen.max_radius)
+    elseif gen.to_light_second && n_children(h) < 2
+        m = mean(b)
+        n = norm(m)
+        return clip_to_max(Vec2(pomdp.min_noise_loc-m[1], 0.0), gen.max_radius)
     else
-        rad = min(gen.max_radius, gen.radius_scale*n)
-        rand_in_radius(gen.rng, rad)
+        rad = min(gen.max_radius)
+        return rand_in_radius(gen.rng, rad)
     end
+    #=
+    @show h.node
+    @show h.tree.tried[h.node]
+    @show h.tree.total_n[h.node]
+    @show h.tree.n[first(h.tree.tried[h.node])]
+    =#
 end
+
+n_children(h::BeliefNode) = length(h.children)
 
 #=
 POMDPs.action(p::AdaptiveRadiusRandom, b) = rand_in_radius(p.rng, min(p.max_radius, p.radius_scale*norm(mean(b))))
@@ -75,7 +86,7 @@ end
 function clip_to_max(s::AbstractVector{Float64}, max::Float64)
     nrm = norm(s)
     if nrm > max
-        return s/norm(s)
+        return max/nrm*s
     else
         return s
     end
