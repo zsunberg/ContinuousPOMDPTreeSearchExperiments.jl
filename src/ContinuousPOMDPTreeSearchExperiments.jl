@@ -149,7 +149,7 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
         end
     end
     if all_terminal
-        warn("All states in particle collection were terminal.")
+        # warn("All states in particle collection were terminal.")
         return initialize_belief(up, initial_state_distribution(up.pomdp))
     end
 
