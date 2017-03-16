@@ -25,11 +25,15 @@ export
     LightDarkLQRPolicy,
     ModeAugmentedBelief,
     InfoGatherHeur,
-    InfoGatherUpdater
+    InfoGatherUpdater,
+    OneStepValue
 
 include("policies.jl")
 include("updaters.jl")
 
 n_children(h::BeliefNode) = length(h.children)
+
+immutable OneStepValue end
+POMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
 
 end # module
