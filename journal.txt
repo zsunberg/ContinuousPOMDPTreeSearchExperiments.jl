@@ -1,0 +1,45 @@
+Wed 15 Mar 2017 12:27:40 PM PDT
+
+500_000 particles in pomcpow
+heuristic (1 of 5)...100%|██████████████████████████████| Time: 0:00:07
+pomcpow (2 of 5)...100%|████████████████████████████████| Time: 0:16:29
+modified_pomcp (3 of 5)...100%|█████████████████████████| Time: 0:23:31
+vanilla_pomcp (4 of 5)...100%|██████████████████████████| Time: 0:12:50
+greedy (5 of 5)...100%|█████████████████████████████████| Time: 0:00:21
+heuristic mean: -7.235164761413105 sem: 0.27554282336930086
+pomcpow mean: -7.469768562232542 sem: 0.29152126787795163
+modified_pomcp mean: -5.756805160244173 sem: 0.20696151441664185
+vanilla_pomcp mean: -16.39413058834327 sem: 0.27982087036589837
+greedy mean: -15.613544378353634 sem: 0.33457615002693186
+
+
+1_000_000 particles in pomcpow
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 10  --color=yes scratch/eval_pomcp.jl
+heuristic (1 of 5)...100%|██████████████████████████████| Time: 0:00:08
+pomcpow (2 of 5)...100%|████████████████████████████████| Time: 0:40:07
+modified_pomcp (3 of 5)...100%|█████████████████████████| Time: 0:24:49
+vanilla_pomcp (4 of 5)...100%|██████████████████████████| Time: 0:12:51
+greedy (5 of 5)...100%|█████████████████████████████████| Time: 0:00:22
+heuristic mean: -7.235164761413105 sem: 0.27554282336930086
+pomcpow mean: -6.679350450167447 sem: 0.27008009511089115
+modified_pomcp mean: -5.909027501851269 sem: 0.2175159081441871
+vanilla_pomcp mean: -16.46974571625036 sem: 0.25654700388065066
+greedy mean: -15.613544378353634 sem: 0.33457615002693186
+
+switched to SimpleParticleFilter for modified
+heuristic (1 of 4)...100%|██████████████████████████████| Time: 0:00:07
+modified_pomcp (2 of 4)...100%|█████████████████████████| Time: 0:19:24
+vanilla_pomcp (3 of 4)...100%|██████████████████████████| Time: 0:12:58
+greedy (4 of 4)...100%|█████████████████████████████████| Time: 0:00:22
+heuristic mean: -7.235164761413105 sem: 0.27554282336930086
+modified_pomcp mean: -6.267678192270309 sem: 0.18293426883608033
+vanilla_pomcp mean: -16.55849811620158 sem: 0.25824830249995767
+greedy mean: -15.613544378353634 sem: 0.33457615002693186
+
+Mon 06 Feb 2017 12:15:06 PM PST
+
+[ ] Make parallel script for just one solver
+[ ] Test it
+[ ] Profile?
+[ ] Wait for Particle Filter update
+
