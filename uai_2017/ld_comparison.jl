@@ -8,8 +8,9 @@ using ProgressMeter
 using PmapProgressMeter
 using ParticleFilters
 using JLD
+using CPUTime
 
-N = 100
+N = 1
 
 @everywhere begin
     using LightDarkPOMDPs
@@ -46,7 +47,7 @@ N = 100
                                     k_observation=4.0,
                                     alpha_observation=1/8,
                                     estimate_value=RolloutEstimator(rollout_policy),
-                                    default_action=(b, ex)->Vec2(0.1, 0.1),
+                                    default_action=Vec2(0.1, 0.1),
                                     rng=rng3
                                    )
         end,
@@ -68,7 +69,7 @@ N = 100
                                     alpha_observation=1/8,
                                     estimate_value=PORolloutEstimator(rollout_policy, node_updater),
                                     node_belief_updater=node_updater,
-                                    default_action=(b, ex)->Vec2(0.1, 0.1),
+                                    default_action=Vec2(0.1, 0.1),
                                     rng=rng3
                                    )
         end,
@@ -97,21 +98,26 @@ N = 100
     )
 
     up_rng = MersenneTwister(5)
-    standard_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100_000), 0.05, up_rng)
-    updaters = Dict{String, Updater}(
-        "vanilla_pomcp" => standard_up,
-        "modified_pomcp" => standard_up,
-        "greedy" => standard_up,
-        "pomcpow" => standard_up,
-        "heuristic" => updater(solvers["heuristic"])
+    updaters = Dict{String, Any}(
+        "vanilla_pomcp" => :standard,
+        "modified_pomcp" => :standard,
+        "greedy" => :standard,
+        "pomcpow" => :standard,
+        "heuristic" => :heuristic
     )
 end
 
 solver_keys = keys(solvers)
 rewards = Dict{String, AbstractVector{Float64}}()
+# state_hists = Dict{String, AbstractVector{AbstractVector{state_type(pomdp)}}}()
+counts = Dict{String, AbstractVector{Int}}()
+times = Dict{String, AbstractVector{Float64}}()
 
 for (j, sk) in enumerate(solver_keys)
     s_rewards = SharedArray(Float64, N) 
+    s_counts = SharedArray(Int, N)
+    # s_hists = SharedArray(AbstractVector{state_type(pomdp)}, N)
+    s_times = SharedArray(Float64, N)
     prog = Progress(N, desc="$sk ($j of $(length(solver_keys)))...")
     pmap(prog, 1:N) do i 
         sim_rng = MersenneTwister(i)
@@ -120,16 +126,28 @@ for (j, sk) in enumerate(solver_keys)
         else
             policy = solve(solvers[sk], pomdp)
         end
-        up = deepcopy(updaters[sk])
+        if updaters[sk] == :standard
+            up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100_000), 0.05, up_rng)
+        elseif updaters[sk] == :heuristic
+            up = updater(policy)
+        end
         sim = RolloutSimulator(max_steps=40, rng=sim_rng)
-        s_rewards[i] = simulate(sim, pomdp, policy, up)
+        pomdp.count = 0
+        s_times[i] = @CPUelapsed s_rewards[i] = simulate(sim, deepcopy(pomdp), policy, up)
+        s_counts[i] = pomdp.count
     end
     rewards[sk] = sdata(s_rewards)
+    # state_hists[sk] = sdata(s_hists)
+    counts[sk] = sdata(s_counts)
+    times[sk] = sdata(s_times)
 end
 
 for k in solver_keys
     println("$k mean: $(mean(rewards[k])) sem: $(std(rewards[k])/sqrt(N))")
+    println("$k time: $(mean(times[k])) sim counts: $(mean(counts[k])))")
 end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "compare_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
-# @save(filename, pomdp, solver_keys, solvers, rewards, updaters)
+println("saving to $filename...")
+@save(filename, pomdp, solver_keys, solvers, rewards, updaters, counts)
+println("done.")
