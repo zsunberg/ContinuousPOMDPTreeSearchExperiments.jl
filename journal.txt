@@ -1,3 +1,25 @@
+Wed 22 Mar 2017 09:32:00 PM PDT
+
+
+heuristic (1 of 5)...100%|██████████████████████████████| Time: 0:00:07
+pomcpow (2 of 5)...100%|████████████████████████████████| Time: 0:17:36
+modified_pomcp (3 of 5)...100%|█████████████████████████| Time: 0:21:54
+vanilla_pomcp (4 of 5)...100%|██████████████████████████| Time: 1:49:08
+greedy (5 of 5)...100%|█████████████████████████████████| Time: 0:00:13
+heuristic mean: -7.235164761413105 sem: 0.27554282336930086
+heuristic time: 0.44763999999999987 sim counts: 0.0
+pomcpow mean: -6.509998772902603 sem: 0.24299155377625786
+pomcpow time: 190.81344 sim counts: 2.021049328e7
+modified_pomcp mean: -6.313697990295132 sem: 0.2325999439490863
+modified_pomcp time: 163.98836 sim counts: 3.7512339338e8
+vanilla_pomcp mean: -15.472871746113288 sem: 0.3934097251852203
+vanilla_pomcp time: 1060.45316 sim counts: 1.406729023e7
+greedy mean: -16.00305793721465 sem: 0.2763833162506445
+greedy time: 2.3548 sim counts: 3.40177267e6
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Wednesday_22_Mar_17_25.jld...
+done.
+
+
 Wed 15 Mar 2017 12:27:40 PM PDT
 
 500_000 particles in pomcpow

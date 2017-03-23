@@ -10,7 +10,7 @@ using ParticleFilters
 using JLD
 using CPUTime
 
-N = 1
+N = 100
 
 @everywhere begin
     using LightDarkPOMDPs
@@ -37,7 +37,7 @@ N = 1
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             rollout_policy = RadiusRandom(radius=10.0, rng=rng3)
-            tree_queries = 50_000
+            tree_queries = 1_000_000
             solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
                                     c=5.0,
@@ -46,7 +46,7 @@ N = 1
                                     alpha_action=1/8,
                                     k_observation=4.0,
                                     alpha_observation=1/8,
-                                    estimate_value=RolloutEstimator(rollout_policy),
+                                    estimate_value=OneStepValue(),
                                     default_action=Vec2(0.1, 0.1),
                                     rng=rng3
                                    )
@@ -78,7 +78,7 @@ N = 1
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             tree_queries = 1_000_000
-            node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            # node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
             solver = POMCPOWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
                                     criterion=MaxUCB(5.0),
@@ -89,10 +89,32 @@ N = 1
                                     k_observation=4.0,
                                     alpha_observation=1/8,
                                     estimate_value=OneStepValue(),
-                                    node_belief_updater=node_updater,
+                                    # node_belief_updater=node_updater,
                                     rng=rng3
                                    )
         end,
+
+        #=
+        "pomcpow_500k" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            tree_queries = 100_000
+            # node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(5.0),
+                                    final_criterion=MaxTries(),
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
+                                    # node_belief_updater=node_updater,
+                                    rng=rng3
+                                   )
+        end,
+        =#
 
         "greedy" => SimpleFeedback(gain=1.0, max_radius=10.0)
     )
@@ -103,6 +125,7 @@ N = 1
         "modified_pomcp" => :standard,
         "greedy" => :standard,
         "pomcpow" => :standard,
+        "pomcpow_100k" => :standard,
         "heuristic" => :heuristic
     )
 end
@@ -137,6 +160,7 @@ for (j, sk) in enumerate(solver_keys)
         s_counts[i] = pomdp.count
     end
     rewards[sk] = sdata(s_rewards)
+    @show mean(rewards[sk])
     # state_hists[sk] = sdata(s_hists)
     counts[sk] = sdata(s_counts)
     times[sk] = sdata(s_times)
@@ -144,7 +168,7 @@ end
 
 for k in solver_keys
     println("$k mean: $(mean(rewards[k])) sem: $(std(rewards[k])/sqrt(N))")
-    println("$k time: $(mean(times[k])) sim counts: $(mean(counts[k])))")
+    println("$k time: $(mean(times[k])) sim counts: $(mean(counts[k]))")
 end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "compare_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
