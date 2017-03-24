@@ -5,6 +5,7 @@ using POMCP
 using POMCPOW
 using Parameters
 using LightDarkPOMDPs
+using Powseeker
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
