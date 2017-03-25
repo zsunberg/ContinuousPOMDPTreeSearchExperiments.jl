@@ -111,6 +111,7 @@ end
 reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.time, mdp(p).xlim, mdp(p).ylim)
 
 
+#=
 function POMCPOW.init_node_belief(::ObsAdaptiveParticleFilter, p::LightDark2DTarget, s::Vec2, a::Vec2, o::Vec2, sp::Vec2)
     POWNodeBelief(p, s, a, o, sp)
 end
@@ -124,3 +125,4 @@ function POMCPOW.push_weighted!(b::POWNodeBelief, up::ObsAdaptiveParticleFilter,
     sp2 = rand(up.rng, ood)
     insert!(b.dist, sp2, w*frac_replaced)
 end
+=#

@@ -27,10 +27,13 @@ export
     ModeAugmentedBelief,
     InfoGatherHeur,
     InfoGatherUpdater,
-    OneStepValue
+    OneStepValue,
+
+    GPSFirst
 
 include("policies.jl")
 include("updaters.jl")
+include("action_gen.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 
