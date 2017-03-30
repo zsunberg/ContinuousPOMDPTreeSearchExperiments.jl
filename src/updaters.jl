@@ -45,6 +45,10 @@ POMDPs.initialize_belief{S}(up::ObsAdaptiveParticleFilter{S}, d::Any) = resample
 POMDPs.update(up::ObsAdaptiveParticleFilter, b, a, o) = update(up, resample(up.resample, b, up.rng), a, o)
 
 function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.ParticleCollection, a, o)
+    if n_particles(b) > 2*up.resample.n
+        b = resample(up.resample, b, up.rng)
+    end
+
     ps = particles(b)
     pm = Array(S, 0)
     wm = Array(Float64, 0)

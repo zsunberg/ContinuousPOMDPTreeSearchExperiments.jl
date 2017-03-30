@@ -1,3 +1,167 @@
+Wed 29 Mar 2017 07:03:52 PM PDT
+
+XXX USE XXX
+
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 uai_2017/ld_comparison.jl
+pomcpow_10k (1 of 2)...100%|████████████████████████████| Time: 0:01:13
+mean(rewards[sk]) = -9.267762047007196
+sum(counts[sk]) / sum(steps[sk]) = 18464.847734227016
+greedy (2 of 2)...100%|█████████████████████████████████| Time: 0:00:54
+mean(rewards[sk]) = -15.753999479537239
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+pomcpow_10k mean: -9.267762047007196 sem: 0.1707708909033004
+pomcpow_10k time: 2.564552 sim counts: 253448.5 steps: 13.726
+greedy mean: -15.753999479537239 sem: 0.14423709957881475
+greedy time: 2.141464 sim counts: 0.0 steps: 33.686
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Wednesday_29_Mar_19_04.jld...
+done.
+
+Wed 29 Mar 2017 06:55:39 PM PDT
+
+XXX USE XXX
+
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 uai_2017/ld_comparison.jl
+heuristic (1 of 6)...100%|██████████████████████████████| Time: 0:00:09
+mean(rewards[sk]) = -7.033655189262772
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+pomcpow (2 of 6)...100%|████████████████████████████████| Time: 1:19:26
+mean(rewards[sk]) = -6.377730449077106
+sum(counts[sk]) / sum(steps[sk]) = 2.4143038177150195e6
+pomcpdpw (3 of 6)...100%|███████████████████████████████| Time: 7:33:26
+mean(rewards[sk]) = -15.69943647695567
+sum(counts[sk]) / sum(steps[sk]) = 319307.70218304446
+bt_100_ro_100k (4 of 6)...100%|█████████████████████████| Time: 1:03:53
+mean(rewards[sk]) = -5.613691760365924
+sum(counts[sk]) / sum(steps[sk]) = 2.4490792149007633e7
+bt_100_osv_100k (5 of 6)...100%|████████████████████████| Time: 0:47:07
+mean(rewards[sk]) = -6.85277809582549
+sum(counts[sk]) / sum(steps[sk]) = 8.728218322816644e6
+greedy (6 of 6)...100%|█████████████████████████████████| Time: 0:00:56
+mean(rewards[sk]) = -15.753999479537239
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+heuristic mean: -7.033655189262772 sem: 0.10013644232719489
+heuristic time: 0.12171999999999979 sim counts: 0.0 steps: 8.984
+pomcpow mean: -6.377730449077106 sem: 0.09845233232867533
+pomcpow time: 184.11048000000005 sim counts: 1.880742674e7 steps: 7.79
+pomcpdpw mean: -15.69943647695567 sem: 0.1560158316692792
+pomcpdpw time: 1066.607432 sim counts: 1.079451618e7 steps: 33.806
+bt_100_ro_100k mean: -5.613691760365924 sem: 0.07078723454023751
+bt_100_ro_100k time: 150.52855200000002 sim counts: 1.60414688576e8 steps: 6.55
+bt_100_osv_100k mean: -6.85277809582549 sem: 0.12512502756233473
+bt_100_osv_100k time: 109.29648800000001 sim counts: 7.6354453888e7 steps: 8.748
+greedy mean: -15.753999479537239 sem: 0.14423709957881475
+greedy time: 2.195144 sim counts: 0.0 steps: 33.686
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Wednesday_29_Mar_10_05.jld...
+done.
+
+Tue 28 Mar 2017 10:52:03 PM PDT
+
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 uai_2017/ld_comparison.jl  bt_1000_osv_10k (1 of 9)...100%|████████████████████████| Time: 0:13:47
+mean(rewards[sk]) = -11.212760358096592
+sum(counts[sk]) / sum(steps[sk]) = 9.317113126448894e6
+heuristic (2 of 9)...100%|██████████████████████████████| Time: 0:00:02
+mean(rewards[sk]) = -7.226265473715379
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+bt_100_ro_50k (3 of 9)...100%|██████████████████████████| Time: 0:08:40
+mean(rewards[sk]) = -8.450746172323269
+sum(counts[sk]) / sum(steps[sk]) = 4.5615460781512605e6
+pomcpow (4 of 9)...100%|████████████████████████████████| Time: 0:17:33
+mean(rewards[sk]) = -6.427691278976738
+sum(counts[sk]) / sum(steps[sk]) = 2.4160163984771576e6
+pomcpdpw (5 of 9)...100%|███████████████████████████████| Time: 1:40:42
+mean(rewards[sk]) = -15.853267090626584
+sum(counts[sk]) / sum(steps[sk]) = 319143.984297761
+bt_10000_osv_1k (6 of 9)...100%|████████████████████████| Time: 0:10:28
+mean(rewards[sk]) = -9.363843614136982
+sum(counts[sk]) / sum(steps[sk]) = 9.489309755780347e6
+bt_1000_ro_5k (7 of 9)...100%|██████████████████████████| Time: 0:06:02
+mean(rewards[sk]) = -10.135463216813116
+sum(counts[sk]) / sum(steps[sk]) = 4.621683939315688e6
+bt_100_osv_100k (8 of 9)...100%|████████████████████████| Time: 0:11:30
+mean(rewards[sk]) = -7.268103412923633
+sum(counts[sk]) / sum(steps[sk]) = 8.624871826923076e6
+greedy (9 of 9)...100%|█████████████████████████████████| Time: 0:00:13
+mean(rewards[sk]) = -15.893171937096822
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+bt_1000_osv_10k mean: -11.212760358096592 sem: 0.44127950612902006
+bt_1000_osv_10k time: 134.07095999999999 sim counts: 1.7683880714e8 steps: 18.98
+heuristic mean: -7.226265473715379 sem: 0.2725311133802234
+heuristic time: 0.3929199999999998 sim counts: 0.0 steps: 9.59
+bt_100_ro_50k mean: -8.450746172323269 sem: 0.35955894726607157
+bt_100_ro_50k time: 70.87136 sim counts: 5.428239833e7 steps: 11.9
+pomcpow mean: -6.427691278976738 sem: 0.23038042462137528
+pomcpow time: 195.14068 sim counts: 1.903820922e7 steps: 7.88
+pomcpdpw mean: -15.853267090626584 sem: 0.34130456588620695
+pomcpdpw time: 1097.0013600000002 sim counts: 1.097536162e7 steps: 34.39
+bt_10000_osv_1k mean: -9.363843614136982 sem: 0.3648557809087868
+bt_10000_osv_1k time: 90.44756 sim counts: 1.3133204702e8 steps: 13.84
+bt_1000_ro_5k mean: -10.135463216813116 sem: 0.3857735894005351
+bt_1000_ro_5k time: 56.43364 sim counts: 7.158988422e7 steps: 15.49
+bt_100_osv_100k mean: -7.268103412923633 sem: 0.28570066391523014
+bt_100_osv_100k time: 114.95456 sim counts: 8.07288003e7 steps: 9.36
+greedy mean: -15.893171937096822 sem: 0.30374049951337256
+greedy time: 2.2675600000000005 sim counts: 0.0 steps: 34.11
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Monday_27_Mar_02_14.jld...
+done.
+
+Sun 26 Mar 2017 10:33:37 PM PDT
+
+for bt_osv_2500, we should use
+
+2500*100 + 2500 = 252500
+
+
+Sun 26 Mar 2017 07:28:04 PM PDT
+
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 uai_2017/ld_comparison.jl 
+bt_osv_2500 (1 of 3)...100%|████████████████████████████| Time: 0:09:11
+mean(rewards[sk]) = -9.708126278280934
+sum(counts[sk]) / sum(steps[sk]) = 2375.5079695079694
+heuristic (2 of 3)...100%|██████████████████████████████| Time: 0:00:02
+mean(rewards[sk]) = -7.226265473715379
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+greedy (3 of 3)...100%|█████████████████████████████████| Time: 0:00:13
+mean(rewards[sk]) = -15.893171937096822
+sum(counts[sk]) / sum(steps[sk]) = 0.0
+bt_osv_2500 mean: -9.708126278280934 sem: 0.3601598549097225
+bt_osv_2500 time: 83.33244 sim counts: 34278.58 steps: 14.43
+heuristic mean: -7.226265473715379 sem: 0.2725311133802234
+heuristic time: 0.4150799999999999 sim counts: 0.0 steps: 9.59
+greedy mean: -15.893171937096822 sem: 0.30374049951337256
+greedy time: 2.2194 sim counts: 0.0 steps: 34.11
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Sunday_26_Mar_19_25.jld...
+done.
+
+
+Sun 26 Mar 2017 04:54:04 PM PDT
+
+modified_pomcp_2500 (1 of 5)...100%|████████████████████| Time: 0:04:22
+mean(rewards[sk]) = -6.228689810256388
+heuristic (2 of 5)...100%|██████████████████████████████| Time: 0:00:02
+mean(rewards[sk]) = -7.235164761413105
+pomcpow (3 of 5)...100%|████████████████████████████████| Time: 0:21:46
+mean(rewards[sk]) = -7.165346048548632
+modified_pomcp (4 of 5)...100%|█████████████████████████| Time: 0:15:53
+mean(rewards[sk]) = -6.310329385942821
+greedy (5 of 5)...100%|█████████████████████████████████| Time: 0:00:12
+mean(rewards[sk]) = -15.905852704954135
+modified_pomcp_2500 mean: -6.228689810256388 sem: 0.18214953179338803
+modified_pomcp_2500 time: 43.771240000000006 sim counts: 1.4972938632e8 steps: 7.46
+heuristic mean: -7.235164761413105 sem: 0.27554282336930086
+heuristic time: 0.38867999999999975 sim counts: 0.0 steps: 9.64
+pomcpow mean: -7.165346048548632 sem: 0.27300311644202
+pomcpow time: 225.59455999999997 sim counts: 2.205615447e7 steps: 9.23
+modified_pomcp mean: -6.310329385942821 sem: 0.22239423722155335
+modified_pomcp time: 162.78972000000005 sim counts: 3.6961437985e8 steps: 7.76
+greedy mean: -15.905852704954135 sem: 0.305511430505056
+greedy time: 2.24324 sim counts: 0.0 steps: 34.18
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/compare_Sunday_26_Mar_16_47.jld...
+done.
+
+Sun 26 Mar 2017 03:17:15 PM PDT
+
+modified pomcp still does better than pomcpow with the same amount of simulations
+
 Fri 24 Mar 2017 10:53:01 AM PDT
 
 zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 uai_2017/ld_comparison.jl

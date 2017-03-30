@@ -10,7 +10,7 @@ using ParticleFilters
 using JLD
 using CPUTime
 
-N = 100
+N = 500
 
 @everywhere begin
     using LightDarkPOMDPs
@@ -26,14 +26,15 @@ N = 100
                               discount=0.95)
     p_rng = MersenneTwister(4)
     solvers = Dict{String, Union{Solver,Policy}}(
+        #=
         "heuristic" => begin
             homing_policy = SimpleFeedback(gain=1.0, max_radius=10.0)
-            exploring_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.05, p_rng)
-            homing_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.0, p_rng)
+            exploring_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.05, copy(p_rng))
+            homing_up = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.0, copy(p_rng))
             InfoGatherHeur(5.0, 0.03, homing_policy, exploring_up, homing_up)
         end,
 
-        "vanilla_pomcp" => begin
+        "pomcpdpw" => begin
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             rollout_policy = RadiusRandom(radius=10.0, rng=rng3)
@@ -52,13 +53,12 @@ N = 100
                                    )
         end,
 
-        "modified_pomcp" => begin
+        "bt_100_ro_100k" => begin
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
             rollout_policy = SimpleFeedback(max_radius=10.0)
-            tree_queries = 50_000
+            tree_queries = 100_000
             node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
-            # node_updater = SimpleParticleFilter(pomdp, LowVarianceResampler(100), rng=rng3)
             solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
                                     c=5.0,
@@ -74,32 +74,31 @@ N = 100
                                    )
         end,
 
-        "pomcpow" => begin
+        "bt_100_osv_100k" => begin
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
-            tree_queries = 1_000_000
-            # node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
-            solver = POMCPOWSolver(next_action=action_gen,
+            rollout_policy = SimpleFeedback(max_radius=10.0)
+            tree_queries = 100_000
+            node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
-                                    criterion=MaxUCB(5.0),
-                                    final_criterion=MaxTries(),
+                                    c=5.0,
                                     max_depth=40,
                                     k_action=10.0,
                                     alpha_action=1/8,
                                     k_observation=4.0,
                                     alpha_observation=1/8,
                                     estimate_value=OneStepValue(),
-                                    # node_belief_updater=node_updater,
+                                    node_belief_updater=node_updater,
+                                    default_action=Vec2(0.1, 0.1),
                                     rng=rng3
                                    )
         end,
 
-        #=
-        "pomcpow_500k" => begin
+        "pomcpow" => begin
             rng3 = copy(p_rng)
             action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
-            tree_queries = 100_000
-            # node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            tree_queries = 1_000_000
             solver = POMCPOWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
                                     criterion=MaxUCB(5.0),
@@ -110,22 +109,34 @@ N = 100
                                     k_observation=4.0,
                                     alpha_observation=1/8,
                                     estimate_value=OneStepValue(),
-                                    # node_belief_updater=node_updater,
                                     rng=rng3
                                    )
         end,
         =#
 
+        "pomcpow_10k" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            tree_queries = 10_000
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(5.0),
+                                    final_criterion=MaxTries(),
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
+                                    rng=rng3
+                                   )
+        end,
+
         "greedy" => SimpleFeedback(gain=1.0, max_radius=10.0)
+
     )
 
-    up_rng = MersenneTwister(5)
     updaters = Dict{String, Any}(
-        "vanilla_pomcp" => :standard,
-        "modified_pomcp" => :standard,
-        "greedy" => :standard,
-        "pomcpow" => :standard,
-        "pomcpow_100k" => :standard,
         "heuristic" => :heuristic
     )
 end
@@ -146,12 +157,13 @@ for (j, sk) in enumerate(solver_keys)
     prog = Progress(N, desc="$sk ($j of $(length(solver_keys)))...")
     pmap(prog, 1:N) do i 
         sim_rng = MersenneTwister(i)
+        up_rng = MersenneTwister(i+100_000)
         if isa(solvers[sk], Policy)
             policy = deepcopy(solvers[sk])
         else
             policy = solve(solvers[sk], pomdp)
         end
-        if updaters[sk] == :standard
+        if get(updaters, sk, :standard) == :standard
             up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
         elseif updaters[sk] == :heuristic
             up = updater(policy)
@@ -169,6 +181,7 @@ for (j, sk) in enumerate(solver_keys)
     counts[sk] = sdata(s_counts)
     times[sk] = sdata(s_times)
     steps[sk] = sdata(s_steps)
+    @show sum(counts[sk])/sum(steps[sk])
 end
 
 for k in solver_keys
