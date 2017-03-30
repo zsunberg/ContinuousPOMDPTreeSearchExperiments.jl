@@ -87,7 +87,7 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
     return pc
 end
 
-POMCPOW.belief_type(::Type{ObsAdaptiveParticleFilter{Vec2}}, ::Type{LightDark2DTarget}) = POWNodeBelief{Vec2, Vec2, Vec2, LightDark2DTarget}
+# POMCPOW.belief_type(::Type{ObsAdaptiveParticleFilter{Vec2}}, ::Type{LightDark2DTarget}) = POWNodeBelief{Vec2, Vec2, Vec2, LightDark2DTarget}
 
 function max_possible_weight(pomdp::AbstractLD2, a, o)
     od = observation(pomdp, a, o) # will only work for LightDark
