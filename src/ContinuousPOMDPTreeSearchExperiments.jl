@@ -22,6 +22,7 @@ export
     SymmetricNormalResampler,
     MinPopResampler,
     ObsAdaptiveParticleFilter,
+    ObsAdaptiveSRFilter,
     LightDarkLQRSolver,
     LightDarkLQRPolicy,
     ModeAugmentedBelief,
@@ -34,6 +35,8 @@ export
 include("policies.jl")
 include("updaters.jl")
 include("action_gen.jl")
+
+include("sr_filter.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 
