@@ -5,6 +5,7 @@ using POMCP
 using POMCPOW
 using Parameters
 using LightDarkPOMDPs
+using Powseeker
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
@@ -26,10 +27,13 @@ export
     ModeAugmentedBelief,
     InfoGatherHeur,
     InfoGatherUpdater,
-    OneStepValue
+    OneStepValue,
+
+    GPSFirst
 
 include("policies.jl")
 include("updaters.jl")
+include("action_gen.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 

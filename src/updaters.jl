@@ -34,7 +34,7 @@ function ParticleFilters.resample(r::MinPopResampler, b, rng::AbstractRNG)
 end
 
 
-immutable ObsAdaptiveParticleFilter{S} <: Updater{ParticleFilters.ParticleCollection}
+immutable ObsAdaptiveParticleFilter{S} <: Updater{ParticleFilters.ParticleCollection{S}}
     pomdp::POMDP{S}
     resample::Any
     max_frac_replaced::Float64
@@ -65,29 +65,57 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
             push!(wm, pdf(od, o))
         end
     end
-    if all_terminal
+    ws = sum(wm)
+    if all_terminal || sum(wm) == 0.0
         # warn("All states in particle collection were terminal.")
-        return initialize_belief(up, initial_state_distribution(up.pomdp))
+        return initialize_belief(up, reset_distribution(up.pomdp, a, o))
     end
 
-    pc = resample(up.resample, WeightedParticleBelief{S}(pm, wm, sum(wm), nothing), up.rng)
+    pc = resample(up.resample, WeightedParticleBelief{S}(pm, wm, ws, nothing), up.rng)
     ps = particles(pc)
-    for i in 1:length(ps)
-        ps[i] += 0.001*randn(up.rng, 2)
-    end
+    # for i in 1:length(ps)
+    #     ps[i] += 0.001*randn(up.rng, 2)
+    # end
 
-    od = observation(up.pomdp, a, o) # will only work for LightDark
-    frac_replaced = up.max_frac_replaced*max(0.0, 1.0 - maximum(wm)/pdf(od, o))
+    mpw = max_possible_weight(up.pomdp, a, o)
+    frac_replaced = up.max_frac_replaced*max(0.0, 1.0 - maximum(wm)/mpw)
     n_replaced = floor(Int, frac_replaced*length(ps))
     is = randperm(up.rng, length(ps))[1:n_replaced]
     for i in is
-        ps[i] = o + LightDarkPOMDPs.obs_std(up.pomdp, o[1])*randn(up.rng, 2)
+        ps[i] = new_particle(up.pomdp, a, o, up.rng)
     end
     return pc
 end
 
 POMCPOW.belief_type(::Type{ObsAdaptiveParticleFilter{Vec2}}, ::Type{LightDark2DTarget}) = POWNodeBelief{Vec2, Vec2, Vec2, LightDark2DTarget}
 
+function max_possible_weight(pomdp::AbstractLD2, a, o)
+    od = observation(pomdp, a, o) # will only work for LightDark
+    return pdf(od, o)    
+end
+
+function new_particle(pomdp::AbstractLD2, a, o, rng)
+    return o + LightDarkPOMDPs.obs_std(pomdp, o[1])*randn(rng, 2)
+end
+
+reset_distribution(p::POMDP, a, o) = initial_state_distribution(p)
+
+
+max_possible_weight(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = 0.0
+
+function new_particle(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs, rng::AbstractRNG)
+    if a.gps
+        return SkierState(o.time, get(o.pos)+pomdp.gps_std*randn(rng, 1), 2*pi*rand(rng))
+    else
+        is = initial_state(pomdp, rng)
+        return SkierState(o.time, is.pos, is.psi)
+    end
+end
+
+reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.time, mdp(p).xlim, mdp(p).ylim)
+
+
+#=
 function POMCPOW.init_node_belief(::ObsAdaptiveParticleFilter, p::LightDark2DTarget, s::Vec2, a::Vec2, o::Vec2, sp::Vec2)
     POWNodeBelief(p, s, a, o, sp)
 end
@@ -101,3 +129,4 @@ function POMCPOW.push_weighted!(b::POWNodeBelief, up::ObsAdaptiveParticleFilter,
     sp2 = rand(up.rng, ood)
     insert!(b.dist, sp2, w*frac_replaced)
 end
+=#
