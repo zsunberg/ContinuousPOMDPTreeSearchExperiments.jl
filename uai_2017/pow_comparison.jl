@@ -11,27 +11,28 @@ using JLD
 using CPUTime
 using Powseeker
 
-N = 1
+N = 500
 
 @everywhere begin
-    using LightDarkPOMDPs
+    using Powseeker
     using POMDPs
     using ContinuousPOMDPTreeSearchExperiments
     using POMDPToolbox
     using POMCP
     using POMCPOW
     using ParticleFilters
+    using CPUTime
 
     pomdp = PowseekerPOMDP()
     p_rng = MersenneTwister(4)
     solvers = Dict{String, Union{Solver,Policy}}(
 
 
-        "bt_100_200" => begin
+        "bt_100_500" => begin
             rng3 = copy(p_rng)
             action_gen = GPSFirst(rng3)
             rollout_policy = Downhill(pomdp)
-            tree_queries = 200
+            tree_queries = 500
             node_updater = ObsAdaptiveSRFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
             solver = POMCPDPWSolver(next_action=action_gen,
                                     tree_queries=tree_queries,
@@ -69,6 +70,25 @@ N = 1
         "pomcpow_10k" => begin
             rng3 = copy(p_rng)
             action_gen = GPSFirst(rng3)
+            rollout_policy = Downhill(pomdp)
+            tree_queries = 10_000
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(exp(35)),
+                                    final_criterion=MaxTries(),
+                                    max_depth=mdp(pomdp).duration+2,
+                                    k_action=8.0,
+                                    alpha_action=1/20,
+                                    k_observation=8.0,
+                                    alpha_observation=1/10,
+                                    estimate_value=FORollout(rollout_policy),
+                                    rng=rng3
+                                   )
+        end,
+
+        "pomcpow_10k_so" => begin
+            rng3 = copy(p_rng)
+            action_gen = GPSFirst(rng3)
             rollout_policy = SkiOver(pomdp)
             tree_queries = 10_000
             solver = POMCPOWSolver(next_action=action_gen,
@@ -84,6 +104,27 @@ N = 1
                                     rng=rng3
                                    )
         end,
+
+        "pomcpow_50k" => begin
+            rng3 = copy(p_rng)
+            action_gen = GPSFirst(rng3)
+            rollout_policy = Downhill(pomdp)
+            tree_queries = 50_000
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(exp(35)),
+                                    final_criterion=MaxTries(),
+                                    max_depth=mdp(pomdp).duration+2,
+                                    k_action=8.0,
+                                    alpha_action=1/20,
+                                    k_observation=8.0,
+                                    alpha_observation=1/10,
+                                    estimate_value=FORollout(rollout_policy),
+                                    rng=rng3
+                                   )
+        end,
+
+
     )
 end
 
