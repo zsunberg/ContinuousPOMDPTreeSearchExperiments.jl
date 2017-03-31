@@ -1,3 +1,15 @@
+Thu 30 Mar 2017 10:34:13 PM PDT
+
+after changing to 0.5 timestep
+n=1000: 32.42
+n=100:
+
+Thu 30 Mar 2017 08:30:17 PM PDT
+
+vdp mcts with n=1000
+8.016
+with n=100, 4.39
+
 Wed 29 Mar 2017 07:03:52 PM PDT
 
 XXX USE XXX
