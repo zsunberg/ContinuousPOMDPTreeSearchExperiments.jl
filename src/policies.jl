@@ -13,6 +13,8 @@ end
 POMDPs.action(p::RadiusRandom, b) = rand_in_radius(p.rng, p.radius)
 POMDPs.updater(p::RadiusRandom) = VoidUpdater()
 
+Base.rand(rng::AbstractRNG, rr::RadiusRandom) = rand_in_radius(rng, rr.radius)
+
 @with_kw type AdaptiveRadiusRandom <: Policy
     max_radius::Float64     = 1.0
     to_zero_first::Bool     = true

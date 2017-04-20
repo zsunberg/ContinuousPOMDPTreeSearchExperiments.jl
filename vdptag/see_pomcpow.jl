@@ -23,7 +23,7 @@ using POMCP
                            criterion=MaxUCB(30),
                            final_criterion=MaxTries(),
                            max_depth=20,
-                           k_action=16.0,
+                           k_action=8.0,
                            alpha_action=1/8,
                            k_observation=8.0,
                            alpha_observation=1/8,
