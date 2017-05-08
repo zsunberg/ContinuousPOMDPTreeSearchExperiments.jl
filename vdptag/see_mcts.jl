@@ -16,14 +16,14 @@ using MCTS
     seed=27
 
     solver = DPWSolver(depth=20,
-                       exploration_constant=mdp.tag_reward,
+                       exploration_constant=40.0,
                        rng=MersenneTwister(seed),
                        estimate_value=RolloutEstimator(ToNextML(mdp)),
-                       n_iterations=100,
+                       n_iterations=1000,
                        k_action=8.0,
-                       alpha_action=1/4,
-                       k_state=8.0,
-                       alpha_state=1/4)
+                       alpha_action=1/20,
+                       k_state=4.0,
+                       alpha_state=1/20)
 end
 
 
@@ -41,6 +41,12 @@ end
 @show mean(rewards)
 
 #=
+policy = solve(solver, mdp)
+
+hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(1))
+hist = simulate(hr, mdp, policy)
+@show discounted_reward(hist)
+
 gr()
 frames = Frames(MIME("image/png"), fps=2)
 @showprogress "Creating gif..." for s in state_hist(hist)

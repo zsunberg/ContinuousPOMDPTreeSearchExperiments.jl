@@ -6,12 +6,14 @@ using POMCPOW
 using Parameters
 using LightDarkPOMDPs
 using Powseeker
+using VDPTag
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
 using GenerativeModels
 using ControlSystems
 using Plots
+
 
 import POMCPOW.n_children
 

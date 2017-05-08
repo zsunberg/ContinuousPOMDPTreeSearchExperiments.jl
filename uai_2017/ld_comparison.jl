@@ -10,7 +10,7 @@ using ParticleFilters
 using JLD
 using CPUTime
 
-N = 500
+N = 20
 
 @everywhere begin
     using LightDarkPOMDPs
@@ -49,6 +49,65 @@ N = 500
                                     alpha_observation=1/8,
                                     estimate_value=OneStepValue(),
                                     default_action=Vec2(0.1, 0.1),
+                                    rng=rng3
+                                   )
+        end,
+
+
+        "bt_100_osv_100k" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            rollout_policy = SimpleFeedback(max_radius=10.0)
+            tree_queries = 100_000
+            node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
+            solver = POMCPDPWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    c=5.0,
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
+                                    node_belief_updater=node_updater,
+                                    default_action=Vec2(0.1, 0.1),
+                                    rng=rng3
+                                   )
+        end,
+        =#
+
+        "pomcpow" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            tree_queries = 1_000_000
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(5.0),
+                                    final_criterion=MaxTries(),
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
+                                    rng=rng3
+                                   )
+        end,
+
+        "pomcpow_10k" => begin
+            rng3 = copy(p_rng)
+            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
+            tree_queries = 10_000
+            solver = POMCPOWSolver(next_action=action_gen,
+                                    tree_queries=tree_queries,
+                                    criterion=MaxUCB(5.0),
+                                    final_criterion=MaxTries(),
+                                    max_depth=40,
+                                    k_action=10.0,
+                                    alpha_action=1/8,
+                                    k_observation=4.0,
+                                    alpha_observation=1/8,
+                                    estimate_value=OneStepValue(),
                                     rng=rng3
                                    )
         end,
@@ -95,42 +154,6 @@ N = 500
                                    )
         end,
 
-        "pomcpow" => begin
-            rng3 = copy(p_rng)
-            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
-            tree_queries = 1_000_000
-            solver = POMCPOWSolver(next_action=action_gen,
-                                    tree_queries=tree_queries,
-                                    criterion=MaxUCB(5.0),
-                                    final_criterion=MaxTries(),
-                                    max_depth=40,
-                                    k_action=10.0,
-                                    alpha_action=1/8,
-                                    k_observation=4.0,
-                                    alpha_observation=1/8,
-                                    estimate_value=OneStepValue(),
-                                    rng=rng3
-                                   )
-        end,
-        =#
-
-        "pomcpow_10k" => begin
-            rng3 = copy(p_rng)
-            action_gen = AdaptiveRadiusRandom(max_radius=6.0, to_zero_first=true, to_light_second=true, rng=rng3)
-            tree_queries = 10_000
-            solver = POMCPOWSolver(next_action=action_gen,
-                                    tree_queries=tree_queries,
-                                    criterion=MaxUCB(5.0),
-                                    final_criterion=MaxTries(),
-                                    max_depth=40,
-                                    k_action=10.0,
-                                    alpha_action=1/8,
-                                    k_observation=4.0,
-                                    alpha_observation=1/8,
-                                    estimate_value=OneStepValue(),
-                                    rng=rng3
-                                   )
-        end,
 
         "greedy" => SimpleFeedback(gain=1.0, max_radius=10.0)
 
@@ -191,5 +214,5 @@ end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "compare_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
 println("saving to $filename...")
-@save(filename, pomdp, solver_keys, solvers, rewards, updaters, counts, steps)
+@save(filename, pomdp, solver_keys, solvers, rewards, updaters, counts, steps, times)
 println("done.")

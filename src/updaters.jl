@@ -115,6 +115,12 @@ end
 reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.time, mdp(p).xlim, mdp(p).ylim)
 
 
+max_possible_weight(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = 0.0
+
+new_particle(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = error("shouldn't get here")
+
+
+
 #=
 function POMCPOW.init_node_belief(::ObsAdaptiveParticleFilter, p::LightDark2DTarget, s::Vec2, a::Vec2, o::Vec2, sp::Vec2)
     POWNodeBelief(p, s, a, o, sp)
