@@ -42,6 +42,7 @@ using POMCP
 end
 
 
+#=
 N = 100
 # s_rewards = SharedArray(Float64, N)
 prog = Progress(N, desc="Simulating...")
@@ -54,6 +55,7 @@ rewards = pmap(prog, 1:N) do i
     discounted_reward(hist)
 end
 @show mean(rewards)
+=#
 
 #=
 policy = solve(solver, pomdp)
