@@ -5,6 +5,7 @@ using Reel
 using ProgressMeter
 using PmapProgressMeter
 using MCTS
+using ProfileView
 
 @everywhere begin
     using POMDPs
@@ -19,7 +20,7 @@ using MCTS
                        exploration_constant=40.0,
                        rng=MersenneTwister(seed),
                        estimate_value=RolloutEstimator(ToNextML(mdp)),
-                       n_iterations=1000,
+                       n_iterations=10000,
                        k_action=8.0,
                        alpha_action=1/20,
                        k_state=4.0,
@@ -27,6 +28,7 @@ using MCTS
 end
 
 
+#=
 N = 100
 # s_rewards = SharedArray(Float64, N)
 prog = Progress(N, desc="Simulating...")
@@ -39,10 +41,22 @@ rewards = pmap(prog, 1:N) do i
     discounted_reward(hist)
 end
 @show mean(rewards)
+=#
+
+policy = solve(solver, mdp)
+a = action(policy, initial_state(mdp, MersenneTwister(1)))
+clear_tree!(policy)
+
+Profile.clear()
+hr = HistoryRecorder(max_steps=20, rng=MersenneTwister(1))
+hist = simulate(hr, mdp, policy)
+clear_tree!(policy)
+@profile hist = simulate(hr, mdp, policy)
+# @profile a = action(policy, initial_state(mdp, MersenneTwister(1)))
+ProfileView.view()
+
 
 #=
-policy = solve(solver, mdp)
-
 hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(1))
 hist = simulate(hr, mdp, policy)
 @show discounted_reward(hist)

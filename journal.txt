@@ -1,3 +1,16 @@
+Sun 07 May 2017 07:15:40 PM PDT
+
+What tests to run????
+First thoroughly check out VDP Tag and see what else we might want to investigate
+
+DESPOT on lightdark
+POMCP on lightdark?
+
+Discretized POMCP, DESPOT, POMCP-DPW
+
+Benchmarks from other papers
+
+
 Thu 30 Mar 2017 10:34:13 PM PDT
 
 after changing to 0.5 timestep
