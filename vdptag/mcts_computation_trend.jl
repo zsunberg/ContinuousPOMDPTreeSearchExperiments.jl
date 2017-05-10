@@ -15,7 +15,7 @@ using Plots
     using PmapProgressMeter
 end
 
-n_points = 8
+n_points = 10
 mrew = Array(Float64, n_points)
 ns = Array(Float64, n_points)
 for j = 1:n_points
