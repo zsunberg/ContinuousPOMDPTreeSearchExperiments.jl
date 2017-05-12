@@ -10,7 +10,6 @@ using VDPTag
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
-using GenerativeModels
 using ControlSystems
 using Plots
 
