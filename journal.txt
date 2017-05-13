@@ -1,3 +1,10 @@
+Fri 12 May 2017 07:05:57 PM PDT
+
+Forgot to copy and paste the screen, but it seems like the discretization does marginally worse
+at n = 10000
+discretized POMCP -> 15
+pomcpow -> 20
+
 Thu 11 May 2017 11:22:45 PM PDT
 
 MDP discrete-doesn't seems to matter too much

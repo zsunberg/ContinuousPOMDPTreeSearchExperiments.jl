@@ -11,7 +11,7 @@ using CPUTime
 using VDPTag
 using Plots
 
-N = 2
+N = 1000
 
 @everywhere begin
     using VDPTag
@@ -26,7 +26,7 @@ N = 2
     pomdp = VDPTagPOMDP()
     p_rng = MersenneTwister(4)
     solvers = Dict{Tuple, Union{Solver, Policy}}()
-    for m in [0.01, 0.1, 1]
+    for m in [0.01, 0.1, 1, 2, 5, 10]
 
         solvers = merge(solvers, Dict{Tuple, Union{Solver,Policy}}(
 
@@ -46,7 +46,6 @@ N = 2
                                        check_repeat_obs=false,
                                        rng=MersenneTwister(13)
                                       )
-
             end,
 
             ("bt_100", m) => begin
