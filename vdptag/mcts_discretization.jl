@@ -7,7 +7,7 @@ using PmapProgressMeter
 using MCTS
 using Plots
 
-@show N = 10
+@show N = 1000
 
 @everywhere begin
     using POMDPs

@@ -1,3 +1,35 @@
+Fri 12 May 2017 07:05:57 PM PDT
+
+Forgot to copy and paste the screen, but it seems like the discretization does marginally worse
+at n = 10000
+discretized POMCP -> 15
+pomcpow -> 20
+
+Thu 11 May 2017 11:22:45 PM PDT
+
+MDP discrete-doesn't seems to matter too much
+
+zsunberg@tula:~/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments$ julia -p 20 vdptag/mcts_discretization.jl
+N = 1000 = 1000
+Simulating...100%|██████████████████████████████████████| Time: 0:00:06
+k = "discrete_random"
+mean(rewards) = -16.99111470314662
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+k = "discrete_heur"
+mean(rewards) = 26.058640290930313
+Simulating...100%|██████████████████████████████████████| Time: 0:10:12
+k = "continuous_dpw"
+mean(rewards) = 50.321368047118916
+Simulating...100%|██████████████████████████████████████| Time: 0:16:49
+k = "discrete_dpw"
+mean(rewards) = 52.87807537064958
+Simulating...100%|██████████████████████████████████████| Time: 0:20:45
+k = "discrete_mcts"
+mean(rewards) = 56.599055225113
+Simulating...100%|██████████████████████████████████████| Time: 0:00:00
+k = "continuous_heur"
+mean(rewards) = 46.710457390363665
+
 Wed 10 May 2017 11:26:24 AM PDT
 
 MDP trends vs discrete
