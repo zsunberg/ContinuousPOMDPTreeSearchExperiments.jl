@@ -20,7 +20,7 @@ using Plots
     using VDPTag
 
     pomdp = VDPTagPOMDP()
-    dpomdp = DiscreteVDPTagPOMDP()
+    dpomdp = AODiscreteVDPTagPOMDP()
 
     n = 10000
     seed = 42
