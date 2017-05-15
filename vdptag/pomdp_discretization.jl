@@ -8,7 +8,7 @@ using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using Plots
 
-@show N = 1000
+@show N = 2
 
 @everywhere begin
     using POMDPs
