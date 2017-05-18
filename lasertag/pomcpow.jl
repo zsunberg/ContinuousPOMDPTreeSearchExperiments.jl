@@ -18,7 +18,7 @@ using Plots
     using POMCP
     using LaserTag
 
-    N = 2
+    N = 1000
     n_rows = 7
     n_cols = 11
     prng = MersenneTwister(14)
@@ -28,7 +28,7 @@ using Plots
 
         "pomcpow" => begin
             ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=10_000,
+            solver = POMCPOWSolver(tree_queries=50_000,
                                    criterion=MaxUCB(40.0),
                                    final_criterion=MaxTries(),
                                    max_depth=20,

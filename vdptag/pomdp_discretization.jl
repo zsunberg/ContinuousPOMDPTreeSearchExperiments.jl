@@ -8,7 +8,7 @@ using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using Plots
 
-@show N = 2
+@show N = 1000
 
 @everywhere begin
     using POMDPs
@@ -20,7 +20,6 @@ using Plots
     using VDPTag
 
     pomdp = VDPTagPOMDP()
-    dpomdp = AODiscreteVDPTagPOMDP()
 
     n = 10000
     seed = 42
@@ -45,7 +44,28 @@ using Plots
             solve(solver, pomdp)
         end,
 
+        # "discrete_pomcpow" => begin
+        #     dpomdp = AODiscreteVDPTagPOMDP(n_angles=1000, n_obs_angles=1000)
+        #     ro = translate_policy(ToNextML(mdp(pomdp)), mdp(pomdp), dpomdp, dpomdp)
+        #     solver = POMCPOWSolver(tree_queries=10_000,
+        #                            criterion=MaxUCB(40.0),
+        #                            final_criterion=MaxTries(),
+        #                            max_depth=20,
+        #                            k_action=8.0,
+        #                            alpha_action=1/20,
+        #                            k_observation=4.0,
+        #                            alpha_observation=1/20,
+        #                            estimate_value=FORollout(ro),
+        #                            check_repeat_act=false,
+        #                            check_repeat_obs=false,
+        #                            rng=MersenneTwister(13)
+        #                           )
+        #     translate_policy(solve(solver, dpomdp), dpomdp, pomdp, dpomdp)
+        # end,
+
+
         "discrete_pomcp" => begin
+            dpomdp = AODiscreteVDPTagPOMDP()
             ro = translate_policy(ToNextML(mdp(pomdp)), mdp(pomdp), dpomdp, dpomdp)
             solver = POMCPSolver(tree_queries=10_000,
                                    c=40.0,

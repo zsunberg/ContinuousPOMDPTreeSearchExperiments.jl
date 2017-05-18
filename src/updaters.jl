@@ -123,11 +123,11 @@ new_particle(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = error("shouldn't ge
 function reset_distribution(p::LaserTagPOMDP, b::ParticleCollection, a, o)
     warn("Resetting Particle Filter Distribution")
     rob = first(particles(b)).robot
-    nextrob = LaserTagPOMDP.add_if_inside(p.floor, rob, LaserTagPOMDP.ACTION_DIRS[a])
-    if o == C_SAME_LOC
-        return ParticleCollection{LTState}([LTState(nextrob, nextrob, false)])
+    nextrob = LaserTag.add_if_inside(p.floor, rob, LaserTag.ACTION_DIRS[a])
+    if o == LaserTag.C_SAME_LOC
+        return ParticleCollection{LaserTag.LTState}([LaserTag.LTState(nextrob, nextrob, false)])
     else
-        return LaserTagPOMDP.LTInitialBelief(nextrob, p.floor)
+        return LaserTag.LTInitialBelief(nextrob, p.floor)
     end
 end
 
