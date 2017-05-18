@@ -68,7 +68,7 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
     ws = sum(wm)
     if all_terminal || sum(wm) == 0.0
         # warn("All states in particle collection were terminal.")
-        return initialize_belief(up, reset_distribution(up.pomdp, a, o))
+        return initialize_belief(up, reset_distribution(up.pomdp, b, a, o))
     end
 
     pc = resample(up.resample, WeightedParticleBelief{S}(pm, wm, ws, nothing), up.rng)
@@ -98,9 +98,9 @@ function new_particle(pomdp::AbstractLD2, a, o, rng)
     return o + LightDarkPOMDPs.obs_std(pomdp, o[1])*randn(rng, 2)
 end
 
-reset_distribution(p::POMDP, a, o) = initial_state_distribution(p)
+reset_distribution(p::POMDP, b, a, o) = initial_state_distribution(p)
 
-
+#=
 max_possible_weight(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = 0.0
 
 function new_particle(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs, rng::AbstractRNG)
@@ -113,12 +113,36 @@ function new_particle(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs, rng::Ab
 end
 
 reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.time, mdp(p).xlim, mdp(p).ylim)
-
+=#
 
 max_possible_weight(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = 0.0
 
 new_particle(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = error("shouldn't get here")
 
+
+function reset_distribution(p::LaserTagPOMDP, b::ParticleCollection, a, o)
+    warn("Resetting Particle Filter Distribution")
+    rob = first(particles(b)).robot
+    nextrob = LaserTagPOMDP.add_if_inside(p.floor, rob, LaserTagPOMDP.ACTION_DIRS[a])
+    if o == C_SAME_LOC
+        return ParticleCollection{LTState}([LTState(nextrob, nextrob, false)])
+    else
+        return LaserTagPOMDP.LTInitialBelief(nextrob, p.floor)
+    end
+end
+
+max_possible_weight(pomdp::LaserTagPOMDP, a::Int, o) = 0.0
+
+new_particle(pomdp::LaserTagPOMDP, a::Int, o) = error("tried to generate a new particle (shouldn't get here)")
+
+#=
+max_possible_weight(pomdp::LaserTagPOMDP, a::Int, o::Float64) = max(1.0, pdf(Normal(0.0, pomdp.return_std), 0.0))
+
+function new_particle(pomdp::VDPTagPOMDP, a::Int, o::Float64)
+    if o == C_SAME_LOC
+        return LTState(
+end
+=#
 
 
 #=

@@ -1,3 +1,4 @@
+#=
 immutable GPSFirst
     rng::MersenneTwister
 end
@@ -9,3 +10,4 @@ function POMCP.next_action(gen::GPSFirst, pomdp::PowseekerPOMDP, b, h)
         return GPSOrAngle(false, 2*pi*rand(gen.rng))
     end
 end
+=#

@@ -5,13 +5,14 @@ using POMCP
 using POMCPOW
 using Parameters
 using LightDarkPOMDPs
-using Powseeker
 using VDPTag
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
 using ControlSystems
 using Plots
+using Distributions
+using LaserTag
 
 
 import POMCPOW.n_children
@@ -29,9 +30,8 @@ export
     ModeAugmentedBelief,
     InfoGatherHeur,
     InfoGatherUpdater,
-    OneStepValue,
+    OneStepValue
 
-    GPSFirst
 
 include("policies.jl")
 include("updaters.jl")
