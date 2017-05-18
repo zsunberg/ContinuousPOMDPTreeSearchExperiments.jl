@@ -125,7 +125,7 @@ function reset_distribution(p::LaserTagPOMDP, b::ParticleCollection, a, o)
     rob = first(particles(b)).robot
     nextrob = LaserTagPOMDP.add_if_inside(p.floor, rob, LaserTagPOMDP.ACTION_DIRS[a])
     if o == C_SAME_LOC
-        return ParticleCollection{LTState}([LTState(nextrob, nextrob, false)])
+        return ParticleCollection{LTState}([LaserTag.LTState(nextrob, nextrob, false)])
     else
         return LaserTagPOMDP.LTInitialBelief(nextrob, p.floor)
     end
