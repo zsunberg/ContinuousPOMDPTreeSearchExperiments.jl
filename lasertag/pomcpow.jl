@@ -7,6 +7,7 @@ using PmapProgressMeter
 using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using Plots
+using QMDP
 
 
 @everywhere begin
@@ -17,15 +18,16 @@ using Plots
     using POMCPOW
     using POMCP
     using LaserTag
+    using QMDP
 
-    N = 100
+    N = 1000
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
         "pomcpow" => begin
             ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=500_000,
-                                   criterion=MaxUCB(10.0),
+            solver = POMCPOWSolver(tree_queries=100_000,
+                                   criterion=MaxUCB(20.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
                                    enable_action_pw=false,
@@ -39,7 +41,9 @@ using Plots
             solver
         end,
 
-        "move_towards_sampled" => MoveTowardsSampled()
+        "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
+
+        "qmdp" => QMDPSolver(max_iterations=1000)
 
         #=
         "discrete_pomcp" => begin
@@ -64,7 +68,7 @@ for (k,sol) in solvers
     rewards = pmap(prog, 1:N) do i
         pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
         if isa(sol,Solver)
-            p = solve(sol, pomdp)
+            p = solve(deepcopy(sol), pomdp)
         else
             p = sol
         end
