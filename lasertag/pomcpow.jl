@@ -18,20 +18,16 @@ using Plots
     using POMCP
     using LaserTag
 
-    N = 1000
-    n_rows = 7
-    n_cols = 11
-    prng = MersenneTwister(14)
-    robs = [Coord(rand(prng, 1:n_cols), rand(prng, 1:n_rows)) for i in 1:N]
+    N = 100
 
-    solvers = Dict{String, Solver}(
+    solvers = Dict{String, Union{Policy, Solver}}(
 
         "pomcpow" => begin
             ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=50_000,
-                                   criterion=MaxUCB(40.0),
+            solver = POMCPOWSolver(tree_queries=500_000,
+                                   criterion=MaxUCB(10.0),
                                    final_criterion=MaxTries(),
-                                   max_depth=20,
+                                   max_depth=100,
                                    enable_action_pw=false,
                                    k_observation=4.0,
                                    alpha_observation=1/20,
@@ -42,6 +38,8 @@ using Plots
                                   )
             solver
         end,
+
+        "move_towards_sampled" => MoveTowardsSampled()
 
         #=
         "discrete_pomcp" => begin
@@ -64,11 +62,15 @@ end
 for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     rewards = pmap(prog, 1:N) do i
-        pomdp = LaserTagPOMDP(robot_init=robs[i])
-        p = solve(sol, pomdp)
+        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
+        if isa(sol,Solver)
+            p = solve(sol, pomdp)
+        else
+            p = sol
+        end
         hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
         up_rng = MersenneTwister(i+100_000)
-        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, up_rng)
+        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
     end
