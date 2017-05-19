@@ -39,7 +39,9 @@ using Plots
             solver
         end,
 
-        "move_towards_sampled" => MoveTowardsSampled()
+        "move_towards_sampled" => MoveTowardsSampled(),
+
+        "qmdp" => QMDPSolver()
 
         #=
         "discrete_pomcp" => begin
@@ -69,8 +71,9 @@ for (k,sol) in solvers
             p = sol
         end
         hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
-        up_rng = MersenneTwister(i+100_000)
-        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
+        # up_rng = MersenneTwister(i+100_000)
+        # up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
+        up = DiscreteUpdater(pomdp)
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
     end
