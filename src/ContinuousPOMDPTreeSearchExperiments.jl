@@ -13,8 +13,10 @@ using ControlSystems
 using Plots
 using Distributions
 using LaserTag
+using DESPOT
+using QMDP
 
-
+import DESPOT: bounds
 import POMCPOW.n_children
 
 export
@@ -30,7 +32,8 @@ export
     ModeAugmentedBelief,
     InfoGatherHeur,
     InfoGatherUpdater,
-    OneStepValue
+    OneStepValue,
+    LaserBounds
 
 
 include("policies.jl")
@@ -38,6 +41,7 @@ include("updaters.jl")
 include("action_gen.jl")
 
 include("sr_filter.jl")
+include("bounds.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 
