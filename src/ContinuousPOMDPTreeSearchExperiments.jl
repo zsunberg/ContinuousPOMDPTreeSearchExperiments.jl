@@ -16,7 +16,7 @@ using LaserTag
 using DESPOT
 using QMDP
 
-import DESPOT: bounds
+import DESPOT: bounds, init_bounds
 import POMCPOW.n_children
 
 export
