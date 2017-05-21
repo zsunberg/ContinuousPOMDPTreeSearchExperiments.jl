@@ -1,3 +1,11 @@
+Sat 20 May 2017 10:45:06 AM PDT
+
+[X] Figure out transition inconsistency
+[X] Look at Inevitable Init
+[ ] code warntype on DPW, DESPOT
+[ ] Run DPW, BasicPOMCP on continuous
+[ ] Discretize
+
 Thu 18 May 2017 09:49:53 AM PDT
 
 [ ] Random obstacles
