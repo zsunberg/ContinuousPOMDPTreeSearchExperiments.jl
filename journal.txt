@@ -1,10 +1,84 @@
-Sat 20 May 2017 10:45:06 AM PDT
+Sat 20 May 2017 10:58:43 PM PDT
 
-[X] Figure out transition inconsistency
-[X] Look at Inevitable Init
-[ ] code warntype on DPW, DESPOT
-[ ] Run DPW, BasicPOMCP on continuous
-[ ] Discretize
+With 500_000 iters
+Simulating...100%|██████████████████████████████████████| Time: 0:00:32
+k = "qmdp"
+mean(rewards) = -12.422425647531348
+Simulating...100%|██████████████████████████████████████| Time: 1:18:19
+k = "pomcpow"
+mean(rewards) = -11.719120527120975
+Simulating...100%|██████████████████████████████████████| Time: 0:00:20
+k = "move_towards_sampled"
+mean(rewards) = -14.148419970637537
+
+Sat 20 May 2017 03:13:06 PM PDT
+
+less aggressive dpw
+enable_action_pw=true,
+k_action=4.0,
+alpha_action=1/8,
+Simulating...100%|██████████████████████████████████████| Time: 0:05:24
+k = "qmdp"
+mean(rewards) = -12.789484244325477
+Simulating...100%|██████████████████████████████████████| Time: 1:24:11
+k = "pomcpow"
+mean(rewards) = -13.675970735083467
+Simulating...100%|██████████████████████████████████████| Time: 0:03:03
+k = "move_towards_sampled"
+mean(rewards) = -15.060258754472738
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/laser_pomcpow_run_Saturday_20_May_16_56.jld...
+
+
+
+Sat 20 May 2017 03:11:27 PM PDT
+
+Fixed dynamics; without action PW
+
+Simulating...100%|██████████████████████████████████████| Time: 0:05:22
+k = "qmdp"
+mean(rewards) = -12.789484244325477
+Simulating...100%|██████████████████████████████████████| Time: 1:38:42
+k = "pomcpow"
+mean(rewards) = -12.447929052529078
+Simulating...100%|██████████████████████████████████████| Time: 0:03:01
+k = "move_towards_sampled"
+mean(rewards) = -15.060258754472738
+
+Sat 20 May 2017 01:12:04 PM PDT
+
+After fixing dynamics, and with action PW,
+
+enable_action_pw=true,
+k_action=4.0,
+alpha_action=1/20,
+
+Simulating...100%|██████████████████████████████████████| Time: 0:05:22
+k = "qmdp"
+mean(rewards) = -12.789484244325477
+Simulating...100%|██████████████████████████████████████| Time: 1:28:58
+k = "pomcpow"
+mean(rewards) = -14.357106698498535
+Simulating...100%|██████████████████████████████████████| Time: 0:03:04
+k = "move_towards_sampled"
+mean(rewards) = -15.060258754472738
+
+Fri 19 May 2017 10:59:14 AM PDT
+
+Packages that will need updating
+POMCP
+POMCPOW
+LaserTag
+
+Fri 19 May 2017 09:20:47 AM PDT
+
+LaserTag:
+
+Simulating...100%|██████████████████████████████████████| Time: 1:39:13
+k = "pomcpow"
+mean(rewards) = -13.319609000942341
+Simulating...100%|██████████████████████████████████████| Time: 0:03:15
+k = "move_towards_sampled"
+mean(rewards) = -15.087908579615986
 
 Thu 18 May 2017 09:49:53 AM PDT
 
