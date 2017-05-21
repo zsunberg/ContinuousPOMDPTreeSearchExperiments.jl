@@ -8,34 +8,40 @@ using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using Plots
 using QMDP
+using JLD
 
 
 @everywhere begin
     using POMDPs
     using POMDPToolbox
     using ContinuousPOMDPTreeSearchExperiments
+    using DiscreteValueIteration
     using ParticleFilters
     using POMCPOW
     using POMCP
     using LaserTag
     using QMDP
 
-    N = 1000
+    N = 100
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
         "pomcpow" => begin
-            ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=100_000,
+            # ro = MoveTowards()
+            solver = POMCPOWSolver(tree_queries=500_000,
                                    criterion=MaxUCB(20.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
                                    enable_action_pw=false,
+                                   # k_action=4.0,
+                                   # alpha_action=1/8,
                                    k_observation=4.0,
                                    alpha_observation=1/20,
-                                   estimate_value=FORollout(ro),
+                                   estimate_value=FOValue(ValueIterationSolver()),
                                    check_repeat_act=false,
                                    check_repeat_obs=false,
+                                   init_N=InevitableInit(),
+                                   init_V=InevitableInit(),
                                    rng=MersenneTwister(13)
                                   )
             solver
@@ -63,6 +69,7 @@ end
 
 @show N
 
+rdict = Dict{String, Any}()
 for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     rewards = pmap(prog, 1:N) do i
@@ -80,4 +87,10 @@ for (k,sol) in solvers
     end
     @show k 
     @show mean(rewards)
+    rdict[k] = rewards
 end
+
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "laser_pomcpow_run_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
+println("saving to $filename...")
+@save(filename, solvers, rdict)
+println("done.")
