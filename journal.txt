@@ -1,3 +1,19 @@
+
+Simulating...100%|██████████████████████████████████████| Time: 0:00:30
+k = "qmdp"
+mean(rewards) = -12.422425647531348
+Simulating...100%|██████████████████████████████████████| Time: 1:15:60
+k = "pomcpow"
+mean(rewards) = -11.779366647775527
+Simulating...100%|██████████████████████████████████████| Time: 1:49:08
+k = "despot"
+mean(rewards) = -12.954366015757728
+Simulating...100%|██████████████████████████████████████| Time: 0:00:21
+k = "move_towards_sampled"
+mean(rewards) = -14.148419970637537
+saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/laser_pomcpow_run_Sunday_21_May_22_58.jld...
+
+
 Sat 20 May 2017 10:58:43 PM PDT
 
 With 500_000 iters

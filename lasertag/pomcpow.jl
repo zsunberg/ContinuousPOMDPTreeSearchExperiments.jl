@@ -9,6 +9,7 @@ using ContinuousPOMDPTreeSearchExperiments
 using Plots
 using QMDP
 using JLD
+using DESPOT
 
 
 @everywhere begin
@@ -21,11 +22,13 @@ using JLD
     using POMCP
     using LaserTag
     using QMDP
+    using DESPOT
 
-    N = 100
+    N = 1000
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
+    #=
         "pomcpow" => begin
             # ro = MoveTowards()
             solver = POMCPOWSolver(tree_queries=500_000,
@@ -46,10 +49,26 @@ using JLD
                                   )
             solver
         end,
+        =#
 
-        "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
+        # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
-        "qmdp" => QMDPSolver(max_iterations=1000)
+        "qmdp" => QMDPSolver(max_iterations=1000),
+
+        #=
+        "despot" => DESPOTSolver{LTState,
+                      Int,
+                      CMeas,
+                      LaserBounds,
+                      MersenneStreamArray}(bounds = LaserBounds(),
+                                           random_streams=MersenneStreamArray(MersenneTwister(1)),
+                                           rng=MersenneTwister(3),
+                                           next_state=LTState([1,1], [1,1], false),
+                                           curr_obs=CMeas(),
+                                           time_per_move=-1.0,
+                                           max_trials=500_000
+                                          ),
+=#
 
         #=
         "discrete_pomcp" => begin
@@ -72,6 +91,7 @@ end
 rdict = Dict{String, Any}()
 for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
+    @show k 
     rewards = pmap(prog, 1:N) do i
         pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
         if isa(sol,Solver)
@@ -85,7 +105,6 @@ for (k,sol) in solvers
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
     end
-    @show k 
     @show mean(rewards)
     rdict[k] = rewards
 end
