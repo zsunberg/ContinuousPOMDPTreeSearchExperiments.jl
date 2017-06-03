@@ -18,6 +18,7 @@ using QMDP
 
 import DESPOT: bounds, init_bounds
 import POMCPOW.n_children
+import POMCP: init_N, init_V
 
 export
     RadiusRandom,
@@ -33,7 +34,8 @@ export
     InfoGatherHeur,
     InfoGatherUpdater,
     OneStepValue,
-    LaserBounds
+    LaserBounds,
+    InevitableInit
 
 
 include("policies.jl")
@@ -41,7 +43,7 @@ include("updaters.jl")
 include("action_gen.jl")
 
 include("sr_filter.jl")
-include("bounds.jl")
+include("bounds_and_heuristics.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 

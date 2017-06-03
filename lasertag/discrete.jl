@@ -24,7 +24,7 @@ using DESPOT
     using QMDP
     using DESPOT
 
-    N = 1000
+    N = 2
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
@@ -57,15 +57,15 @@ using DESPOT
 
         "despot" => DESPOTSolver{LTState,
                       Int,
-                      CMeas,
+                      DMeas,
                       LaserBounds,
-                      MersenneStreamArray}(bounds = LaserBounds(),
+                      MersenneStreamArray}(bounds = LaserBounds{DMeas}(),
                                            random_streams=MersenneStreamArray(MersenneTwister(1)),
                                            rng=MersenneTwister(3),
                                            next_state=LTState([1,1], [1,1], false),
-                                           curr_obs=CMeas(),
+                                           curr_obs=DMeas(),
                                            time_per_move=-1.0,
-                                           max_trials=500_000
+                                           max_trials=100_000
                                           ),
 
         #=
@@ -91,7 +91,7 @@ for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     @show k 
     rewards = pmap(prog, 1:N) do i
-        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
+        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000), discrete=true)
         if isa(sol,Solver)
             p = solve(deepcopy(sol), pomdp)
         else
