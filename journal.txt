@@ -1,6 +1,15 @@
+Sat 03 Jun 2017 05:17:16 PM PDT
+
+[X] Look and see if any obvious parameters are off
+    ? eta
+[ ] Better heuristic?
+[ ] Manually Verify?
+[ ] Reproduce in C++
+[ ] Make despot faster
+
 Sat 03 Jun 2017 01:07:41 PM PDT
 
-Why isn't DESPOT working well enough
+Why isn't DESPOT working well enough?
 
 N = 100
 k = "qmdp"
@@ -10,7 +19,6 @@ k = "despot"
 Simulating...100%|██████████████████████████████████████| Time: 1:48:21
 mean(rewards) = -13.04114149677848
 saving to /home/zsunberg/.julia/v0.5/ContinuousPOMDPTreeSearchExperiments/data/laser_pomcpow_run_Saturday_3_Jun_02_31.jld...
-
 
 
 Simulating...100%|██████████████████████████████████████| Time: 0:00:30

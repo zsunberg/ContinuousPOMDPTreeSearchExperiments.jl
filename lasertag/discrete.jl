@@ -55,6 +55,11 @@ using DESPOT
 
         "qmdp" => QMDPSolver(max_iterations=1000),
 
+        "ml" => OptimalMLSolver(ValueIterationSolver()),
+
+        "be" => BestExpectedSolver(ValueIterationSolver()),
+
+        #=
         "despot" => DESPOTSolver{LTState,
                       Int,
                       DMeas,
@@ -67,6 +72,7 @@ using DESPOT
                                            time_per_move=-1.0,
                                            max_trials=500_000
                                           ),
+        =#
 
         #=
         "discrete_pomcp" => begin
@@ -99,7 +105,7 @@ for (k,sol) in solvers
         end
         hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
         up_rng = MersenneTwister(i+100_000)
-        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
+        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
     end
