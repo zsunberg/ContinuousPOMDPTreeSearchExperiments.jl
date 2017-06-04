@@ -24,7 +24,7 @@ using DESPOT
     using QMDP
     using DESPOT
 
-    N = 2
+    N = 100
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
@@ -65,7 +65,7 @@ using DESPOT
                                            next_state=LTState([1,1], [1,1], false),
                                            curr_obs=DMeas(),
                                            time_per_move=-1.0,
-                                           max_trials=100_000
+                                           max_trials=500_000
                                           ),
 
         #=
