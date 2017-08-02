@@ -1,8 +1,11 @@
 using POMDPs
 
-POMDPs.add("POMDPToolbox")
-POMDPs.add("POMCP")
+# POMDPs.add("BasicPOMCP")
+POMDPs.add("QMDP")
+POMDPs.add("POMCPOW")
+POMDPs.add("DESPOT")
 
-Pkg.clone("https://github.com/zsunberg/LightDarkPOMDPs.jl")
-Pkg.clone("https://github.com/zsunberg/ParticleFilters.jl")
-Pkg.clone("https://github.com/zsunberg/POMCPOW.jl")
+try Pkg.clone("https://github.com/slundberg/PmapProgressMeter.jl.git") end
+
+try Pkg.clone("https://github.com/zsunberg/LightDarkPOMDPs.jl") end
+try Pkg.clone("https://github.com/zsunberg/VDPTag.jl.git") end

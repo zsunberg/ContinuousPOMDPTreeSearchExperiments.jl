@@ -1,7 +1,7 @@
 module ContinuousPOMDPTreeSearchExperiments
 
 using POMDPs
-using POMCP
+using BasicPOMCP
 using POMCPOW
 using Parameters
 using LightDarkPOMDPs
@@ -18,7 +18,6 @@ using QMDP
 
 import DESPOT: bounds, init_bounds
 import POMCPOW.n_children
-import POMCP: init_N, init_V
 
 export
     RadiusRandom,
@@ -48,6 +47,6 @@ include("bounds_and_heuristics.jl")
 n_children(h::BeliefNode) = length(h.children)
 
 immutable OneStepValue end
-POMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
+BasicPOMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
 
 end # module

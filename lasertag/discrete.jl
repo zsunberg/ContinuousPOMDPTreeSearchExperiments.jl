@@ -10,6 +10,7 @@ using Plots
 using QMDP
 using JLD
 using DESPOT
+using BasicPOMCP
 
 
 @everywhere begin
@@ -19,19 +20,18 @@ using DESPOT
     using DiscreteValueIteration
     using ParticleFilters
     using POMCPOW
-    using POMCP
     using LaserTag
     using QMDP
     using DESPOT
+    using BasicPOMCP
 
-    N = 100
+    N = 6
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
-    #=
         "pomcpow" => begin
             # ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=500_000,
+            solver = POMCPOWSolver(tree_queries=10_000, #500_000
                                    criterion=MaxUCB(20.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
@@ -49,7 +49,6 @@ using DESPOT
                                   )
             solver
         end,
-        =#
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
@@ -59,34 +58,27 @@ using DESPOT
 
         "be" => BestExpectedSolver(ValueIterationSolver()),
 
-        #=
         "despot" => DESPOTSolver{LTState,
                       Int,
                       DMeas,
                       LaserBounds,
-                      MersenneStreamArray}(bounds = LaserBounds{DMeas}(),
+                      MersenneStreamArray}(bounds = LaserBounds{LaserTagPOMDP{DESPOTEmu, DMeas}}(),
                                            random_streams=MersenneStreamArray(MersenneTwister(1)),
                                            rng=MersenneTwister(3),
                                            next_state=LTState([1,1], [1,1], false),
                                            curr_obs=DMeas(),
                                            time_per_move=-1.0,
-                                           max_trials=500_000
+                                           max_trials=10_000 # 500_000
                                           ),
-        =#
 
-        #=
-        "discrete_pomcp" => begin
-            ro = translate_policy(ToNextML(mdp(pomdp)), mdp(pomdp), dpomdp, dpomdp)
-            solver = POMCPSolver(tree_queries=10_000,
-                                   c=40.0,
-                                   max_depth=20,
-                                   estimate_value=FORollout(ro),
+
+
+        "pomcp" => POMCPSolver(tree_queries=10_000,
+                                   c=20.0,
+                                   max_depth=100,
+                                   estimate_value=FOValue(ValueIterationSolver()),
                                    rng=MersenneTwister(13)
                                   )
-            dpolicy = solve(solver, dpomdp)
-            translate_policy(dpolicy, dpomdp, pomdp, dpomdp)
-        end,
-        =#
     )
 end
 
@@ -97,13 +89,13 @@ for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     @show k 
     rewards = pmap(prog, 1:N) do i
-        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000), discrete=true)
+        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
         if isa(sol,Solver)
             p = solve(deepcopy(sol), pomdp)
         else
             p = sol
         end
-        hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
+        hr = HistoryRecorder(max_steps=5, rng=MersenneTwister(i))
         up_rng = MersenneTwister(i+100_000)
         up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)

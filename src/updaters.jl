@@ -34,7 +34,7 @@ function ParticleFilters.resample(r::MinPopResampler, b, rng::AbstractRNG)
 end
 
 
-immutable ObsAdaptiveParticleFilter{S} <: Updater{ParticleFilters.ParticleCollection{S}}
+immutable ObsAdaptiveParticleFilter{S} <: Updater
     pomdp::POMDP{S}
     resample::Any
     max_frac_replaced::Float64
@@ -50,8 +50,8 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
     end
 
     ps = particles(b)
-    pm = Array(S, 0)
-    wm = Array(Float64, 0)
+    pm = Array{S}(0)
+    wm = Array{Float64}(0)
     sizehint!(pm, n_particles(b))
     sizehint!(wm, n_particles(b))
     all_terminal = true

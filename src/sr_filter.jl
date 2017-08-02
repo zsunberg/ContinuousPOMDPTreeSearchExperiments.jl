@@ -1,4 +1,4 @@
-immutable ObsAdaptiveSRFilter{S} <: Updater{ParticleFilters.ParticleCollection{Tuple{S,Float64}}}
+immutable ObsAdaptiveSRFilter{S} <: Updater
     pomdp::POMDP{S}
     resample::Any
     max_frac_replaced::Float64
@@ -17,8 +17,8 @@ function POMDPs.update{S}(up::ObsAdaptiveSRFilter{S}, b::ParticleFilters.Particl
     end
 
     ps = particles(b)
-    pm = Array(Tuple{S,Float64}, 0)
-    wm = Array(Float64, 0)
+    pm = Array{Tuple{S,Float64}}(0)
+    wm = Array{Float64}(0)
     sizehint!(pm, n_particles(b))
     sizehint!(wm, n_particles(b))
     all_terminal = true

@@ -3,7 +3,7 @@
     rng::AbstractRNG    = Base.GLOBAL_RNG
 end
 
-POMCP.next_action(gen::RadiusRandom, pomdp::POMDP, b, h) = rand_in_radius(gen.rng, gen.radius)
+POMCPOW.next_action(gen::RadiusRandom, pomdp::POMDP, b, h) = rand_in_radius(gen.rng, gen.radius)
 function rand_in_radius(rng::AbstractRNG, radius::Float64)
     r = radius*rand(rng)
     angle = 2*pi*rand(rng)
@@ -22,7 +22,7 @@ Base.rand(rng::AbstractRNG, rr::RadiusRandom) = rand_in_radius(rng, rr.radius)
     rng::AbstractRNG        = Base.GLOBAL_RNG
 end
 
-function POMCP.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, b, h::BeliefNode)
+function POMCPOW.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, b, h::BeliefNode)
     if gen.to_zero_first && n_children(h) < 1
         m = mean(b)
         n = norm(m)
@@ -105,7 +105,7 @@ end
 
 POMDPs.updater(h::InfoGatherHeur) = InfoGatherUpdater(h.std_thresh, h.exploring_up, h.homing_up)
 
-immutable InfoGatherUpdater <: Updater{ModeAugmentedBelief}
+immutable InfoGatherUpdater <: Updater
     std_thresh::Float64
     exploring_up::Updater
     homing_up::Updater
