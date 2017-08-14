@@ -1,3 +1,32 @@
+Thu 10 Aug 2017 02:21:02 PM PDT
+
+N=100
+n=100000
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:10:35
+mean(rewards) = -12.070827601297673
+std(rewards) / sqrt(N) = 0.7035574068690779
+
+
+Wed 02 Aug 2017 09:19:29 PM PDT
+
+N=100?
+n=500000?
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 1:13:06
+mean(rewards) = -10.606161592470805
+std(rewards) / sqrt(N) = 0.6399314663360224
+
+
+Wed 02 Aug 2017 05:07:51 PM PDT
+
+n = 100_000
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:31:58
+1918.487838 seconds (114.44 k allocations: 8.852 MiB)
+mean(rewards) = -10.753207384302518
+std(rewards) / sqrt(N) = 0.6451073093825108
+
 Mon 05 Jun 2017 11:13:12 AM PDT
 
 cpp despot with seed 4

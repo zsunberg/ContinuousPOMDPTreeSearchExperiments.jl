@@ -9,9 +9,10 @@ using ContinuousPOMDPTreeSearchExperiments
 using Plots
 using QMDP
 using JLD
-using DESPOT
+# using DESPOT
 using BasicPOMCP
 
+file_contents = readstring(@__FILE__())
 
 @everywhere begin
     using POMDPs
@@ -22,16 +23,18 @@ using BasicPOMCP
     using POMCPOW
     using LaserTag
     using QMDP
-    using DESPOT
+    # using DESPOT
     using BasicPOMCP
 
-    N = 6
+    N = 100
+    n = 10_000
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
+        #=
         "pomcpow" => begin
             # ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=10_000, #500_000
+            solver = POMCPOWSolver(tree_queries=n, #500_000
                                    criterion=MaxUCB(20.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
@@ -49,6 +52,7 @@ using BasicPOMCP
                                   )
             solver
         end,
+        =#
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
@@ -56,24 +60,25 @@ using BasicPOMCP
 
         "ml" => OptimalMLSolver(ValueIterationSolver()),
 
-        "be" => BestExpectedSolver(ValueIterationSolver()),
+        # "be" => BestExpectedSolver(ValueIterationSolver()),
 
-        "despot" => DESPOTSolver{LTState,
-                      Int,
-                      DMeas,
-                      LaserBounds,
+        "random" => RandomSolver(rng=MersenneTwister(4)),
+
+        #=
+        "despot" => DESPOTSolver{LTState, Int, DMeas, LaserBounds,
                       MersenneStreamArray}(bounds = LaserBounds{LaserTagPOMDP{DESPOTEmu, DMeas}}(),
                                            random_streams=MersenneStreamArray(MersenneTwister(1)),
                                            rng=MersenneTwister(3),
                                            next_state=LTState([1,1], [1,1], false),
                                            curr_obs=DMeas(),
-                                           time_per_move=-1.0,
-                                           max_trials=10_000 # 500_000
+                                           time_per_move=100.0,
+                                           # eta=0.01,
+                                           pruning_constant=0.01,
+                                           max_trials=n # 500_000
                                           ),
+        =#
 
-
-
-        "pomcp" => POMCPSolver(tree_queries=10_000,
+        "pomcp" => POMCPSolver(tree_queries=n,
                                    c=20.0,
                                    max_depth=100,
                                    estimate_value=FOValue(ValueIterationSolver()),
@@ -83,6 +88,7 @@ using BasicPOMCP
 end
 
 @show N
+@show n
 
 rdict = Dict{String, Any}()
 for (k,sol) in solvers
@@ -95,17 +101,18 @@ for (k,sol) in solvers
         else
             p = sol
         end
-        hr = HistoryRecorder(max_steps=5, rng=MersenneTwister(i))
+        hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
         up_rng = MersenneTwister(i+100_000)
-        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, up_rng)
+        up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
     end
     @show mean(rewards)
+    @show std(rewards)/sqrt(N)
     rdict[k] = rewards
 end
 
-filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "laser_pomcpow_run_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "laser_discrete_run_$(Dates.format(now(), "E_d_u_HH_MM")).jld")
 println("saving to $filename...")
-@save(filename, solvers, rdict)
+@save(filename, solvers, rdict, file_contents)
 println("done.")
