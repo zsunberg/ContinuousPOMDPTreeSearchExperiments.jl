@@ -13,10 +13,12 @@ using ControlSystems
 using Plots
 using Distributions
 using LaserTag
-using DESPOT
+# using DESPOT
+using ARDESPOT
 using QMDP
 
-import DESPOT: bounds, init_bounds
+# import DESPOT: bounds, init_bounds
+import ARDESPOT: bounds, init_bounds
 import POMCPOW.n_children
 
 export

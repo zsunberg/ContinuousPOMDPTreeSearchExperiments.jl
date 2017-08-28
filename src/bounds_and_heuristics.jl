@@ -1,6 +1,6 @@
 type LaserBounds{P<:LaserTagPOMDP}
     ubp::QMDPPolicy{P, Int}
-    lb::Float64
+    lb_not_same::Float64
 
     LaserBounds{P}() where P = new()
     LaserBounds{P}(p, lb) where P = new(p, lb)
@@ -9,10 +9,33 @@ end
 function LaserBounds(p::LaserTagPOMDP)
     sol = QMDPSolver(max_iterations=1000)
     pol = solve(sol, p)
-    lb = -p.step_cost/(1-discount(p))
+    lb_not_same = -p.step_cost/(1-discount(p))
     return LaserBounds{typeof(p)}(pol, lb)
 end
 
+function bounds(l::LaserBounds, p::LaserTagPOMDP, b::ScenarioBelief)
+    no = previous_obs(b)
+    if !isnull(previous_obs(b)) && get(previous_obs(b)) == LaserTag.D_SAME_LOC
+        lb = l.ubp.pomdp.tag_reward
+    else
+        lb = l.lb_not_same
+    end
+    vsum = 0.0
+    for s in iterator(b)
+        vsum += state_value(l.ubp, s)
+    end
+    return lb, vsum/length(b.scenarios)
+end
+
+function init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOTSolver)
+    sol = QMDPSolver(max_iterations=1000)
+    l.ubp = solve(sol, p)
+    l.lb_not_same = -p.step_cost/(1-discount(p))
+    return l
+end
+
+
+#=
 function bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOTParticle{S}}, ::DESPOTConfig)
     bv = zeros(n_states(p))
     for dp in b 
@@ -28,6 +51,7 @@ function init_bounds(l::LaserBounds, p::LaserTagPOMDP, config::DESPOTConfig)
     l.lb = -p.step_cost/(1-discount(p))
     return l
 end
+=#
 
 immutable InevitableInit end 
 

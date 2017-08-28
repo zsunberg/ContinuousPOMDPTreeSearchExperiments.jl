@@ -34,26 +34,39 @@ function ParticleFilters.resample(r::MinPopResampler, b, rng::AbstractRNG)
 end
 
 
-immutable ObsAdaptiveParticleFilter{S} <: Updater
-    pomdp::POMDP{S}
-    resample::Any
+immutable ObsAdaptiveParticleFilter{P<:POMDP,S,R,RNG<:AbstractRNG} <: Updater
+    pomdp::P
+    resample::R
     max_frac_replaced::Float64
-    rng::AbstractRNG
+    rng::RNG
+    _pm::Array{S}
+    _wm::Array{Float64}
+end
+
+function ObsAdaptiveParticleFilter(p::POMDP, resample, max_frac_replaced, rng::AbstractRNG)
+    S = state_type(p)
+    return ObsAdaptiveParticleFilter(p, resample, max_frac_replaced, rng, S[], Float64[])
 end
 
 POMDPs.initialize_belief{S}(up::ObsAdaptiveParticleFilter{S}, d::Any) = resample(up.resample, d, up.rng)
 POMDPs.update(up::ObsAdaptiveParticleFilter, b, a, o) = update(up, resample(up.resample, b, up.rng), a, o)
 
-function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.ParticleCollection, a, o)
+function POMDPs.update(up::ObsAdaptiveParticleFilter, b::ParticleFilters.ParticleCollection, a, o)
     if n_particles(b) > 2*up.resample.n
         b = resample(up.resample, b, up.rng)
     end
 
     ps = particles(b)
+    pm = up._pm
+    wm = up._wm
+    resize!(pm, 0)
+    resize!(wm, 0)
+    #=
     pm = Array{S}(0)
     wm = Array{Float64}(0)
     sizehint!(pm, n_particles(b))
     sizehint!(wm, n_particles(b))
+    =#
     all_terminal = true
     for i in 1:n_particles(b)
         s = ps[i]
@@ -71,7 +84,7 @@ function POMDPs.update{S}(up::ObsAdaptiveParticleFilter{S}, b::ParticleFilters.P
         return initialize_belief(up, reset_distribution(up.pomdp, b, a, o))
     end
 
-    pc = resample(up.resample, WeightedParticleBelief{S}(pm, wm, ws, nothing), up.rng)
+    pc = resample(up.resample, WeightedParticleBelief{state_type(up.pomdp)}(pm, wm, ws, nothing), up.rng)
     ps = particles(pc)
     # for i in 1:length(ps)
     #     ps[i] += 0.001*randn(up.rng, 2)
