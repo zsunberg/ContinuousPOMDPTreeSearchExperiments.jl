@@ -1,3 +1,27 @@
+Tue 29 Aug 2017 06:56:57 PM PDT
+
+N = 100
+n = 1000000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:25
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "pomcpow"
+Simulating... 97%|█████████████████████████████████████ |  ETA: 0:01:26gvim: Fatal IO error 11 (Resource temporarily unavailable) on X server localhost:10.0.
+Simulating...100%|██████████████████████████████████████| Time: 0:53:16
+mean(rewards) = -9.5652359501832
+std(rewards) / sqrt(N) = 0.5432442305531421
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:54
+mean(rewards) = -23.419155908663896
+std(rewards) / sqrt(N) = 2.3841840480092236
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:53:43
+mean(rewards) = -10.73522490448752
+std(rewards) / sqrt(N) = 0.7414608817904751
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Monday_28_Aug_23_07.jld...
+done.
+
 Thu 10 Aug 2017 02:21:02 PM PDT
 
 N=100

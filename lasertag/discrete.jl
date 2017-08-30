@@ -28,17 +28,16 @@ file_contents = readstring(@__FILE__())
     using BasicPOMCP
     using ARDESPOT
 
-    N = 10
-    n = 10_000
+    N = 100
+    n = 1_000_000
     P = typeof(gen_lasertag(rng=MersenneTwister(18)))
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
-        #=
         "pomcpow" => begin
             # ro = MoveTowards()
             solver = POMCPOWSolver(tree_queries=n, #500_000
-                                   criterion=MaxUCB(20.0),
+                                   criterion=MaxUCB(40.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
                                    enable_action_pw=false,
@@ -55,11 +54,10 @@ file_contents = readstring(@__FILE__())
                                   )
             solver
         end,
-        =#
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
-        # "qmdp" => QMDPSolver(max_iterations=1000),
+        "qmdp" => QMDPSolver(max_iterations=1000),
 
         # "ml" => OptimalMLSolver(ValueIterationSolver()),
 
@@ -68,17 +66,16 @@ file_contents = readstring(@__FILE__())
         # "random" => RandomSolver(rng=MersenneTwister(4)),
 
         "despot" => DESPOTSolver(T_max=Inf,
-                                 max_trials=1000,
+                                 max_trials=10_000,
                                  bounds=LaserBounds{P}(),
-                                 rng=MersenneTwister(4))
-        #=
+                                 rng=MersenneTwister(4)),
+
         "pomcp" => POMCPSolver(tree_queries=n,
                                    c=20.0,
                                    max_depth=100,
                                    estimate_value=FOValue(ValueIterationSolver()),
                                    rng=MersenneTwister(13)
                                   )
-        =#
     )
 end
 
@@ -89,8 +86,8 @@ rdict = Dict{String, Any}()
 for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     @show k 
-    # rewards = pmap(prog, 1:N) do i
-    rewards = map(1:N) do i
+    rewards = pmap(prog, 1:N) do i
+    # rewards = map(1:N) do i
         pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
         if isa(sol,Solver)
             p = solve(deepcopy(sol), pomdp)
@@ -101,7 +98,6 @@ for (k,sol) in solvers
         up_rng = MersenneTwister(i+100_000)
         up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)
-        print(".")
         discounted_reward(hist)
     end
     @show mean(rewards)

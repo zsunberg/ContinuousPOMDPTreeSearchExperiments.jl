@@ -4,11 +4,11 @@ using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using QMDP
 using JLD
-using DESPOT
 using BasicPOMCP
 using StaticArrays
 using POMDPs
 using Reel
+using ARDESPOT
 
 f = ARGS[1]
 k = ARGS[2]
@@ -18,18 +18,14 @@ rdict = load(f, "rdict")
 
 n = 100_000
 
-sol = DESPOTSolver{LTState, Int, DMeas, LaserBounds,
-                      MersenneStreamArray}(bounds = LaserBounds{LaserTagPOMDP{DESPOTEmu, DMeas}}(),
-                                           random_streams=MersenneStreamArray(MersenneTwister(1)),
-                                           rng=MersenneTwister(3),
-                                           next_state=LTState([1,1], [1,1], false),
-                                           curr_obs=DMeas(),
-                                           time_per_move=100.0,
-                                           eta=0.01,
-                                           max_trials=n # 500_000
-                                          )
-
 pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
+
+sol = DESPOTSolver(T_max=Inf,
+                   max_trials=10_000,
+                   bounds=LaserBounds{typeof(pomdp)}(),
+                   rng=MersenneTwister(4))
+
+
 if isa(sol,Solver)
     p = solve(deepcopy(sol), pomdp)
 else
@@ -43,12 +39,16 @@ up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0
 frames = Frames(MIME("image/png"), fps=2)
 disc = 1.0
 rew = 0.0
+states = []
+beliefs = []
 for (s, b, a, r, sp, o, bp) in stepthrough(pomdp, p, up, "sbarspobp", max_steps=100, rng=MersenneTwister(i))
     rew += disc*r
     disc*=discount(pomdp)
     show(STDOUT, MIME("text/plain"), LaserTagVis(pomdp, s=s))
     println()
     push!(frames, LaserTagVis(pomdp, s=sp, b=bp, o=o, a=a))
+    push!(states, s)
+    push!(beliefs, b)
 end
 
 println("Total discounted reward for this simulation: $rew")
