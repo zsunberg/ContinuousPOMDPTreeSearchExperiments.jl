@@ -61,12 +61,7 @@ function POMDPs.update(up::ObsAdaptiveParticleFilter, b::ParticleFilters.Particl
     wm = up._wm
     resize!(pm, 0)
     resize!(wm, 0)
-    #=
-    pm = Array{S}(0)
-    wm = Array{Float64}(0)
-    sizehint!(pm, n_particles(b))
-    sizehint!(wm, n_particles(b))
-    =#
+
     all_terminal = true
     for i in 1:n_particles(b)
         s = ps[i]
@@ -79,7 +74,7 @@ function POMDPs.update(up::ObsAdaptiveParticleFilter, b::ParticleFilters.Particl
         end
     end
     ws = sum(wm)
-    if all_terminal || sum(wm) == 0.0
+    if all_terminal || ws < eps(1.0/length(wm))
         # warn("All states in particle collection were terminal.")
         return initialize_belief(up, reset_distribution(up.pomdp, b, a, o))
     end

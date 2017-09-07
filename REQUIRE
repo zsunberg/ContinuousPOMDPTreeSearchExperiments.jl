@@ -5,4 +5,6 @@ Plots
 Reel
 ControlSystems
 CPUTime
+DataFrames
+DataArrays
 JLD
