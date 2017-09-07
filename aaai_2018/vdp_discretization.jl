@@ -42,43 +42,8 @@ N = 100
                                    rng=MersenneTwister(13)
                                   )
 
-        end,
+        end
 
-        "bt_100" => begin
-            rng3 = copy(p_rng)
-            rollout_policy = ToNextML(mdp(pomdp))
-            tree_queries = 1000
-            node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng3)
-            solver = POMCPDPWSolver(tree_queries=tree_queries,
-                                    c=40.0,
-                                    max_depth=20,
-                                    k_action=8.0,
-                                    alpha_action=1/20,
-                                    k_observation=4.0,
-                                    alpha_observation=1/20,
-                                    estimate_value=FORollout(rollout_policy),
-                                    node_belief_updater=node_updater,
-                                    default_action=TagAction(false, 0.0),
-                                    rng=rng3
-                                   )
-        end,
-
-        "dpw" => begin
-            rng3 = copy(p_rng)
-            rollout_policy = ToNextML(mdp(pomdp))
-            tree_queries = 10_000
-            solver = POMCPDPWSolver(tree_queries=tree_queries,
-                                    c=40.0,
-                                    max_depth=20,
-                                    k_action=8.0,
-                                    alpha_action=1/20,
-                                    k_observation=4.0,
-                                    alpha_observation=1/20,
-                                    estimate_value=FORollout(rollout_policy),
-                                    default_action=TagAction(false, 0.0),
-                                    rng=rng3
-                                   )
-        end,
     )
 end
 

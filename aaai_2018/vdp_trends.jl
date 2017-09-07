@@ -10,7 +10,6 @@ using ParticleFilters
 N = 100
 
 pomdp = VDPTagPOMDP()
-p_rng = MersenneTwister(4)
 planners = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin

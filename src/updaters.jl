@@ -81,9 +81,6 @@ function POMDPs.update(up::ObsAdaptiveParticleFilter, b::ParticleFilters.Particl
 
     pc = resample(up.resample, WeightedParticleBelief{state_type(up.pomdp)}(pm, wm, ws, nothing), up.rng)
     ps = particles(pc)
-    # for i in 1:length(ps)
-    #     ps[i] += 0.001*randn(up.rng, 2)
-    # end
 
     mpw = max_possible_weight(up.pomdp, a, o)
     frac_replaced = up.max_frac_replaced*max(0.0, 1.0 - maximum(wm)/mpw)
