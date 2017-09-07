@@ -15,7 +15,9 @@ end
 
 function bounds(l::LaserBounds, p::LaserTagPOMDP, b::ScenarioBelief)
     no = previous_obs(b)
-    if !isnull(previous_obs(b)) && get(previous_obs(b)) == LaserTag.D_SAME_LOC
+    if all(isterminal(p, s) for s in iterator(b))
+        lb = 0.0
+    elseif !isnull(previous_obs(b)) && get(previous_obs(b)) == LaserTag.D_SAME_LOC
         lb = l.ubp.pomdp.tag_reward
     else
         lb = l.lb_not_same
@@ -23,6 +25,10 @@ function bounds(l::LaserBounds, p::LaserTagPOMDP, b::ScenarioBelief)
     vsum = 0.0
     for s in iterator(b)
         vsum += state_value(l.ubp, s)
+    end
+    ub = vsum/length(b.scenarios)
+    if lb > ub
+        @show b.scenarios
     end
     return lb, vsum/length(b.scenarios)
 end

@@ -16,6 +16,12 @@ using LaserTag
 # using DESPOT
 using ARDESPOT
 using QMDP
+using MCTS
+
+using DataFrames
+using DataArrays
+using PmapProgressMeter
+using ProgressMeter
 
 # import DESPOT: bounds, init_bounds
 import ARDESPOT: bounds, init_bounds
@@ -36,7 +42,12 @@ export
     InfoGatherUpdater,
     OneStepValue,
     LaserBounds,
-    InevitableInit
+    InevitableInit,
+
+    Sim,
+    # SimQueue,
+    run_parallel,
+    metadata_as_pairs
 
 
 include("policies.jl")
@@ -45,6 +56,9 @@ include("action_gen.jl")
 
 include("sr_filter.jl")
 include("bounds_and_heuristics.jl")
+
+include("simulations.jl")
+include("integration.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 

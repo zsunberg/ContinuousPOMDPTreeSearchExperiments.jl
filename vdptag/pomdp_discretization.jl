@@ -8,7 +8,7 @@ using ParticleFilters
 using ContinuousPOMDPTreeSearchExperiments
 using Plots
 
-@show N = 1000
+@show N = 2
 
 @everywhere begin
     using POMDPs
@@ -16,7 +16,7 @@ using Plots
     using ContinuousPOMDPTreeSearchExperiments
     using ParticleFilters
     using POMCPOW
-    using POMCP
+    using BasicPOMCP
     using VDPTag
 
     pomdp = VDPTagPOMDP()
@@ -28,7 +28,7 @@ using Plots
 
         "pomcpow" => begin
             ro = ToNextML(mdp(pomdp))
-            solver = POMCPOWSolver(tree_queries=10_000,
+            solver = POMCPOWSolver(tree_queries=n,
                                    criterion=MaxUCB(40.0),
                                    final_criterion=MaxTries(),
                                    max_depth=20,
@@ -67,7 +67,7 @@ using Plots
         "discrete_pomcp" => begin
             dpomdp = AODiscreteVDPTagPOMDP()
             ro = translate_policy(ToNextML(mdp(pomdp)), mdp(pomdp), dpomdp, dpomdp)
-            solver = POMCPSolver(tree_queries=10_000,
+            solver = POMCPSolver(tree_queries=n,
                                    c=40.0,
                                    max_depth=20,
                                    estimate_value=FORollout(ro),
@@ -81,7 +81,8 @@ end
 
 for (k,p) in planners
     prog = Progress(N, desc="Simulating...")
-    rewards = pmap(prog, 1:N) do i
+    # rewards = pmap(prog, 1:N) do i
+    rewards = map(1:N) do i
         hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
         up_rng = MersenneTwister(i+100_000)
         up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, up_rng)
