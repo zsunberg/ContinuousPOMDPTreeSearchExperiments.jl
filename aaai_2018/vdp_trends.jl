@@ -7,7 +7,27 @@ using MCTS
 using DataFrames
 using ParticleFilters
 
-N = 100
+N = 1000
+
+function create_pft(m)
+        rng = MersenneTwister(13)
+        rollout_policy = ToNextML(mdp(pomdp))
+        node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(m), 0.05, rng)
+        solver = DPWSolver(n_iterations=typemax(Int),
+                           exploration_constant=40.0,
+                           depth=20,
+                           k_action=8.0,
+                           alpha_action=1/20,
+                           k_state=4.0,
+                           alpha_state=1/20,
+                           check_repeat_state=false,
+                           check_repeat_action=false,
+                           estimate_value=FORollout(rollout_policy),
+                           rng=rng
+                          )
+        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
+        return solve(solver, belief_mdp)
+end
 
 function pft_stats_collector(planner)
     payload = Dict(:cpu_times_us=>
@@ -37,11 +57,17 @@ planners = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FORollout(rollout_policy),
                                check_repeat_act=false,
                                check_repeat_obs=false,
+                               default_action=TagAction(false,0.0),
                                rng=MersenneTwister(13)
                               )
         solve(solver, deepcopy(pomdp))
     end,
 
+    "pft_10" => create_pft(10),
+    "pft_100" => create_pft(100),
+    "pft_1000" => create_pft(1000)
+
+    #=
     "bt_100" => begin
         rng = MersenneTwister(13)
         rollout_policy = ToNextML(mdp(pomdp))
@@ -81,6 +107,7 @@ planners = Dict{String, Union{Solver,Policy}}(
         belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
         solve(solver, belief_mdp)
     end
+    =#
 
 )
 
