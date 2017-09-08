@@ -6,8 +6,9 @@ using VDPTag
 using MCTS
 using DataFrames
 using ParticleFilters
+using CPUTime
 
-N = 1000
+N = 4
 
 function create_pft(m)
         rng = MersenneTwister(13)
@@ -30,14 +31,17 @@ function create_pft(m)
 end
 
 function pft_stats_collector(planner)
-    payload = Dict(:cpu_times_us=>
-
-                  )
-    return PolicyWrapper(planner, payload=Dict{Symbol, Any}()) do p, d, b
-        p.pomdp.
-        tic()
-        a = action 
-
+    d = Dict(:cpu_us=>Int[],
+             :n_nodes=>Int[],
+            )
+    return PolicyWrapper(planner, payload=d) do p, d, b
+        start_us = CPUtime_us()
+        a = action(p, b)
+        cpu_us = CPUtime_us() - start_us
+        push!(d[:cpu_us], cpu_us)
+        tree = get(p.tree)
+        push!(d[:n_nodes], length(tree.total_n))
+        return a
     end
 end
 
@@ -63,73 +67,55 @@ planners = Dict{String, Union{Solver,Policy}}(
         solve(solver, deepcopy(pomdp))
     end,
 
-    "pft_10" => create_pft(10),
-    "pft_100" => create_pft(100),
-    "pft_1000" => create_pft(1000)
-
-    #=
-    "bt_100" => begin
-        rng = MersenneTwister(13)
-        rollout_policy = ToNextML(mdp(pomdp))
-        node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100), 0.05, rng)
-        solver = DPWSolver(n_iterations=10_000_000,
-                           exploration_constant=40.0,
-                           depth=20,
-                           k_action=8.0,
-                           alpha_action=1/20,
-                           k_state=4.0,
-                           alpha_state=1/20,
-                           check_repeat_state=false,
-                           check_repeat_action=false,
-                           estimate_value=FORollout(rollout_policy),
-                           rng=rng
-                          )
-        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
-        solve(solver, belief_mdp)
-    end,
-
-    "bt_1000" => begin
-        rng = MersenneTwister(13)
-        rollout_policy = ToNextML(mdp(pomdp))
-        node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(1000), 0.05, rng)
-        solver = DPWSolver(n_iterations=10_000_000,
-                           exploration_constant=40.0,
-                           depth=20,
-                           k_action=8.0,
-                           alpha_action=1/20,
-                           k_state=4.0,
-                           alpha_state=1/20,
-                           check_repeat_state=false,
-                           check_repeat_action=false,
-                           estimate_value=FORollout(rollout_policy),
-                           rng=rng
-                          )
-        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
-        solve(solver, belief_mdp)
-    end
-    =#
-
+    "pft_10" => pft_stats_collector(create_pft(10)),
+    "pft_100" => pft_stats_collector(create_pft(100)),
+    "pft_1000" => pft_stats_collector(create_pft(1000))
 )
 
 alldata = DataFrame()
-for t in logspace(-2,1,7)
+# for t in logspace(-2,1,7)
+for t in [0.01] 
     for (k, planner) in planners
         println("$k ($t)")
-        planner.solver.max_time = t
+        if isa(planner, PolicyWrapper)
+            planner.policy.solver.max_time = t
+        else
+            planner.solver.max_time = t
+        end
         sims = []
         for i in 1:N
             srand(planner, i+50_000)
-            push!(sims, Sim(pomdp,
-                            deepcopy(planner),
-                            ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(10_000), 0.05, MersenneTwister(i+90_000)),
-                            rng=MersenneTwister(i+70_000),
-                            max_steps=100,
-                            metadata=Dict(:solver=>k,
-                                          :time=>t,
-                                          :i=>i)
-                           ))
+            sim = Sim(deepcopy(pomdp),
+                      deepcopy(planner),
+                      ObsAdaptiveParticleFilter(deepcopy(pomdp),
+                                                LowVarianceResampler(10_000),
+                                                0.05, MersenneTwister(i+90_000)),
+                      rng=MersenneTwister(i+70_000),
+                      max_steps=100,
+                      metadata=Dict(:solver=>k,
+                                    :time=>t,
+                                    :i=>i)
+                     )
+            push!(sims, sim)
         end
-        data = run_parallel(sims)
+
+        data = run_parallel(sims) do sim, h
+            stuff = sim.metadata
+            if isa(sim.policy, PolicyWrapper)
+                p = sim.policy
+                stuff[:mean_cpu_us] = mean(p.payload[:cpu_us])
+                stuff[:max_cpu_us] = maximum(p.payload[:cpu_us])
+                stuff[:min_cpu_us] = minimum(p.payload[:cpu_us])
+                stuff[:mean_nodes] = mean(p.payload[:n_nodes])
+                stuff[:max_nodes] = maximum(p.payload[:n_nodes])
+                stuff[:min_nodes] = minimum(p.payload[:n_nodes])
+            end
+            stuff[:reward] = discounted_reward(h)
+            return stuff
+        end
+
+        @show data
+
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
         alldata = vcat(alldata, data)
