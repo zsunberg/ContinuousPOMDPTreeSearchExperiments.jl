@@ -9,6 +9,18 @@ using ParticleFilters
 
 N = 100
 
+function pft_stats_collector(planner)
+    payload = Dict(:cpu_times_us=>
+
+                  )
+    return PolicyWrapper(planner, payload=Dict{Symbol, Any}()) do p, d, b
+        p.pomdp.
+        tic()
+        a = action 
+
+    end
+end
+
 pomdp = VDPTagPOMDP()
 planners = Dict{String, Union{Solver,Policy}}(
 
