@@ -8,14 +8,15 @@ using CPUTime
 using VDPTag
 using DataFrames
 
-N = 1000
+N = 4
 
 pomdp = VDPTagPOMDP()
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
-        ro = ToNextML(mdp(pomdp))
+        rng = MersenneTwister(13)
+        ro = ToNextMLSolver(rng)
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(40.0),
                                final_criterion=MaxTries(),
@@ -28,20 +29,21 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FORollout(ro),
                                check_repeat_act=true,
                                check_repeat_obs=true,
-                               default_action=1,
-                               rng=MersenneTwister(13)
+                               # default_action=1,
+                               rng=rng
                               )
     end,
 
     "pomcp" => begin
-        ro = ToNextML(mdp(pomdp))
+        rng = MersenneTwister(13)
+        ro = ToNextMLSolver(rng)
         POMCPSolver(max_depth=20,
                     max_time=0.1,
                     c=40.0,
                     tree_queries=typemax(Int),
-                    default_action=1,
+                    # default_action=1,
                     estimate_value=FORollout(ro),
-                    rng=MersenneTwister(17)
+                    rng=rng
                    )
     end
 )
@@ -52,6 +54,7 @@ for n_angles_float in logspace(0.5, 3, 6)
     for (k, solver) in solvers
         println("$k ($n_angles)")
         dpomdp = AODiscreteVDPTagPOMDP(n_angles=n_angles, n_obs_angles=n_angles)
+        solver.estimate_value
         planner = solve(solver, dpomdp)
         sims = []
         for i in 1:N
