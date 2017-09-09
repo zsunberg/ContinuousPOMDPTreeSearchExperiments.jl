@@ -14,7 +14,6 @@ pomdp = VDPTagPOMDP()
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
-    #=
     "pomcpow" => begin
         ro = ToNextML(mdp(pomdp))
         solver = POMCPOWSolver(tree_queries=10_000_000,
@@ -26,14 +25,13 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                alpha_action=1/20,
                                k_observation=4.0,
                                alpha_observation=1/20,
-                               estimate_value=0.0,
+                               estimate_value=FORollout(ro),
                                check_repeat_act=true,
                                check_repeat_obs=true,
                                default_action=1,
                                rng=MersenneTwister(13)
                               )
     end,
-    =#
 
     "pomcp" => begin
         ro = ToNextML(mdp(pomdp))
@@ -42,7 +40,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=40.0,
                     tree_queries=typemax(Int),
                     default_action=1,
-                    estimate_value=0.0,
+                    estimate_value=FORollout(ro),
                     rng=MersenneTwister(17)
                    )
     end
@@ -78,8 +76,6 @@ for n_angles_float in logspace(0.5, 3, 6)
         end
 
         data = run_parallel(sims)
-
-        @show data
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
