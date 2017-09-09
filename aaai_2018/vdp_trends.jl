@@ -11,11 +11,13 @@ using CPUTime
 @everywhere using POMDPToolbox
 @everywhere using CPUTime
 
-N = 1000
+N = 4
+
+pomdp = VDPTagPOMDP()
 
 function create_pft(m)
     rng = MersenneTwister(13)
-    rollout_policy = ToNextML(mdp(pomdp))
+    rollout_policy = ToNextML(mdp(pomdp), rng)
     node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(m), 0.05, rng)
     solver = DPWSolver(n_iterations=typemax(Int),
                        exploration_constant=40.0,
@@ -27,6 +29,7 @@ function create_pft(m)
                        check_repeat_state=false,
                        check_repeat_action=false,
                        estimate_value=FORollout(rollout_policy),
+                       next_action=NextMLFirst(mdp(pomdp), rng),
                        rng=rng
                       )
     belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
@@ -45,12 +48,12 @@ function create_pft(m)
     end
 end
 
-pomdp = VDPTagPOMDP()
 
 wrapped = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
-        rollout_policy = ToNextML(mdp(pomdp))
+        rng = MersenneTwister(13)
+        rollout_policy = ToNextML(mdp(pomdp), rng)
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(40.0),
                                final_criterion=MaxTries(),
@@ -62,8 +65,9 @@ wrapped = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FORollout(rollout_policy),
                                check_repeat_act=false,
                                check_repeat_obs=false,
+                               next_action=NextMLFirst(mdp(pomdp), rng),
                                default_action=TagAction(false,0.0),
-                               rng=MersenneTwister(13)
+                               rng=rng
                               )
         planner = solve(solver, deepcopy(pomdp))
         d = Dict(:cpu_us=>Int[],
@@ -87,7 +91,8 @@ wrapped = Dict{String, Union{Solver,Policy}}(
 )
 
 alldata = DataFrame()
-for t in logspace(-2,1,7)
+# for t in logspace(-2,1,7)
+for t in [0.1]
     for (k, wrapper) in wrapped
         println("$k ($t)")
         wrapper.policy.solver.max_time = t
@@ -108,7 +113,7 @@ for t in logspace(-2,1,7)
             push!(sims, sim)
         end
 
-        data = run_parallel(sims) do sim, h
+        data = run(sims) do sim, h
             stuff = sim.metadata
             if isa(sim.policy, PolicyWrapper)
                 p = sim.policy
