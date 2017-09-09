@@ -3,10 +3,7 @@ using ContinuousPOMDPTreeSearchExperiments
 using POMDPToolbox
 using BasicPOMCP
 using POMCPOW
-using ProgressMeter
-using PmapProgressMeter
 using ParticleFilters
-using JLD
 using CPUTime
 using VDPTag
 using DataFrames
