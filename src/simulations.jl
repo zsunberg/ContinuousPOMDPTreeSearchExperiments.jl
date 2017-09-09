@@ -92,6 +92,18 @@ function run_parallel(process::Function, queue::AbstractVector;
     return create_dataframe(frame_lines)
 end
 
+Base.run(queue::AbstractVector) = run(default_process, queue)
+
+function Base.run(process::Function, queue::AbstractVector; show_progress=true)
+
+    lines = []
+    @showprogress for sim in queue
+        result = simulate(sim)
+        push!(lines, process(sim, result))
+    end
+    return create_dataframe(lines)
+end
+
 function create_dataframe(lines::Vector)
     master = Dict{Symbol, DataArray}()
     for line in lines
