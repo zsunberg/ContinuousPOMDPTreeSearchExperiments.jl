@@ -11,12 +11,13 @@ using CPUTime
 using VDPTag
 using DataFrames
 
-N = 4
+N = 1000
 
 pomdp = VDPTagPOMDP()
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
+    #=
     "pomcpow" => begin
         ro = ToNextML(mdp(pomdp))
         solver = POMCPOWSolver(tree_queries=10_000_000,
@@ -35,6 +36,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                rng=MersenneTwister(13)
                               )
     end,
+    =#
 
     "pomcp" => begin
         ro = ToNextML(mdp(pomdp))
