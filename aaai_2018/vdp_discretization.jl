@@ -3,10 +3,7 @@ using ContinuousPOMDPTreeSearchExperiments
 using POMDPToolbox
 using BasicPOMCP
 using POMCPOW
-using ProgressMeter
-using PmapProgressMeter
 using ParticleFilters
-using JLD
 using CPUTime
 using VDPTag
 using DataFrames
@@ -81,6 +78,8 @@ for n_angles_float in logspace(0.5, 3, 6)
         end
 
         data = run_parallel(sims)
+
+        @show data
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
