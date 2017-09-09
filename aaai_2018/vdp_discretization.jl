@@ -15,7 +15,8 @@ pomdp = VDPTagPOMDP()
 solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
-        ro = ToNextML(mdp(pomdp))
+        rng = MersenneTwister(13)
+        ro = ToNextMLSolver(rng)
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(40.0),
                                final_criterion=MaxTries(),
@@ -29,19 +30,20 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                check_repeat_act=true,
                                check_repeat_obs=true,
                                default_action=1,
-                               rng=MersenneTwister(13)
+                               rng=rng
                               )
     end,
 
     "pomcp" => begin
-        ro = ToNextML(mdp(pomdp))
+        rng = MersenneTwister(13)
+        ro = ToNextMLSolver(rng)
         POMCPSolver(max_depth=20,
                     max_time=0.1,
                     c=40.0,
                     tree_queries=typemax(Int),
                     default_action=1,
                     estimate_value=FORollout(ro),
-                    rng=MersenneTwister(17)
+                    rng=rng
                    )
     end
 )
