@@ -47,6 +47,7 @@ export
     Sim,
     # SimQueue,
     run_parallel,
+    run,
     metadata_as_pairs
 
 
