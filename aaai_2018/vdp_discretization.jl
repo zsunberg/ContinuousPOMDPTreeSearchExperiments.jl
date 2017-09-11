@@ -8,7 +8,7 @@ using CPUTime
 using VDPTag
 using DataFrames
 
-N = 1000
+N = 4
 
 pomdp = VDPTagPOMDP()
 
@@ -29,6 +29,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FORollout(ro),
                                check_repeat_act=true,
                                check_repeat_obs=true,
+                               next_action=RootToNextMLFirst(rng),
                                default_action=1,
                                rng=rng
                               )
@@ -77,7 +78,8 @@ for n_angles_float in logspace(0.5, 3, 6)
             push!(sims, sim)
         end
 
-        data = run_parallel(sims)
+        # data = run_parallel(sims)
+        data = run(sims)
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

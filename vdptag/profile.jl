@@ -31,12 +31,11 @@ belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
 planner = solve(solver, belief_mdp)
 =#
 
-rollout_policy = ToNextML(mdp(pomdp))
+rollout_policy = ToNextML(mdp(pomdp), Base.GLOBAL_RNG)
 solver = POMCPOWSolver(tree_queries=10_000_000,
                        criterion=MaxUCB(40.0),
                        final_criterion=MaxTries(),
                        max_depth=20,
-                       max_time=1.0,
                        k_action=8.0,
                        alpha_action=1/20,
                        k_observation=4.0,
@@ -44,7 +43,10 @@ solver = POMCPOWSolver(tree_queries=10_000_000,
                        estimate_value=FORollout(rollout_policy),
                        check_repeat_act=false,
                        check_repeat_obs=false,
-                       rng=MersenneTwister(13)
+                       next_action=NextMLFirst(mdp(pomdp), Base.GLOBAL_RNG),
+                       default_action=TagAction(false,0.0),
+                       max_time=0.1,
+                       rng=Base.GLOBAL_RNG
                       )
 planner = solve(solver, deepcopy(pomdp))
 
