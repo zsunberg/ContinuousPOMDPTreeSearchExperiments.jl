@@ -77,3 +77,25 @@ function POMCPOW.init_V(m::InevitableInit, pomdp::LaserTagPOMDP, h::BeliefNode, 
         return -pomdp.step_cost
     end
 end
+
+struct RootToNextMLFirst
+    rng::MersenneTwister
+end
+
+function MCTS.next_action(gen::RootToNextMLFirst, p::VDPTagPOMDP, b, node)
+    if isroot(node) && n_children(node) < 1
+        target_sum=MVector(0.0, 0.0)
+        agent_sum=MVector(0.0, 0.0)
+        for s in particles(b::ParticleCollection)
+            target_sum += s.target
+            agent_sum += s.agent
+        end
+        next = VDPTag.next_ml_target(mdp(p), target_sum/n_particles(b))
+        diff = next-agent_sum/n_particles(b)
+        return TagAction(false, atan2(diff[2], diff[1]))
+    else
+        return rand(gen.rng, actions(p))
+    end
+end
+
+MCTS.next_action(gen::RootToNextMLFirst, p::GenerativeBeliefMDP, b, node) = next_action(gen, p.pomdp, b, node)

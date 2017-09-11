@@ -11,7 +11,7 @@ using CPUTime
 @everywhere using POMDPToolbox
 @everywhere using CPUTime
 
-N = 4
+N = 1000
 
 pomdp = VDPTagPOMDP()
 
@@ -29,7 +29,9 @@ function create_pft(m)
                        check_repeat_state=false,
                        check_repeat_action=false,
                        estimate_value=FORollout(rollout_policy),
-                       next_action=NextMLFirst(mdp(pomdp), rng),
+                       # next_action=NextMLFirst(mdp(pomdp), rng),
+                       next_action=RootToNextMLFirst(rng),
+                       # default_action=TagAction(false,0.0),
                        rng=rng
                       )
     belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
@@ -65,9 +67,10 @@ wrapped = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FORollout(rollout_policy),
                                check_repeat_act=false,
                                check_repeat_obs=false,
-                               next_action=NextMLFirst(mdp(pomdp), rng),
+                               # next_action=NextMLFirst(mdp(pomdp), MersenneTwister(15)),
+                               next_action=RootToNextMLFirst(rng),
                                default_action=TagAction(false,0.0),
-                               rng=rng
+                               rng=rng,
                               )
         planner = solve(solver, deepcopy(pomdp))
         d = Dict(:cpu_us=>Int[],
@@ -91,8 +94,9 @@ wrapped = Dict{String, Union{Solver,Policy}}(
 )
 
 alldata = DataFrame()
-# for t in logspace(-2,1,7)
-for t in [0.1]
+for t in logspace(-2,1,7)
+# for t in logspace(-1,1,5)
+# for t in [10.0]
     for (k, wrapper) in wrapped
         println("$k ($t)")
         wrapper.policy.solver.max_time = t
@@ -113,7 +117,7 @@ for t in [0.1]
             push!(sims, sim)
         end
 
-        data = run(sims) do sim, h
+        data = run_parallel(sims) do sim, h
             stuff = sim.metadata
             if isa(sim.policy, PolicyWrapper)
                 p = sim.policy
