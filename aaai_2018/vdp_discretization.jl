@@ -8,7 +8,7 @@ using CPUTime
 using VDPTag
 using DataFrames
 
-N = 4
+N = 1000
 
 pomdp = VDPTagPOMDP()
 
@@ -20,7 +20,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(40.0),
                                final_criterion=MaxTries(),
-                               max_depth=20,
+                               max_depth=10,
                                max_time=0.1,
                                k_action=8.0,
                                alpha_action=1/20,
@@ -38,7 +38,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "pomcp" => begin
         rng = MersenneTwister(13)
         ro = ToNextMLSolver(rng)
-        POMCPSolver(max_depth=20,
+        POMCPSolver(max_depth=10,
                     max_time=0.1,
                     c=40.0,
                     tree_queries=typemax(Int),
@@ -50,7 +50,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 )
 
 alldata = DataFrame()
-for n_angles_float in logspace(0.5, 3, 6)
+for n_angles_float in logspace(0.5, 4, 8)
+# for n_angles_float in [10]
     n_angles = round(Int, n_angles_float)
     for (k, solver) in solvers
         println("$k ($n_angles)")
@@ -78,8 +79,8 @@ for n_angles_float in logspace(0.5, 3, 6)
             push!(sims, sim)
         end
 
-        # data = run_parallel(sims)
-        data = run(sims)
+        data = run_parallel(sims)
+        # data = run(sims)
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
