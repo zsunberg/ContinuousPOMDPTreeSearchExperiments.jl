@@ -14,6 +14,7 @@ pomdp = VDPTagPOMDP()
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
+    #=
     "pomcpow" => begin
         rng = MersenneTwister(13)
         ro = ToNextMLSolver(rng)
@@ -34,6 +35,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                rng=rng
                               )
     end,
+    =#
 
     "pomcp" => begin
         rng = MersenneTwister(13)
@@ -50,12 +52,14 @@ solvers = Dict{String, Union{Solver,Policy}}(
 )
 
 alldata = DataFrame()
-for n_angles_float in logspace(0.5, 4, 8)
+for n_angles_float in logspace(0.5, 3, 6)
+for n_obs_angles_float in logspace(0.5, 3, 6)
 # for n_angles_float in [10]
     n_angles = round(Int, n_angles_float)
+    n_obs_angles = round(Int, n_obs_angles_float)
     for (k, solver) in solvers
-        println("$k ($n_angles)")
-        dpomdp = AODiscreteVDPTagPOMDP(n_angles=n_angles, n_obs_angles=n_angles)
+        println("$k ($n_angles, $n_obs_angles)")
+        dpomdp = AODiscreteVDPTagPOMDP(n_angles=n_angles, n_obs_angles=n_obs_angles)
         planner = solve(solver, dpomdp)
         sims = []
         for i in 1:N
@@ -73,6 +77,7 @@ for n_angles_float in logspace(0.5, 4, 8)
                       max_steps=100,
                       metadata=Dict(:solver=>k,
                                     :n_angles=>n_angles,
+                                    :n_obs_angles=>n_obs_angles,
                                     :i=>i)
                      )
 
@@ -86,6 +91,7 @@ for n_angles_float in logspace(0.5, 4, 8)
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
         alldata = vcat(alldata, data)
     end
+end
 end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "vdp_discretization_$(Dates.format(now(), "E_d_u_HH_MM")).csv")
