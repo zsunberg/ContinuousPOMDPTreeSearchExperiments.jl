@@ -21,7 +21,7 @@ function create_pft(m)
     node_updater = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(m), 0.05, rng)
     solver = DPWSolver(n_iterations=typemax(Int),
                        exploration_constant=40.0,
-                       depth=20,
+                       depth=10,
                        k_action=8.0,
                        alpha_action=1/20,
                        k_state=4.0,
@@ -59,7 +59,7 @@ wrapped = Dict{String, Union{Solver,Policy}}(
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(40.0),
                                final_criterion=MaxTries(),
-                               max_depth=20,
+                               max_depth=10,
                                k_action=8.0,
                                alpha_action=1/20,
                                k_observation=4.0,
