@@ -1,5 +1,6 @@
 using DataFrames
 using PGFPlots
+using Query
 
 legend = Dict("pomcpow"=>"POMCPOW",
               "pomcp"=>"POMCP",
@@ -12,7 +13,7 @@ legend = Dict("pomcpow"=>"POMCPOW",
 
 # computation time figure
 
-filename = "vdp_trends_Sunday_10_Sep_04_30.csv"
+filename = "vdp_trends_Monday_11_Sep_19_20.csv"
 
 alldata = readtable(Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", filename))
 
@@ -39,15 +40,33 @@ for df in groupby(summary, [:solver])
     push!(lines, line)
 end
 
+cheight = get(first(@from i in summary begin
+    @where i.time == 0.1 && i.solver == "pomcpow"
+    @select i.reward_mean
+end))
+@show cheight
+# warn("cheight")
+# cheight = 38.26
+
 a = Axis(lines, xmode="log", xlabel="Step Computation Limit (s)", ylabel="Mean Discounted Reward", legendPos="south east")
 pdf = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "aaai_2018", "vdp_trends.pdf")
+
+tex = tempname()*".tex"
+save(tex, a, include_preamble=false)
+run(`cat $tex`)
+println("\n\n\n")
 
 save(pdf, a)
 run(`xdg-open $pdf`)
 
 # discretization figure
 
-filename = "vdp_discretization_Saturday_9_Sep_14_59.csv"
+filename = "vdp_discretization_Monday_11_Sep_13_28.csv"
+
+legend = Dict("pomcpow"=>"POMCPOW (Discretized)",
+              "pomcp"=>"POMCP (Discretized)",
+             )
+
 
 alldata = readtable(Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", filename))
 
@@ -58,8 +77,6 @@ summary = by(alldata, [:solver, :n_angles]) do df
              )
 end
 
-@show summary
-
 lines = PGFPlots.Plot[]
 for df in groupby(summary, [:solver])
     line = PGFPlots.Linear(df[:n_angles],
@@ -69,9 +86,16 @@ for df in groupby(summary, [:solver])
                           )
     push!(lines, line)
 end
+ends = vcat(minimum(alldata[:n_angles]), maximum(alldata[:n_angles]))
+cline = PGFPlots.Linear(ends, [cheight, cheight], style="ultra thick, dashed", mark="none", legendentry="POMCPOW (Continuous)")
+push!(lines, cline)
 
-a = Axis(lines, xmode="log", ymin=-20, xlabel="Number of Discrete Angles", ylabel="Mean Discounted Reward", legendPos="south east")
+a = Axis(lines, xmode="log", ymin=-5, xlabel="Number of Discrete Action and Observation Angles", ylabel="Mean Discounted Reward", legendPos="south east")
 pdf = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "aaai_2018", "vdp_discretization.pdf")
+
+tex = tempname()*".tex"
+save(tex, a, include_preamble=false)
+run(`cat $tex`)
 
 save(pdf, a)
 run(`xdg-open $pdf`)
