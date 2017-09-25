@@ -20,8 +20,9 @@ n = 100_000
 
 pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
 
-sol = DESPOTSolver(T_max=Inf,
-                   max_trials=10_000,
+sol = DESPOTSolver(lambda=0.1,
+                   T_max=5.0,
+                   max_trials=1_000_000,
                    bounds=LaserBounds{typeof(pomdp)}(),
                    rng=MersenneTwister(4))
 

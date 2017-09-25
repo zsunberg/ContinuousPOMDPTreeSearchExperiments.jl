@@ -28,9 +28,10 @@ file_contents = readstring(@__FILE__())
     using BasicPOMCP
     using ARDESPOT
 
-    N = 10
+    N = 100
     n = 1_000_000
     P = typeof(gen_lasertag(rng=MersenneTwister(18)))
+    lambda = 0.0
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
@@ -68,12 +69,11 @@ file_contents = readstring(@__FILE__())
         # "random" => RandomSolver(rng=MersenneTwister(4)),
 
         "despot" => begin
-            @show lambda = 0.01
-            DESPOTSolver(T_max=Inf,
-                                 lambda=lambda,
-                                 max_trials=10_000,
-                                 bounds=LaserBounds{P}(),
-                                 rng=MersenneTwister(4))
+            DESPOTSolver(lambda=lambda,
+                         max_trials=1_000_000,
+                         T_max=5.0,
+                         bounds=LaserBounds{P}(),
+                         rng=MersenneTwister(4))
         end,
 
         #=
@@ -89,6 +89,7 @@ end
 
 @show N
 @show n
+@show lambda
 
 rdict = Dict{String, Any}()
 for (k,sol) in solvers
