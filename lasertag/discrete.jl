@@ -70,10 +70,10 @@ file_contents = readstring(@__FILE__())
         "despot" => begin
             @show lambda = 0.01
             DESPOTSolver(T_max=Inf,
-                                 lambda=lambda,
-                                 max_trials=10_000,
-                                 bounds=LaserBounds{P}(),
-                                 rng=MersenneTwister(4))
+                         lambda=lambda,
+                         max_trials=1000,
+                         bounds=LaserBounds{P}(),
+                         rng=MersenneTwister(4))
         end,
 
         #=

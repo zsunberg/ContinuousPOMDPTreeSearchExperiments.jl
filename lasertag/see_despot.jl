@@ -1,37 +1,37 @@
 using LaserTag
-using Plots
 using POMDPToolbox
 using ContinuousPOMDPTreeSearchExperiments
-using Plots
 using POMDPs
-using QMDP
 using ProfileView
 using ParticleFilters
-using DESPOT
+using ARDESPOT
 
 p = gen_lasertag(rng=MersenneTwister(4))
 
-solver = DESPOTSolver{LTState,
-                      Int,
-                      CMeas,
-                      LaserBounds,
-                      MersenneStreamArray}(bounds = LaserBounds(),
-                                           random_streams=MersenneStreamArray(MersenneTwister(1)),
-                                           rng=MersenneTwister(3),
-                                           next_state=LTState([1,1], [1,1], false),
-                                           curr_obs=CMeas(),
-                                           time_per_move=-1.0,
-                                           max_trials=500_000
-                                          )
+solver = DESPOTSolver(T_max=Inf,
+             lambda=0.01,
+             max_trials=1,
+             bounds=LaserBounds{typeof(p)}(),
+             rng=MersenneTwister(4))
 
 
-policy = solve(solver, p)
+planner = solve(solver, p)
 
+b0 = initial_state_distribution(p)
+s0 = rand(MersenneTwister(5), b0)
+println(LaserTagVis(p, s=s0))
+
+tree = ARDESPOT.build_despot(planner, b0)
+
+println(TreeView(tree, 1, 3))
+
+#=
 @time action(policy, initial_state_distribution(p))
 
 Profile.clear()
 @profile action(policy, initial_state_distribution(p))
 ProfileView.view()
+=#
 
 # hr = HistoryRecorder(max_steps=5, show_progress=true)
 # filter = SIRParticleFilter(p, 100_000)

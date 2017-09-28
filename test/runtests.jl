@@ -20,3 +20,5 @@ end
 
 @show data = run_parallel(q)
 @test data[1, :reward] == data[2, :reward]
+
+p = gen_lasertag(rng=MersenneTwister(4))
