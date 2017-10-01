@@ -14,52 +14,85 @@ function LaserBounds(p::LaserTagPOMDP)
 end
 
 function bounds(l::LaserBounds, p::LaserTagPOMDP, b::ScenarioBelief)
-    no = previous_obs(b)
-    if all(isterminal(p, s) for s in iterator(b))
+    ps = particles(b)
+    if !all(isterminal(p, s) for s in ps) && !isnull(previous_obs(b))
+        if get(previous_obs(b)) == LaserTag.D_SAME_LOC
+            if !all(!isterminal(p, s) && s.robot==s.opponent for s in ps)
+                for s in ps
+                    @show s
+                    @show isterminal(p,s)
+                    @show s.robot
+                    @show s.opponent
+                end
+            end
+            @assert all(!isterminal(p, s) && s.robot==s.opponent for s in ps)
+        else
+            if !any(isterminal(p, s) || s.robot!=s.opponent for s in ps)
+                for s in ps
+                    @show s
+                    @show isterminal(p,s)
+                    @show s.robot
+                    @show s.opponent
+                end
+            end
+            @assert any(isterminal(p, s) || s.robot!=s.opponent for s in ps)
+        end
+    end
+    return bounds(l, p, ps)
+end
+
+function bounds(l::LaserBounds, p::LaserTagPOMDP, particles)
+    if all(isterminal(p, s) for s in particles)
         lb = 0.0
-    elseif !isnull(previous_obs(b)) && get(previous_obs(b)) == LaserTag.D_SAME_LOC
+    elseif all(!isterminal(p, s) && s.robot==s.opponent for s in particles)
         lb = l.ubp.pomdp.tag_reward
-    elseif length(b.scenarios) == 1
-        lb = state_value(l.ubp, first(iterator(b)))
+    elseif length(particles) == 1
+        lb = state_value(l.ubp, first(particles))
     else
         lb = l.lb_not_same
     end
     vsum = 0.0
-    for s in iterator(b)
+    for s in particles
         vsum += state_value(l.ubp, s)
     end
-    ub = vsum/length(b.scenarios)
+    ub = vsum/length(particles)
     if lb > ub
-        @show b.scenarios
+        warning("lb > ub")
+        @show particles
     end
-    return lb, vsum/length(b.scenarios)
+    return lb, vsum/length(particles)
 end
 
-function init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOTSolver)
+function init_bounds(l::LaserBounds, p::LaserTagPOMDP)
     sol = QMDPSolver(max_iterations=1000)
     l.ubp = solve(sol, p)
     l.lb_not_same = -p.step_cost/(1-discount(p))
     return l
 end
 
+init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOTSolver) = init_bounds(l, p)
+DESPOT.init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOT.DESPOTConfig) = init_bounds(l, p)
 
-#=
-function bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOTParticle{S}}, ::DESPOTConfig)
-    bv = zeros(n_states(p))
-    for dp in b 
-        bv[state_index(p, dp.state)] += dp.weight
+function DESPOT.bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOT.DESPOTParticle{S}}, ::DESPOT.DESPOTConfig)
+    return bounds(l, p, p.state for p in b)
+end
+
+function DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c)
+    # @show collect(p.state for p in particles)
+    if all(p.state.robot==p.state.opponent for p in particles)
+        return LaserTag.TAG_ACTION
+    else
+        warn("non-tag default")
+        return rand(1:4)
     end
-    bv ./= sum(bv)
-    return l.lb, value(l.ubp, DiscreteBelief(bv))
 end
 
-function init_bounds(l::LaserBounds, p::LaserTagPOMDP, config::DESPOTConfig)
-    sol = QMDPSolver(max_iterations=1000)
-    l.ubp = solve(sol, p)
-    l.lb = -p.step_cost/(1-discount(p))
-    return l
+function nogap_tag(b, ng::NoGap)
+    @assert all(!s.terminal && s.robot==s.opponent for s in iterator(b))
+    # @assert ng.value == l.ubp.pomdp.tag_reward
+    return LaserTag.TAG_ACTION
 end
-=#
+
 
 immutable InevitableInit end 
 

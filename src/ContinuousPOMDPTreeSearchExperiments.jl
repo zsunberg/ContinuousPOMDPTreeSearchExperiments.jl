@@ -13,7 +13,7 @@ using ControlSystems
 using Plots
 using Distributions
 using LaserTag
-# using DESPOT
+import DESPOT
 using ARDESPOT
 using QMDP
 using MCTS
@@ -44,6 +44,7 @@ export
     LaserBounds,
     InevitableInit,
     RootToNextMLFirst,
+    nogap_tag,
 
     Sim,
     # SimQueue,
