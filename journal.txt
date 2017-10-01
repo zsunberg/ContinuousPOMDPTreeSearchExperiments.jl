@@ -1,3 +1,142 @@
+Fri 29 Sep 2017 09:36:08 AM PDT
+
+At 10 it is worse
+
+N = 1000
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 10
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:50
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:09
+mean(rewards) = -11.419435630794528
+std(rewards) / sqrt(N) = 0.17382558562220637
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_21_36.jld...
+
+but at 50 it seems to be really good
+
+N = 1000
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 50
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:50
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:08
+mean(rewards) = -10.668149214716083
+std(rewards) / sqrt(N) = 0.1797646933082757
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_22_04.jld...
+done.
+
+Thu 28 Sep 2017 09:31:33 PM PDT
+
+??? Decreasing K leads to better performance
+
+N = 1000
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 100
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:50
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:13
+mean(rewards) = -10.85445958803187
+std(rewards) / sqrt(N) = 0.18417685723205504
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_21_31.jld...
+done.
+
+
+Thu 28 Sep 2017 06:26:57 PM PDT
+
+Something is very, very strange with K
+
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 50000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:21
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:25:06
+mean(rewards) = -18.32498586378628
+std(rewards) / sqrt(N) = 0.5187454940785285
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_19_57.jld...
+
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 5000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:22
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:39
+mean(rewards) = -11.639852993326196
+std(rewards) / sqrt(N) = 0.672522296221273
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_18_23.jld...
+done.
+
+solvers["despot"].lambda = 0.0
+solvers["despot"].K = 500
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:21
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:16
+mean(rewards) = -10.889650128672468
+std(rewards) / sqrt(N) = 0.6570518347344256
+
+
+Thu 28 Sep 2017 09:52:03 AM PDT
+
+With old bounds
+
+lambda = 0.0
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:20
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:07:58
+mean(rewards) = -10.479284095896972
+std(rewards) / sqrt(N) = 0.6509758212436103
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Thursday_28_Sep_09_50.jld...
+done.
+
+Thu 28 Sep 2017 09:28:40 AM PDT
+
+With new bounds
+
+WHY SO FAST??
+
+lambda = 0.01
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:20
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:17
+mean(rewards) = -13.028315239540785
+std(rewards) / sqrt(N) = 0.6681122080230456
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Wednesday_27_Sep_23_19.jld...
+done.
+
+lambda = 0.0
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:20
+mean(rewards) = -10.474711310004281
+std(rewards) / sqrt(N) = 0.6281852344377283
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:16
+mean(rewards) = -10.889650128672468
+std(rewards) / sqrt(N) = 0.6570518347344256
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Wednesday_27_Sep_23_25.jld...
+
+
 Mon 25 Sep 2017 02:18:39 PM PDT
 
 N = 100

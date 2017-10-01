@@ -28,10 +28,9 @@ file_contents = readstring(@__FILE__())
     using BasicPOMCP
     using ARDESPOT
 
-    N = 100
+    N = 1000
     n = 1_000_000
     P = typeof(gen_lasertag(rng=MersenneTwister(18)))
-    lambda = 0.0
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
@@ -60,7 +59,6 @@ file_contents = readstring(@__FILE__())
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
-        "qmdp" => QMDPSolver(max_iterations=1000),
 
         # "ml" => OptimalMLSolver(ValueIterationSolver()),
 
@@ -69,12 +67,15 @@ file_contents = readstring(@__FILE__())
         # "random" => RandomSolver(rng=MersenneTwister(4)),
 
         "despot" => begin
-            DESPOTSolver(lambda=lambda,
+            DESPOTSolver(lambda=0.0,
+                         K=50,
                          max_trials=1_000_000,
                          T_max=5.0,
                          bounds=LaserBounds{P}(),
                          rng=MersenneTwister(4))
         end,
+
+        "qmdp" => QMDPSolver(max_iterations=1000),
 
         #=
         "pomcp" => POMCPSolver(tree_queries=n,
@@ -88,8 +89,8 @@ file_contents = readstring(@__FILE__())
 end
 
 @show N
-@show n
-@show lambda
+@show solvers["despot"].lambda
+@show solvers["despot"].K
 
 rdict = Dict{String, Any}()
 for (k,sol) in solvers
