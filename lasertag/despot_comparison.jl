@@ -15,8 +15,8 @@ using ARDESPOT
 
 file_contents = readstring(@__FILE__())
 
-# @everywhere begin
-begin
+@everywhere begin
+# begin
     using POMDPs
     using POMDPToolbox
     using ContinuousPOMDPTreeSearchExperiments
@@ -29,7 +29,9 @@ begin
     using BasicPOMCP
     using ARDESPOT
 
-    N = 1
+    N = 1000
+    K = 5000
+    T_max = 10.0
     P = typeof(gen_lasertag(rng=MersenneTwister(18)))
 
     solvers = Dict{String, Union{Policy, Solver}}(
@@ -39,7 +41,8 @@ begin
         "ardespot" => begin
             DESPOTSolver(lambda=0.0,
                          max_trials=1_000_000,
-                         T_max=5.0,
+                         T_max=T_max,
+                         K=K,
                          bounds=LaserBounds{P}(),
                          default_action=nogap_tag,
                          rng=MersenneTwister(4))
@@ -52,8 +55,9 @@ begin
                                 LaserBounds{P},
                                 DESPOT.MersenneStreamArray}(
                 bounds=LaserBounds{P}(),
-                time_per_move=5.0,
+                time_per_move=T_max,
                 max_trials=1_000_000,
+                n_particles=K,
                 random_streams=DESPOT.MersenneStreamArray(MersenneTwister(4)),
                 next_state=LTState([-1,-1],[-1,-1], false)
             )
@@ -61,14 +65,16 @@ begin
     )
 end
 
+@show K
 @show N
+@show T_max
 
 rdict = Dict{String, Any}()
 for (k,sol) in solvers
     prog = Progress(N, desc="Simulating...")
     @show k 
-    # rewards = pmap(prog, 1:N) do i
-    rewards = map(1:N) do i
+    rewards = pmap(prog, 1:N) do i
+    # rewards = map(1:N) do i
         pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
         if isa(sol,Solver)
             p = solve(deepcopy(sol), pomdp)

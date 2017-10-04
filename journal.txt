@@ -1,3 +1,143 @@
+Wed 04 Oct 2017 02:05:38 PM PDT
+
+TEST: does lambda decrease performance with MDP/TRIVIAL
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype TRIVIAL
+Will eventually write to data/cpp_run_Wed_04_Oct_14_01.txt...
+using args -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype TRIVIAL
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/0.1s  
+Average total discounted reward (stderr) = -10.781712 (0.141706)
+
+Tue 03 Oct 2017
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 10
+Will eventually write to data/cpp_run_Tue_03_Oct_15_50.txt...
+using args -n 500 -t 10
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/1.7s  
+Average total discounted reward (stderr) = -8.720817 (0.128947)
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 5000 -t 10
+Will eventually write to data/cpp_run_Tue_03_Oct_13_39.txt...
+using args -n 5000 -t 10
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/2.1s  
+Average total discounted reward (stderr) = -8.842181 (0.136431)
+
+Tue 03 Oct 2017 01:39:29 PM PDT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 100 -t 0.2
+Will eventually write to data/cpp_run_Tue_03_Oct_13_33.txt...
+using args -n 100 -t 0.2
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/0.1s  
+Average total discounted reward (stderr) = -9.398212 (0.126560)
+
+Tue 03 Oct 2017 01:32:51 PM PDT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1
+Will eventually write to data/cpp_run_Tue_03_Oct_13_07.txt...
+using args -n 500 -t 1
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/0.4s  
+Average total discounted reward (stderr) = -8.566343 (0.131037)
+
+
+Tue 03 Oct 2017 12:03:51 PM PDT
+
+with -n 5000 -t 10
+cpp_run_Mon_02_Oct_20_20
+rewards: -9.017 +/- 0.133
+
+with -n 500 -t 1
+
+Mon 02 Oct 2017 01:14:06 PM PDT
+
+Trying to increase the max time with K
+
+K = 5000
+N = 1000
+T_max = 10.0
+k = "ardespot"
+Simulating...100%|██████████████████████████████████████| Time: 0:23:36
+mean(rewards) = -11.730302144935402
+std(rewards) / sqrt(N) = 0.20165559476130868
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:42
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:49:44
+mean(rewards) = -11.699963803538598
+std(rewards) / sqrt(N) = 0.20202869275535995
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/despot_comparison_run_Monday_2_Oct_14_35.jld...
+
+K = 500
+N = 1000
+T_max = 1.0
+k = "ardespot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:54
+mean(rewards) = -11.02352406445708
+std(rewards) / sqrt(N) = 0.19018357382631232
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:43
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:02:05
+mean(rewards) = -11.16220935441867
+std(rewards) / sqrt(N) = 0.19411016062998934
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/despot_comparison_run_Mond
+ay_2_Oct_13_11.jld...
+done.
+
+
+Mon 02 Oct 2017 01:01:55 PM PDT
+
+Ok, need to run c++ despot with k=5000 and time = 10 sec?
+Should probably parallelize
+
+Mon 02 Oct 2017 11:37:59 AM PDT
+
+lolwut
+
+K = 5000
+N = 1000
+k = "ardespot"
+Simulating...100%|██████████████████████████████████████| Time: 0:20:05
+mean(rewards) = -11.730302144935402
+std(rewards) / sqrt(N) = 0.20165559476130868
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:42
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:44:27
+mean(rewards) = -11.773622775128977
+std(rewards) / sqrt(N) = 0.20137185094246154
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/despot_comparison_run_Monday_2_Oct_12_53.jld...
+done.
+
+
+Despot comparison at K=500
+
+N = 1000
+k = "ardespot"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:54
+mean(rewards) = -11.02352406445708
+std(rewards) / sqrt(N) = 0.19018357382631232
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:43
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:02:04
+mean(rewards) = -11.09346871146992
+std(rewards) / sqrt(N) = 0.19182739340444913
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/despot_comparison_run_Monday_2_Oct_11_35.jld...
+done.
+
 Fri 29 Sep 2017 09:36:08 AM PDT
 
 At 10 it is worse
