@@ -1,6 +1,33 @@
+Thu 05 Oct 2017 10:02:18 AM PDT
+
+Whoah - this works really well!!
+Does the random policy also include random tags??
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1.0 -p 0.01 --ubtype MDP --lbtype RANDOM
+Will eventually write to data/cpp_run_Thu_05_Oct_09_16.txt...
+using args -n 500 -t 1.0 -p 0.01 --ubtype MDP --lbtype RANDOM
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/0.4s  
+Average total discounted reward (stderr) = -8.493163 (0.130435)
+
+
+Wed 04 Oct 2017 03:45:22 PM PDT
+
+Ok, so to make something compelling, we have to implement the good bounds exactly, which means understanding exactly how this works.
+Then we need to make a harder continuous problem
+also speed tests
+
 Wed 04 Oct 2017 02:05:38 PM PDT
 
 TEST: does lambda decrease performance with MDP/TRIVIAL
+ANSWER: lolwut. yes.
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1.0 -p 0.01 --ubtype MDP --lbtype TRIVIAL
+Will eventually write to data/cpp_run_Wed_04_Oct_14_43.txt...
+using args -n 500 -t 1.0 -p 0.01 --ubtype MDP --lbtype TRIVIAL
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:56/1142/100%/1.0s ^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^local:0/2000/100%/1.0s  ^[[3~^[[3~[B^[[B^[[B^[[B[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B
+Average total discounted reward (stderr) = -14.074241 (0.191560)
 
 zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype TRIVIAL
 Will eventually write to data/cpp_run_Wed_04_Oct_14_01.txt...
@@ -8,6 +35,14 @@ using args -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype TRIVIAL
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 local:0/2000/100%/0.1s  
 Average total discounted reward (stderr) = -10.781712 (0.141706)
+
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ bash cpp/run.sh 2000 -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype RANDOM
+Will eventually write to data/cpp_run_Wed_04_Oct_14_08.txt...
+using args -n 500 -t 1.0 -p 0.0 --ubtype MDP --lbtype RANDOM
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+local:0/2000/100%/0.6s  [[3~
+Average total discounted reward (stderr) = -10.475910 (0.136797)
 
 Tue 03 Oct 2017
 
