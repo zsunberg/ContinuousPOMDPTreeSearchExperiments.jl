@@ -17,6 +17,7 @@ import DESPOT
 using ARDESPOT
 using QMDP
 using MCTS
+using DiscreteValueIteration
 
 using DataFrames
 using DataArrays
@@ -44,6 +45,8 @@ export
     LaserBounds,
     InevitableInit,
     RootToNextMLFirst,
+    ModeMDP,
+    ModeMDPSolver,
     nogap_tag,
 
     Sim,

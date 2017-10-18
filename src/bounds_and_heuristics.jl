@@ -144,3 +144,17 @@ function MCTS.next_action(gen::RootToNextMLFirst, p::AODiscreteVDPTagPOMDP, b, n
         return rand(gen.rng, actions(p))
     end
 end
+
+struct ModeMDP <: Policy 
+    vi::ValueIterationPolicy
+end
+
+struct ModeMDPSolver <: Solver
+    vi::ValueIterationSolver
+end
+
+ModeMDPSolver(;kwargs...) = ModeMDPSolver(ValueIterationSolver(;kwargs...))
+
+POMDPs.solve(sol::ModeMDPSolver, pomdp::POMDP) = ModeMDP(solve(sol.vi, pomdp))
+
+POMDPs.action(p::ModeMDP, b) = action(p.vi, mode(b))

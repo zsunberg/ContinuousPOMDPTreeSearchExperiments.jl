@@ -4,6 +4,7 @@ using POMDPs
 POMDPs.add("QMDP")
 POMDPs.add("POMCPOW")
 POMDPs.add("DESPOT")
+POMDPs.add("DiscreteValueIteration")
 
 try Pkg.clone("https://github.com/slundberg/PmapProgressMeter.jl.git") end
 
