@@ -28,19 +28,19 @@ file_contents = readstring(@__FILE__())
     using BasicPOMCP
     using ARDESPOT
 
-    N = 2000
+    N = 1000
     n = 1_000_000
     P = typeof(gen_lasertag(rng=MersenneTwister(18)))
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
-        #=
         "pomcpow" => begin
             # ro = MoveTowards()
-            solver = POMCPOWSolver(tree_queries=n, #500_000
+            solver = POMCPOWSolver(tree_queries=1_000_000_000, #500_000
                                    criterion=MaxUCB(40.0),
                                    final_criterion=MaxTries(),
                                    max_depth=100,
+                                   max_time=2.0,
                                    enable_action_pw=false,
                                    # k_action=4.0,
                                    # alpha_action=1/8,
@@ -55,7 +55,6 @@ file_contents = readstring(@__FILE__())
                                   )
             solver
         end,
-        =#
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
@@ -66,20 +65,18 @@ file_contents = readstring(@__FILE__())
 
         # "random" => RandomSolver(rng=MersenneTwister(4)),
 
-        #=
         "despot" => begin
-            DESPOTSolver(lambda=0.0,
-                         K=50,
+            DESPOTSolver(lambda=0.01,
+                         K=500,
                          max_trials=1_000_000,
-                         T_max=5.0,
+                         T_max=2.0,
                          bounds=LaserBounds{P}(),
+                         default_action=NoGapTag(),
+                         bounds_warnings=false,
                          rng=MersenneTwister(4))
         end,
-        =#
 
         "qmdp" => QMDPSolver(max_iterations=1000),
-
-        "mode_mdp" => ModeMDPSolver(max_iterations=1000),
 
         #=
         "pomcp" => POMCPSolver(tree_queries=n,
@@ -93,10 +90,10 @@ file_contents = readstring(@__FILE__())
 end
 
 @show N
-if haskey(solvers, "despot")
-    @show solvers["despot"].lambda
-    @show solvers["despot"].K
-end
+@show solvers["despot"].lambda
+@show solvers["despot"].K
+@show solvers["despot"].T_max
+@show solvers["pomcpow"].max_time
 
 rdict = Dict{String, Any}()
 for (k,sol) in solvers

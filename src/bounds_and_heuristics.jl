@@ -1,85 +1,80 @@
 type LaserBounds{P<:LaserTagPOMDP}
     ubp::QMDPPolicy{P, Int}
+    lbp::RandomPolicy
+    max_depth::Int
     lb_not_same::Float64
 
     LaserBounds{P}() where P = new()
-    LaserBounds{P}(p, lb) where P = new(p, lb)
 end
 
+#=
 function LaserBounds(p::LaserTagPOMDP)
     sol = QMDPSolver(max_iterations=1000)
     pol = solve(sol, p)
     lb_not_same = -p.step_cost/(1-discount(p))
     return LaserBounds{typeof(p)}(pol, lb)
 end
+=#
 
 function bounds(l::LaserBounds, p::LaserTagPOMDP, b::ScenarioBelief)
     ps = particles(b)
     if !all(isterminal(p, s) for s in ps) && !isnull(previous_obs(b))
         if get(previous_obs(b)) == LaserTag.D_SAME_LOC
-            if !all(!isterminal(p, s) && s.robot==s.opponent for s in ps)
-                for s in ps
-                    @show s
-                    @show isterminal(p,s)
-                    @show s.robot
-                    @show s.opponent
-                end
-            end
             @assert all(!isterminal(p, s) && s.robot==s.opponent for s in ps)
         else
-            if !any(isterminal(p, s) || s.robot!=s.opponent for s in ps)
-                for s in ps
-                    @show s
-                    @show isterminal(p,s)
-                    @show s.robot
-                    @show s.opponent
-                end
-            end
             @assert any(isterminal(p, s) || s.robot!=s.opponent for s in ps)
         end
     end
-    return bounds(l, p, ps)
+    steps = l.max_depth-b.depth
+    lb = ARDESPOT.branching_sim(p, l.lbp, b, steps)/length(b.scenarios)
+    return bounds(l, p, ps, lb)
 end
 
-function bounds(l::LaserBounds, p::LaserTagPOMDP, particles)
+function bounds(l::LaserBounds, p::LaserTagPOMDP, particles, provided_lb=nothing)
     if all(isterminal(p, s) for s in particles)
         lb = 0.0
     elseif all(!isterminal(p, s) && s.robot==s.opponent for s in particles)
         lb = l.ubp.pomdp.tag_reward
+    elseif !isa(provided_lb, Void)
+        lb = provided_lb
     elseif length(particles) == 1
         lb = state_value(l.ubp, first(particles))
     else
         lb = l.lb_not_same
     end
+
     vsum = 0.0
     for s in particles
         vsum += state_value(l.ubp, s)
     end
     ub = vsum/length(particles)
-    if lb > ub
-        warning("lb > ub")
-        @show particles
-    end
+    # if lb > ub
+    #     warn("lb > ub")
+    #     @show particles
+    # end
     return lb, vsum/length(particles)
 end
 
-function init_bounds(l::LaserBounds, p::LaserTagPOMDP)
+function init_bounds(l::LaserBounds, p::LaserTagPOMDP, max_depth::Int, rng=Base.GLOBAL_RNG)
     sol = QMDPSolver(max_iterations=1000)
     l.ubp = solve(sol, p)
+    l.lbp = solve(RandomSolver(rng), p)
+    l.max_depth = max_depth
     l.lb_not_same = -p.step_cost/(1-discount(p))
     return l
 end
 
-init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOTSolver) = init_bounds(l, p)
-DESPOT.init_bounds(l::LaserBounds, p::LaserTagPOMDP, ::DESPOT.DESPOTConfig) = init_bounds(l, p)
+init_bounds(l::LaserBounds, p::LaserTagPOMDP, s::DESPOTSolver) = init_bounds(l, p, s.D, s.rng)
+DESPOT.init_bounds(l::LaserBounds, p::LaserTagPOMDP, c::DESPOT.DESPOTConfig) = init_bounds(l, p, c.search_depth)
 
 function DESPOT.bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOT.DESPOTParticle{S}}, ::DESPOT.DESPOTConfig)
     return bounds(l, p, p.state for p in b)
 end
 
-function DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c)
-    # @show collect(p.state for p in particles)
-    if all(p.state.robot==p.state.opponent for p in particles)
+DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c) = default_action(particles)
+
+function default_action(particles)
+    if all(s.robot==s.opponent for s in particles)
         return LaserTag.TAG_ACTION
     else
         warn("non-tag default")
@@ -87,10 +82,25 @@ function DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c)
     end
 end
 
-function nogap_tag(b, ng::NoGap)
-    @assert all(!s.terminal && s.robot==s.opponent for s in iterator(b))
-    # @assert ng.value == l.ubp.pomdp.tag_reward
-    return LaserTag.TAG_ACTION
+struct NoGapTag end
+
+function ARDESPOT.default_action(ngt::NoGapTag, b, ex)
+    if isa(ex, NoGap)
+        return default_action(particles(b))
+    else
+        rethrow(ex)
+    end
+    return -1
+end
+
+function nogap_tag(b, ex)
+    if isa(ex, NoGap)
+        @assert all(!s.terminal && s.robot==s.opponent for s in iterator(b))
+        # @assert ng.value == l.ubp.pomdp.tag_reward
+        return LaserTag.TAG_ACTION
+    else
+        rethrow(ex)
+    end
 end
 
 

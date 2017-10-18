@@ -45,6 +45,7 @@ export
     LaserBounds,
     InevitableInit,
     RootToNextMLFirst,
+    NoGapTag,
     ModeMDP,
     ModeMDPSolver,
     nogap_tag,
