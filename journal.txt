@@ -1,3 +1,27 @@
+Tue 17 Oct 2017 04:54:10 PM PDT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 lasertag/discrete.jl 
+N = 1000
+solvers["despot"].lambda = 0.01
+solvers["despot"].K = 500
+solvers["despot"].T_max = 2.0
+solvers["pomcpow"].max_time = 2.0
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:59
+mean(rewards) = -10.915843898604315
+std(rewards) / sqrt(N) = 0.1959624873943656
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:23:44
+mean(rewards) = -10.554632699622246
+std(rewards) / sqrt(N) = 0.16924298684972508
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:22:46
+mean(rewards) = -8.670399408477682
+std(rewards) / sqrt(N) = 0.18508926759230465
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/laser_discrete_run_Tuesday_17_Oct_15_59.jld...
+done.
+
+
 Thu 05 Oct 2017 10:02:18 AM PDT
 
 Whoah - this works really well!!

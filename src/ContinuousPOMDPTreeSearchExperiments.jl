@@ -44,6 +44,7 @@ export
     LaserBounds,
     InevitableInit,
     RootToNextMLFirst,
+    NoGapTag,
     nogap_tag,
 
     Sim,
