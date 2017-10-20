@@ -49,6 +49,7 @@ export
     ModeMDP,
     ModeMDPSolver,
     nogap_tag,
+    VDPUpper,
 
     Sim,
     # SimQueue,

@@ -168,3 +168,13 @@ ModeMDPSolver(;kwargs...) = ModeMDPSolver(ValueIterationSolver(;kwargs...))
 POMDPs.solve(sol::ModeMDPSolver, pomdp::POMDP) = ModeMDP(solve(sol.vi, pomdp))
 
 POMDPs.action(p::ModeMDP, b) = action(p.vi, mode(b))
+
+struct VDPUpper end
+
+function ARDESPOT.ubound(ub::VDPUpper, pomdp::POMDP, b::ScenarioBelief)
+    if all(isterminal(pomdp, s) for s in particles(b))
+        return 0.0
+    else
+        return mdp(cproblem(pomdp)).tag_reward
+    end
+end
