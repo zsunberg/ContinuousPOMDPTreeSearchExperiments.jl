@@ -9,7 +9,7 @@ using VDPTag
 using DataFrames
 using ARDESPOT
 
-N = 1
+N = 100
 
 pomdp = VDPTagPOMDP()
 @show mdp(pomdp).tag_radius
@@ -69,9 +69,9 @@ solvers = Dict{String, Union{Solver,Policy}}(
 )
 
 alldata = DataFrame()
-# for n_angles_float in logspace(0.5, 3, 6)
+for n_angles_float in logspace(0.5, 3, 6)
 # for n_obs_angles_float in logspace(0.5, 3, 6)
-for n_angles_float in [10.0]
+# for n_angles_float in [10.0]
     n_angles = round(Int, n_angles_float)
     for (k, solver) in solvers
         println("$k ($n_angles)")
