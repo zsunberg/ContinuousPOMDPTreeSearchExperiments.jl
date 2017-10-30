@@ -1,3 +1,52 @@
+Fri 20 Oct 2017 02:30:45 PM PDT
+
+This one is with K=100
+
+pomcpow (10, 10)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:58
+reward: 19.824 ±  0.875
+despot (10, 10)
+Simulating...100%|██████████████████████████████████████| Time: 0:02:02
+reward:  5.328 ±  0.936
+pomcp (10, 10)
+Simulating...100%|██████████████████████████████████████| Time: 0:02:05
+reward:  0.833 ±  0.840
+pomcpow (32, 32)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:42
+reward: 34.254 ±  0.902
+despot (32, 32)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:40
+reward: 42.110 ±  0.705
+pomcp (32, 32)
+Simulating...100%|██████████████████████████████████████| Time: 0:02:17
+reward: -6.254 ±  0.672
+pomcpow (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:42
+reward: 35.776 ±  0.888
+despot (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:02:11
+reward: 22.899 ±  0.794
+pomcp (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:01:45
+
+Fri 20 Oct 2017 02:30:13 PM PDT
+
+[Below is with K=500 so it exceeds the 0.1 time limit]
+
+Fri 20 Oct 2017 11:03:27 AM PDT
+
+Oh, shoot...
+
+pomcpow (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:40
+reward: 38.094 ±  0.826
+despot (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:04
+reward: 51.876 ±  0.455
+pomcp (100, 100)
+Simulating...100%|██████████████████████████████████████| Time: 0:01:44
+reward:  6.676 ±  0.774
+
 Tue 17 Oct 2017 04:54:10 PM PDT
 
 zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 lasertag/discrete.jl 

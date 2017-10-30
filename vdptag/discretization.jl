@@ -12,8 +12,8 @@ using ARDESPOT
 N = 1000
 
 pomdp = VDPTagPOMDP()
-@show mdp(pomdp).tag_radius
-@show mdp(pomdp).tag_terminate
+
+@show max_time = 0.1
 
 file_contents = readstring(@__FILE__())
 
@@ -22,11 +22,11 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "pomcpow" => begin
         rng = MersenneTwister(13)
         ro = ToNextMLSolver(rng)
-        solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(40.0),
+        solver = POMCPOWSolver(tree_queries=100_000_000,
+                               criterion=MaxUCB(100.0),
                                final_criterion=MaxTries(),
                                max_depth=10,
-                               max_time=0.1,
+                               max_time=max_time,
                                k_action=8.0,
                                alpha_action=1/20,
                                k_observation=4.0,
@@ -44,7 +44,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = ToNextMLSolver(rng)
         POMCPSolver(max_depth=10,
-                    max_time=0.1,
+                    max_time=max_time,
                     c=40.0,
                     tree_queries=typemax(Int),
                     default_action=1,
@@ -58,20 +58,20 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = ToNextMLSolver(rng)
         b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
         DESPOTSolver(lambda=0.01,
-                     K=500,
+                     K=100,
                      D=10,
                      max_trials=1_000_000,
-                     T_max=0.1,
+                     T_max=max_time,
                      bounds=b,
-                     random_source=MemorizingSource(500, 10, rng, min_reserve=8),
+                     random_source=MemorizingSource(500, 10, rng, min_reserve=12),
                      rng=rng)
     end
 )
 
 alldata = DataFrame()
-for n_angles_float in logspace(0.5, 3, 6)
+for n_angles_float in logspace(0.5, 2.5, 5)
 # for n_obs_angles_float in logspace(0.5, 3, 6)
-# for n_angles_float in [10.0]
+# for n_angles_float in [100.0]
     n_obs_angles_float = n_angles_float
     n_angles = round(Int, n_angles_float)
     n_obs_angles = round(Int, n_obs_angles_float)
@@ -102,8 +102,8 @@ for n_angles_float in logspace(0.5, 3, 6)
             push!(sims, sim)
         end
 
-        # data = run_parallel(sims)
-        data = run(sims)
+        data = run_parallel(sims)
+        # data = run(sims)
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
@@ -113,7 +113,8 @@ end
 # end
 
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "data", "vdp_discretization_$(Dates.format(now(), "E_d_u_HH_MM"))")
+# filename = joinpath("tmp", "vdp_discretization_$(Dates.format(now(), "E_d_u_HH_MM"))")
 println("saving to $filename...")
 writetable(filename*".csv", alldata)
-write(filename*"_file.jl, file_contents)
+write(filename*"_file.jl", file_contents)
 println("done.")
