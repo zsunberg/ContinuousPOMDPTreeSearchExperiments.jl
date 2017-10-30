@@ -35,7 +35,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                check_repeat_act=true,
                                check_repeat_obs=true,
                                next_action=RootToNextMLFirst(rng),
-                               default_action=1,
+                               # default_action=1,
                                rng=rng
                               )
     end,
@@ -47,7 +47,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     max_time=0.1,
                     c=40.0,
                     tree_queries=typemax(Int),
-                    default_action=1,
+                    # default_action=1,
                     estimate_value=FORollout(ro),
                     rng=rng
                    )
@@ -99,8 +99,8 @@ for n_angles_float in logspace(0.5, 3, 6)
             push!(sims, sim)
         end
 
-        # data = run_parallel(sims)
-        data = run(sims)
+        data = run_parallel(sims)
+        # data = run(sims)
 
         rs = data[:reward]
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
