@@ -64,31 +64,47 @@ default_process(s::Sim, hist::SimHistory) = default_process(s, discounted_reward
 
 metadata_as_pairs(s::Sim) = convert(Array{Any}, collect(s.metadata))
 
-#=
-struct SimQueue
-    process::Function # takes in a Sim and the result and outputs an associative with symbols as keys
-    queue::Vector{Sim}
-end
-
-SimQueue(process::Function=default_process) = SimQueue(process, Sim[])
-
-Base.length(q::SimQueue) = length(q.queue)
-
-function Base.push!(q::SimQueue, sim::Sim)
-    push!(q.queue, sim)
-    return q
-end
-=#
 
 run_parallel(queue::AbstractVector) = run_parallel(default_process, queue)
 
 function run_parallel(process::Function, queue::AbstractVector;
                       progress=Progress(length(queue), desc="Simulating..."))
 
+    #=
     frame_lines = pmap(progress, queue) do sim
         result = simulate(sim)
         return process(sim, result)
     end
+    =#
+
+    # based on the simple implementation of pmap here: https://docs.julialang.org/en/latest/manual/parallel-computing
+    np = nprocs()
+    n = length(queue)
+    i = 1
+    prog = 0
+    frame_lines = []
+    @sync begin 
+        for p in 1:np
+            if np == 1 || p != myid()
+                @async begin
+                    while true
+                        i += 1
+                        if i > n
+                            break
+                        end
+                        frame_lines[i] = remotecall_fetch(p, queue[i]) do sim
+                            result = simulate(sim)
+                            return process(sim, result)
+                        end
+                        if progress isa Progress
+                            update!(progress, prog+=1)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     return create_dataframe(frame_lines)
 end
 
