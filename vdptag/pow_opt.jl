@@ -11,8 +11,7 @@ using ARDESPOT
 using Distributions
 using Query
 
-#=
-function gen_syms(x::Vector{Float64}, n, k)
+function gen_sims(x::Vector{Float64}, n, k)
     c = max(0.0, x[1])
     k_act = max(1.0, x[2])
     inv_alpha_act = max(0.1, x[3])
@@ -62,8 +61,8 @@ function gen_syms(x::Vector{Float64}, n, k)
     
     return sims
 end
-=#
 
+#=
 gen_syms(x::Vector{Float64}, n, k) = Any[k=>copy(x) for i in 1:n]
 
 function run_parallel(sims::Vector{Any})
@@ -75,13 +74,14 @@ function run_parallel(sims::Vector{Any})
     end
     return DataFrame(k=ks, reward=rewards)
 end
+=#
 
 start_mean = [40.0, 8.0, 20.0, 4.0, 20.0]
 start_cov = diagm([40.0^2, 10.0^2, 20.0^2, 10.0^2, 20.0^2])
 d = MvNormal(start_mean, start_cov)
 rng = MersenneTwister(15)
-K = 200
-m = 50
+K = 100
+m = 30
 
 for i in 1:100
     sims = []
@@ -89,7 +89,7 @@ for i in 1:100
     for k in 1:K
         p = rand(d)
         params[k] = p
-        k_sims = gen_syms(p, 10, k)
+        k_sims = gen_sims(p, 2, k)
         append!(sims, k_sims)
     end
     results = run_parallel(sims)
@@ -115,4 +115,5 @@ for i in 1:100
     end
     @show mean(d)
     @show eigvals(cov(d))
+    @show eigvecs(cov(d))
 end

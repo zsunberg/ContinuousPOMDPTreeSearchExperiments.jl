@@ -82,17 +82,18 @@ function run_parallel(process::Function, queue::AbstractVector;
     n = length(queue)
     i = 1
     prog = 0
-    frame_lines = []
+    frame_lines = Vector{Any}(n)
+    nextidx() = (idx=i; i+=1; idx)
     @sync begin 
         for p in 1:np
             if np == 1 || p != myid()
                 @async begin
                     while true
-                        i += 1
-                        if i > n
+                        idx = nextidx()
+                        if idx > n
                             break
                         end
-                        frame_lines[i] = remotecall_fetch(p, queue[i]) do sim
+                        frame_lines[idx] = remotecall_fetch(p, queue[idx]) do sim
                             result = simulate(sim)
                             return process(sim, result)
                         end
