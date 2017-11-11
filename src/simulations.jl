@@ -84,6 +84,7 @@ function run_parallel(process::Function, queue::AbstractVector;
     prog = 0
     frame_lines = Vector{Any}(n)
     nextidx() = (idx=i; i+=1; idx)
+    prog_lock = ReentrantLock()
     @sync begin 
         for p in 1:np
             if np == 1 || p != myid()
@@ -98,7 +99,9 @@ function run_parallel(process::Function, queue::AbstractVector;
                             return process(sim, result)
                         end
                         if progress isa Progress
+                            lock(prog_lock)
                             update!(progress, prog+=1)
+                            unlock(prog_lock)
                         end
                     end
                 end

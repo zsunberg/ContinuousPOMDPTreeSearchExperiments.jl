@@ -9,7 +9,6 @@ using VDPTag
 using DataFrames
 using ARDESPOT
 using Distributions
-using Query
 
 function gen_sims(x::Vector{Float64}, n, k)
     c = max(0.0, x[1])
@@ -33,7 +32,8 @@ function gen_sims(x::Vector{Float64}, n, k)
                            check_repeat_act=false,
                            check_repeat_obs=false,
                            next_action=RootToNextMLFirst(rng),
-                           default_action=ReportWhenUsed(1),
+                           # default_action=ReportWhenUsed(TagAction(false, 0.0)),
+                           default_action=TagAction(false, 0.0),
                            rng=rng
                           )
 
@@ -76,12 +76,13 @@ function run_parallel(sims::Vector{Any})
 end
 =#
 
-start_mean = [40.0, 8.0, 20.0, 4.0, 20.0]
-start_cov = diagm([40.0^2, 10.0^2, 20.0^2, 10.0^2, 20.0^2])
+# start_mean = [40.0, 8.0, 20.0, 4.0, 20.0]
+start_mean = [65.0, 13.0, 8.0, 2.0, 33.0]
+start_cov = diagm([40.0^2, 6.0^2, 10.0^2, 6.0^2, 10.0^2])
 d = MvNormal(start_mean, start_cov)
 rng = MersenneTwister(15)
-K = 100
-m = 30
+K = 400
+m = 50
 
 for i in 1:100
     sims = []
@@ -89,7 +90,7 @@ for i in 1:100
     for k in 1:K
         p = rand(d)
         params[k] = p
-        k_sims = gen_sims(p, 2, k)
+        k_sims = gen_sims(p, 40, k)
         append!(sims, k_sims)
     end
     results = run_parallel(sims)
@@ -113,6 +114,7 @@ for i in 1:100
             rethrow(ex)
         end
     end
+    println("iteration $i")
     @show mean(d)
     @show eigvals(cov(d))
     @show eigvecs(cov(d))
