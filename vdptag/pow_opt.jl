@@ -17,7 +17,7 @@ function gen_sims(x::Vector{Float64}, n, k)
     k_obs = max(1.0, x[4])
     inv_alpha_obs = max(0.1, x[5])
 
-    rng = Base.GLOBAL_RNG
+    rng = MersenneTwister(0)
     ro = ToNextMLSolver(rng)
     solver = POMCPOWSolver(tree_queries=10_000_000,
                            criterion=MaxUCB(c),
@@ -45,13 +45,13 @@ function gen_sims(x::Vector{Float64}, n, k)
         filter = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(10_000),
                                            0.05,
-                                           # MersenneTwister(i+90_000))            
-                                           MersenneTwister(rand(UInt32)))
+                                           MersenneTwister(i+10000*k))            
 
+        srand(planner, i+40000*k)
         sim = Sim(deepcopy(pomdp),
                   deepcopy(planner),
                   filter,
-                  rng=MersenneTwister(rand(UInt32)),
+                  rng=MersenneTwister(i+50_000*k),
                   max_steps=100,
                   metadata=Dict(:i=>i, :k=>k)
                  )
@@ -81,7 +81,7 @@ start_mean = [65.0, 13.0, 8.0, 2.0, 33.0]
 start_cov = diagm([40.0^2, 6.0^2, 10.0^2, 6.0^2, 10.0^2])
 d = MvNormal(start_mean, start_cov)
 rng = MersenneTwister(15)
-K = 400
+K = 200
 m = 50
 
 for i in 1:100
