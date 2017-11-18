@@ -1,6 +1,7 @@
+__precompile__(false)
 module ContinuousPOMDPTreeSearchExperiments
 
-using POMDPs
+importall POMDPs
 using BasicPOMCP
 using POMCPOW
 using Parameters
@@ -55,8 +56,15 @@ export
     # SimQueue,
     run_parallel,
     run,
-    metadata_as_pairs
+    metadata_as_pairs,
 
+    SimpleLightDark,
+    LDHeuristic,
+    LDHSolver
+
+
+
+include("simple_lightdark.jl")
 
 include("policies.jl")
 include("updaters.jl")
@@ -65,7 +73,7 @@ include("action_gen.jl")
 include("sr_filter.jl")
 include("bounds_and_heuristics.jl")
 
-include("simulations.jl")
+# include("simulations.jl")
 include("integration.jl")
 
 n_children(h::BeliefNode) = length(h.children)

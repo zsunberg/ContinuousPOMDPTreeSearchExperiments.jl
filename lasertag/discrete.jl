@@ -37,14 +37,14 @@ file_contents = readstring(@__FILE__())
         "pomcpow" => begin
             # ro = MoveTowards()
             solver = POMCPOWSolver(tree_queries=1_000_000_000, #500_000
-                                   criterion=MaxUCB(40.0),
+                                   criterion=MaxUCB(60.0),
                                    final_criterion=MaxTries(),
-                                   max_depth=100,
+                                   max_depth=90,
                                    max_time=2.0,
                                    enable_action_pw=false,
                                    # k_action=4.0,
                                    # alpha_action=1/8,
-                                   k_observation=4.0,
+                                   k_observation=2.0,
                                    alpha_observation=1/20,
                                    estimate_value=FOValue(ValueIterationSolver()),
                                    check_repeat_act=false,

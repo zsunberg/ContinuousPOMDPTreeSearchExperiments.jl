@@ -105,6 +105,15 @@ end
 
 reset_distribution(p::POMDP, b, a, o) = initial_state_distribution(p)
 
+function max_possible_weight(pomdp::SimpleLightDark, a, o)
+    return pdf(observation(pomdp, o), o)
+end
+
+function new_particle(p::SimpleLightDark, a, o, rng)
+    return clamp(round(Int, o + rand(rng, observation(p, o))), -p.radius, p.radius)
+end
+
+
 #=
 max_possible_weight(pomdp::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = 0.0
 
