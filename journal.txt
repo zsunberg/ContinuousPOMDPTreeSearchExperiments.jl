@@ -1,3 +1,34 @@
+Fri 17 Nov 2017 07:48:28 PM PST
+
+[ ] try pomcpow with better parameters
+[ ] 
+
+Tue 14 Nov 2017 10:35:54 PM PST
+
+Simple light-dark
+
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 20 = 20
+k = "heuristic_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:06
+reward: -12.400 ±  4.695
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:12
+reward: -77.450 ±  8.921
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:03
+reward: -74.250 ±  9.713
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:43
+reward:  3.650 ±  0.577
+k = "despot_0"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:07
+reward: -77.450 ±  8.921
+k = "heuristic_1"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: -12.400 ±  4.695
+
 Tue 07 Nov 2017 06:01:52 AM PST
 
 cross-entropy maximization

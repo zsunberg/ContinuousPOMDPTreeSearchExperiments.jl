@@ -10,8 +10,20 @@ struct POMDPSim <: Sim
     metadata::Dict{Symbol}
 end
 
-POMDPs.simulate(s::Sim) = simulate(s.simulator, s.pomdp, s.policy, s.updater, s.initial_belief, s.initial_state)
+struct MDPSim <: Sim
+    simulator::Simulator
+    mdp::MDP
+    policy::Policy
+    initial_state::Any
+    metadata::Dict{Symbol}
+end
 
+"""
+    Sim(p::POMDP, policy::Policy, metadata=Dict(:note=>"a note"))
+    Sim(p::POMDP, policy::Policy[, updater[, initial_belief[, initial_state]]]; kwargs...)
+
+Create a `Sim` object that represents a POMDP simulation.
+"""
 function Sim(pomdp::POMDP,
                     policy::Policy,
                     up=updater(policy),
@@ -31,14 +43,20 @@ function Sim(pomdp::POMDP,
     return POMDPSim(simulator, pomdp, policy, up, initial_belief, is, metadata)
 end
 
-struct MDPSim <: Sim
-    simulator::Simulator
-    mdp::MDP
-    policy::Policy
-    initial_state::Any
-    metadata::Dict{Symbol}
-end
+"""
+    Sim(p::MDP, policy::Policy, metadata=Dict(:note=>"a note"))
+    Sim(p::MDP, policy::Policy[, initial_state]; kwargs...)
 
+Create a `Sim` object that represents a MDP simulation.
+
+A vector of `Sim` objects can be executed with `run` or `run_parallel`.
+
+## Keyword Arguments
+- `rng::AbstractRNG=Base.GLOBAL_RNG`
+- `max_steps::Int=typemax(Int)`
+- `simulator::Simulator=HistoryRecorder(rng=rng, max_steps=max_steps)`
+- `metadata::Dict{Symbol}=Dict{Symbol, Any}()` a dictionary of metadata for the sim that will be recorded, e.g. `Dict(:solver_iterations=>500)`.
+"""
 function Sim(mdp::MDP,
              policy::Policy,
              initial_state=nothing;
@@ -56,6 +74,9 @@ function Sim(mdp::MDP,
     return MDPSim(simulator, mdp, policy, is, metadata)
 end
 
+POMDPs.simulate(s::POMDPSim) = simulate(s.simulator, s.pomdp, s.policy, s.updater, s.initial_belief, s.initial_state)
+POMDPs.simulate(s::MDPSim) = simulate(s.simulator, s.mdp, s.policy, s.initial_state)
+
 function default_process(s::Sim, r::Float64)
     stuff = metadata_as_pairs(s)
     return push!(stuff, :reward=>r)
@@ -63,7 +84,6 @@ end
 default_process(s::Sim, hist::SimHistory) = default_process(s, discounted_reward(hist))
 
 metadata_as_pairs(s::Sim) = convert(Array{Any}, collect(s.metadata))
-
 
 run_parallel(queue::AbstractVector) = run_parallel(default_process, queue)
 
@@ -115,11 +135,17 @@ end
 Base.run(queue::AbstractVector) = run(default_process, queue)
 
 function Base.run(process::Function, queue::AbstractVector; show_progress=true)
-
     lines = []
-    @showprogress for sim in queue
-        result = simulate(sim)
-        push!(lines, process(sim, result))
+    if show_progress
+        @showprogress for sim in queue
+            result = simulate(sim)
+            push!(lines, process(sim, result))
+        end
+    else
+        for sim in queue
+            result = simulate(sim)
+            push!(lines, process(sim, result))
+        end
     end
     return create_dataframe(lines)
 end
