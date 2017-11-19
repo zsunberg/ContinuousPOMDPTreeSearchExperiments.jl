@@ -11,7 +11,6 @@ using StaticArrays
 using POMDPToolbox
 using ParticleFilters
 using ControlSystems
-using Plots
 using Distributions
 using LaserTag
 import DESPOT
@@ -19,6 +18,7 @@ using ARDESPOT
 using QMDP
 using MCTS
 using DiscreteValueIteration
+using RecipesBase
 
 using DataFrames
 using DataArrays
