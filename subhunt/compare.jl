@@ -16,7 +16,7 @@ qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
-@show max_time = 1.0
+@show max_time = 10.0
 @show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -53,9 +53,25 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      # default_action=qp,
                      rng=rng)
     end,
+
+    "despot_5_01" => begin
+        rng = MersenneTwister(13)
+        b = IndependentBounds(DefaultPolicyLB(qp), 100.0, check_terminal=true)
+        dpomdp = DSubHuntPOMDP(pomdp, 5.0)
+        sol = DESPOTSolver(lambda=0.01,
+                     epsilon_0=0.0,
+                     K=1000,
+                     D=max_depth,
+                     max_trials=1_000_000,
+                     T_max=max_time,
+                     bounds=b,
+                     default_action=ReportWhenUsed(qp),
+                     rng=rng)
+        solve(sol, dpomdp)
+    end,
 )
 
-@show N=500
+@show N=1
 
 for (k, solver) in solvers
     @show k
@@ -80,8 +96,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    data = run_parallel(sims)
-    # data = run(sims)
+    # data = run_parallel(sims)
+    data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

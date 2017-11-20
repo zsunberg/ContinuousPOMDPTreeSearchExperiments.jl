@@ -56,7 +56,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     # default_action=ro,
+                     default_action=ReportWhenUsed(solve(ro, pomdp)),
                      rng=rng)
     end,
 
@@ -71,7 +71,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     # default_action=ro,
+                     default_action=ReportWhenUsed(solve(ro, pomdp)),
                      rng=rng)
     end,
 
