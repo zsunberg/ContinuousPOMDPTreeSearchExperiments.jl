@@ -1,3 +1,90 @@
+
+
+Sun 19 Nov 2017 08:13:42 AM PST
+
+Sweet! with K=1000, k=4, and alpha=1/10
+
+max_time = 10.0 = 10.0
+max_depth = 20 = 20
+N = 500 = 500
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:10:41
+reward: 25.369 ±  1.850
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:22
+reward: 27.339 ±  1.888
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:16
+reward: 80.111 ±  1.486
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:20:13
+reward: 43.446 ±  2.058
+
+Sun 19 Nov 2017 12:49:18 AM PST
+
+with p_aware_kill = 0.6, somewhat better
+
+max_time = 10.0 = 10.0
+max_depth = 20 = 20
+N = 500 = 500
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:10:41
+reward: 25.369 ±  1.850
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:22
+reward: 27.339 ±  1.888
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:16
+reward: 80.111 ±  1.486
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:20:13
+reward: 43.446 ±  2.058
+
+Sat 18 Nov 2017 11:23:36 PM PST
+
+First subhunt... shoot
+
+N = 500 = 500
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:49
+reward: 25.513 ±  1.851
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:22
+reward: 27.339 ±  1.888
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:17
+reward: 72.263 ±  1.751
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:02:37
+reward: 27.568 ±  1.895
+
+
+Fri 17 Nov 2017 09:16:24 PM PST
+
+N = 1000
+solvers["despot"].lambda = 0.01
+solvers["despot"].K = 500
+solvers["despot"].T_max = 1.0
+solvers["pomcpow"].max_time = 1.0
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:53
+mean(rewards) = -10.807104307124584
+std(rewards) / sqrt(N) = 0.1947013045198957
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:12:35
+mean(rewards) = -10.920345876333318
+std(rewards) / sqrt(N) = 0.16474969966372327
+k = "despot"
+Simulating...  1%|                                      |  ETA: 0:34:00WARNING: DESPOT's MemorizingSource
+ random number generator had to move the memory locations of the rngs 457 times. If this number was large
+, it may be affecting performance (profiling is the best way to tell).
+
+To suppress this warning, use MemorizingSource(..., move_warning=false).
+
+To reduce the number of moves, try using MemorizingSource(..., min_reserve=n) and increase n until the nu
+mber of moves is low.
+
+
 Fri 17 Nov 2017 07:48:28 PM PST
 
 [ ] try pomcpow with better parameters

@@ -8,8 +8,6 @@ using DiscreteValueIteration
 using QMDP
 using SubHunt
 
-@show max_time = 1.0
-@show max_depth = 20
 pomdp = SubHuntPOMDP()
 
 vs = ValueIterationSolver()
@@ -17,6 +15,9 @@ vp = solve(vs, pomdp, verbose=true)
 qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
+
+@show max_time = 1.0
+@show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => qp,
@@ -30,7 +31,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                max_depth=max_depth,
                                max_time=max_time,
                                enable_action_pw=false,
-                               k_observation=4.0,
+                               k_observation=1.0,
                                alpha_observation=1/10,
                                estimate_value=FOValue(vp),
                                check_repeat_obs=false,
@@ -41,11 +42,10 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "despot_01" => begin
         rng = MersenneTwister(13)
-        b = IndependentBounds(DefaultPolicyLB(qp), 101.0, check_terminal=true)
-        @show b.check_terminal
+        b = IndependentBounds(DefaultPolicyLB(qp), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.01,
                      epsilon_0=0.0,
-                     K=500,
+                     K=1000,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
@@ -55,7 +55,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 )
 
-@show N=1
+@show N=500
 
 for (k, solver) in solvers
     @show k
@@ -70,7 +70,7 @@ for (k, solver) in solvers
         filter = SIRParticleFilter(deepcopy(pomdp), 100_000, rng=MersenneTwister(i+90_000))            
 
         sim = Sim(deepcopy(pomdp),
-                  deepcopy(planner),
+                  planner,
                   filter,
                   rng=MersenneTwister(i+70_000),
                   max_steps=100,

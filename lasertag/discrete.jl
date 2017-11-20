@@ -34,13 +34,14 @@ file_contents = readstring(@__FILE__())
 
     solvers = Dict{String, Union{Policy, Solver}}(
 
+        #=
         "pomcpow" => begin
             # ro = MoveTowards()
             solver = POMCPOWSolver(tree_queries=1_000_000_000, #500_000
                                    criterion=MaxUCB(60.0),
                                    final_criterion=MaxTries(),
                                    max_depth=90,
-                                   max_time=2.0,
+                                   max_time=1.0,
                                    enable_action_pw=false,
                                    # k_action=4.0,
                                    # alpha_action=1/8,
@@ -55,6 +56,7 @@ file_contents = readstring(@__FILE__())
                                   )
             solver
         end,
+        =#
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
@@ -69,14 +71,15 @@ file_contents = readstring(@__FILE__())
             DESPOTSolver(lambda=0.01,
                          K=500,
                          max_trials=1_000_000,
-                         T_max=2.0,
+                         T_max=1.0,
                          bounds=LaserBounds{P}(),
                          default_action=NoGapTag(),
                          bounds_warnings=false,
+                         random_source=MemorizingSource(500, 90, MersenneTwister(5), min_reserve=10)
                          rng=MersenneTwister(4))
         end,
 
-        "qmdp" => QMDPSolver(max_iterations=1000),
+        # "qmdp" => QMDPSolver(max_iterations=1000),
 
         #=
         "pomcp" => POMCPSolver(tree_queries=n,
@@ -101,14 +104,14 @@ for (k,sol) in solvers
     @show k 
     rewards = pmap(prog, 1:N) do i
     # rewards = map(1:N) do i
-        pomdp = gen_lasertag(rng=MersenneTwister(i+600_000))
+        pomdp = gen_lasertag(rng=MersenneTwister(i+700_000))
         if isa(sol,Solver)
             p = solve(deepcopy(sol), pomdp)
         else
             p = sol
         end
         hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i))
-        up_rng = MersenneTwister(i+100_000)
+        up_rng = MersenneTwister(i+140_000)
         up = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
         hist = simulate(hr, pomdp, p, up)
         discounted_reward(hist)
