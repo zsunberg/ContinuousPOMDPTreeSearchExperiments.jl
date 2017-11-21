@@ -23,6 +23,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => qp,
     "ping_first" => PingFirst(qp),
 
+    #=
     "pomcpow" => begin
         rng = MersenneTwister(13)
         solver = POMCPOWSolver(tree_queries=10_000_000,
@@ -53,9 +54,26 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      # default_action=qp,
                      rng=rng)
     end,
+    =#
 
+    "pomcpdpw" => begin
+        rng = MersenneTwister(13)
+        solver = PDPWSolver(tree_queries=10_000_000,
+                            c=100.0,
+                            max_depth=max_depth,
+                            max_time=max_time,
+                            enable_action_pw=false,
+                            k_observation=1.0,
+                            alpha_observation=1/10,
+                            estimate_value=FOValue(vp),
+                            check_repeat_obs=false,
+                            # default_action=ReportWhenUsed(-1),
+                            rng=rng
+                           )
+    end,
 )
 
+#=
 for d in [0.1, 0.5, 1.0, 2.0, 3.0, 5.0, 10.0, 20.0]
     solvers["despot_$(d)_01"] = begin
         rng = MersenneTwister(13)
@@ -73,9 +91,9 @@ for d in [0.1, 0.5, 1.0, 2.0, 3.0, 5.0, 10.0, 20.0]
         solve(sol, dpomdp)
     end
 end
+=#
 
-
-@show N=500
+@show N=1
 
 for (k, solver) in solvers
     @show k
@@ -104,8 +122,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    data = run_parallel(sims)
-    # data = run(sims)
+    # data = run_parallel(sims)
+    data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

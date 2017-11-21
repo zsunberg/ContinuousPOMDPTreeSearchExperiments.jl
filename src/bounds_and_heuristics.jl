@@ -145,15 +145,16 @@ end
 
 MCTS.next_action(gen::RootToNextMLFirst, p::GenerativeBeliefMDP, b, node) = next_action(gen, p.pomdp, b, node)
 
-function MCTS.next_action(gen::RootToNextMLFirst, p::VDPTag.DiscreteVDPTagProblem, b, node)
-    if isroot(node) && n_children(node) < 1
-        cpc = ParticleCollection([convert_s(state_type(cproblem(p)), s, p) for s in b.particles])
-        ca = next_action(gen, cproblem(p), cpc, node)
-        return convert_a(action_type(p), ca, p)
-    else
-        return rand(gen.rng, actions(p))
-    end
-end
+# XXXD
+# function MCTS.next_action(gen::RootToNextMLFirst, p::VDPTag.DiscreteVDPTagProblem, b, node)
+#     if isroot(node) && n_children(node) < 1
+#         cpc = ParticleCollection([convert_s(state_type(cproblem(p)), s, p) for s in b.particles])
+#         ca = next_action(gen, cproblem(p), cpc, node)
+#         return convert_a(action_type(p), ca, p)
+#     else
+#         return rand(gen.rng, actions(p))
+#     end
+# end
 
 struct ModeMDP <: Policy 
     vi::ValueIterationPolicy

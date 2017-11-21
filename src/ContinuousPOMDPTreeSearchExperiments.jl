@@ -6,7 +6,6 @@ using BasicPOMCP
 using POMCPOW
 using Parameters
 using LightDarkPOMDPs
-using VDPTag
 using StaticArrays
 using POMDPToolbox
 using ParticleFilters
@@ -25,6 +24,11 @@ using DataFrames
 using DataArrays
 using PmapProgressMeter
 using ProgressMeter
+
+# using VDPTag
+using VDPTag2
+const VDPTag = VDPTag2 # yikes!!
+
 
 # import DESPOT: bounds, init_bounds
 import ARDESPOT: bounds, init_bounds
@@ -61,8 +65,9 @@ export
 
     SimpleLightDark,
     LDHeuristic,
-    LDHSolver
+    LDHSolver,
 
+    PDPWSolver
 
 
 include("simple_lightdark.jl")
@@ -76,6 +81,7 @@ include("bounds_and_heuristics.jl")
 
 # include("simulations.jl")
 include("integration.jl")
+include("pomcpdpw.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 

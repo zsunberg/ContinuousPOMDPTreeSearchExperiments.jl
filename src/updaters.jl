@@ -158,10 +158,9 @@ end
 reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.time, mdp(p).xlim, mdp(p).ylim)
 =#
 
-max_possible_weight(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = 0.0
+max_possible_weight(pomdp::VDPTagPOMDP, a::TagAction, o) = 0.0
 
 new_particle(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = error("shouldn't get here")
-
 
 function reset_distribution(p::LaserTagPOMDP, b::ParticleCollection, a, o)
     # warn("Resetting Particle Filter Distribution")
