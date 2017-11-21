@@ -87,7 +87,7 @@ function POMDPs.update(up::ObsAdaptiveParticleFilter, b::ParticleFilters.Particl
     n_replaced = floor(Int, frac_replaced*length(ps))
     is = randperm(up.rng, length(ps))[1:n_replaced]
     for i in is
-        ps[i] = new_particle(up.pomdp, a, o, up.rng)
+        ps[i] = new_particle(up.pomdp, b, a, o, up.rng)
     end
     return pc
 end
@@ -99,7 +99,7 @@ function max_possible_weight(pomdp::AbstractLD2, a, o)
     return pdf(od, o)    
 end
 
-function new_particle(pomdp::AbstractLD2, a, o, rng)
+function new_particle(pomdp::AbstractLD2, b, a, o, rng)
     return o + LightDarkPOMDPs.obs_std(pomdp, o[1])*randn(rng, 2)
 end
 
@@ -109,9 +109,38 @@ function max_possible_weight(pomdp::SimpleLightDark, a, o)
     return pdf(observation(pomdp, o), o)
 end
 
-function new_particle(p::SimpleLightDark, a, o, rng)
+function new_particle(p::SimpleLightDark, b, a, o, rng)
     return clamp(round(Int, o + rand(rng, observation(p, o))), -p.radius, p.radius)
 end
+
+function max_possible_weight(pomdp::SubHuntPOMDP, a, o)
+    if a == SubHunt.PING
+        return pdf(Normal(0.0, pomdp.active_std), 0.0)^8
+    else
+        return pdf(Normal(0.0, pomdp.passive_std), 0.0)^7 * pdf(Normal(0.0, pomdp.passive_detected_std), 0.0)
+    end
+end
+
+function new_particle(p::SubHuntPOMDP, b, a, o, rng)
+    nonterm = filter(s->!isterminal(p, s), particles(b))
+    own = first(nonterm).own
+    aware = first(nonterm).aware || a == SubHunt.PING
+    target = SVector(rand(rng, 1:p.size), rand(rng, 1:p.size))
+    return SubState(own, target, rand(rng, 1:4), aware)
+end
+
+function reset_distribution(p::SubHuntPOMDP, b, a, o, rng)
+    nonterm = filter(s->!isterminal(p, s), particles(b))
+    own = first(nonterm).own
+    aware = first(nonterm).aware || a == SubHunt.PING
+    ps = SubState[]
+    for i in 1:100
+        target = SVector(rand(rng, 1:p.size), rand(rng, 1:p.size))
+        push!(ps, SubState(own, target, rand(rng, 1:4), aware))
+    end
+    return ParticleCollection(ps)
+end
+
 
 
 #=

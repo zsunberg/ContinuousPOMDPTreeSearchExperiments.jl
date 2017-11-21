@@ -19,6 +19,7 @@ using QMDP
 using MCTS
 using DiscreteValueIteration
 using RecipesBase
+using SubHunt
 
 using DataFrames
 using DataArrays
@@ -80,5 +81,7 @@ n_children(h::BeliefNode) = length(h.children)
 
 immutable OneStepValue end
 BasicPOMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
+
+Base.srand(p::QMDPPolicy, i::Int) = p
 
 end # module
