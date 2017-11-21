@@ -23,7 +23,7 @@ qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
-@show max_time = 5.0
+@show max_time = 1.0
 @show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -40,7 +40,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                enable_action_pw=false,
                                k_observation=1.0,
                                alpha_observation=1/10,
-                               estimate_value=FOValue(vp),
+                               estimate_value=FORollout(vp),
                                check_repeat_obs=false,
                                default_action=ReportWhenUsed(qp),
                                rng=rng
@@ -107,7 +107,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     default_action=ReportWhenUsed(qp),
-                    estimate_value=FORollout(vp),
+                    estimate_value=FOValue(vp),
                     rng=rng
                    )
     end,
@@ -120,19 +120,19 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     default_action=ReportWhenUsed(qp),
-                    estimate_value=FORollout(vp),
+                    estimate_value=FOValue(vp),
                     rng=rng
                    )
         solve(sol, dpomdp)
     end,
 )
 
-@show N=1
+@show N=500
 
 alldata = DataFrame()
-for (k, solver) in solvers
-# s = "pft"
-# for (k, solver) in [(s, solvers[s])]
+# for (k, solver) in solvers
+test = ["qmdp", "pomcpow", "pft"]
+for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -156,11 +156,13 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
+
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
+    alldata = vcat(alldata, data)
 end
 
 datestring = Dates.format(now(), "E_d_u_HH_MM")
