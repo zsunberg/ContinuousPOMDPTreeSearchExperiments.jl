@@ -65,13 +65,13 @@ function init_bounds(l::LaserBounds, p::LaserTagPOMDP, max_depth::Int, rng=Base.
 end
 
 init_bounds(l::LaserBounds, p::LaserTagPOMDP, s::DESPOTSolver) = init_bounds(l, p, s.D, s.rng)
-DESPOT.init_bounds(l::LaserBounds, p::LaserTagPOMDP, c::DESPOT.DESPOTConfig) = init_bounds(l, p, c.search_depth)
-
-function DESPOT.bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOT.DESPOTParticle{S}}, ::DESPOT.DESPOTConfig)
-    return bounds(l, p, p.state for p in b)
-end
-
-DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c) = default_action(particles)
+# DESPOT.init_bounds(l::LaserBounds, p::LaserTagPOMDP, c::DESPOT.DESPOTConfig) = init_bounds(l, p, c.search_depth)
+# 
+# function DESPOT.bounds{S}(l::LaserBounds, p::LaserTagPOMDP, b::Vector{DESPOT.DESPOTParticle{S}}, ::DESPOT.DESPOTConfig)
+#     return bounds(l, p, p.state for p in b)
+# end
+# 
+# DESPOT.default_action(l::LaserBounds, pomdp::POMDP, particles, c) = default_action(particles)
 
 function default_action(particles)
     if all(s.robot==s.opponent for s in particles)
