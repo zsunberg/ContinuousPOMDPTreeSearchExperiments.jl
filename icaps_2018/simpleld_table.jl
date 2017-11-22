@@ -9,7 +9,7 @@ using MCTS
 using DiscreteValueIteration
 using POMDPToolbox
 
-@show max_time = 0.1
+@show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
 
@@ -50,7 +50,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = QMDPSolver()
         # b = IndependentBounds(DefaultPolicyLB(ro), FullyObservableValueUB(ro))
-        b = IndependentBounds(DefaultPolicyLB(ro), 10.0, check_terminal=true)
+        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.0,
                      epsilon_0=0.0,
                      K=500,
@@ -58,14 +58,14 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     default_action=solve(ro, pomdp),
                      rng=rng)
     end,
 
     "despot_01" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
-        b = IndependentBounds(DefaultPolicyLB(ro), 10.0, check_terminal=true)
+        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.01,
                      epsilon_0=0.0,
                      K=500,
@@ -73,7 +73,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     # default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     default_action=solve(ro, pomdp),
                      rng=rng)
     end,
 
@@ -127,7 +128,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "heuristic_01" => LDHSolver(std_thresh=0.1)
 )
 
-@show N=1
+@show N=100
 
 for (k, solver) in solvers
     @show k
@@ -154,8 +155,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

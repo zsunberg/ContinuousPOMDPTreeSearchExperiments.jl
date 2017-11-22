@@ -1,6 +1,10 @@
+Tue 21 Nov 2017 10:42:36 PM PST
+
+Results for VDPTag 2
+
 Tue 21 Nov 2017 05:44:55 PM PST
 
-Acceptable results for the table
+Acceptable results for the table for subhunt
 
 max_time = 2.0 = 2.0
 max_depth = 20 = 20
