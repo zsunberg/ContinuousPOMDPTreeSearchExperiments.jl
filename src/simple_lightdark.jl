@@ -45,6 +45,13 @@ end
 end
 
 generate_o(p::DSimpleLightDark, sp, rng::AbstractRNG) = floor(Int, rand(rng, observation(p.sld, sp)))
+generate_o(p::DSimpleLightDark, a, sp, rng::AbstractRNG) = generate_o(p, sp, rng)
+function generate_sor(p::DSimpleLightDark, s, a, rng::AbstractRNG)
+    sp = generate_s(p, s, a, rng)
+    o = generate_o(p, sp, rng)
+    r = reward(p, s, a, sp)
+    return sp, o, r
+end
 
 discount(p::DSimpleLightDark) = discount(p.sld)
 isterminal(p::DSimpleLightDark, s::Number) = isterminal(p.sld, s)
