@@ -14,7 +14,7 @@ using DataFrames
 file_contents = readstring(@__FILE__())
 
 pomdp = VDPTagPOMDP()
-
+dpomdp = AODiscreteVDPTagPOMDP(pomdp, 30, 0.5)
 
 @show max_time = 1.0
 @show max_depth = 10
@@ -68,6 +68,23 @@ solvers = Dict{String, Union{Solver,Policy}}(
         belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
         solve(solver, belief_mdp)
     end,
+
+    "d_despot" => begin
+        rng = MersenneTwister(13)
+        ro = ToNextMLSolver(rng)
+        b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
+        sol = DESPOTSolver(lambda=0.01,
+                     K=500,
+                     D=10,
+                     max_trials=1_000_000,
+                     T_max=0.1,
+                     bounds=b,
+                     random_source=MemorizingSource(500, 10, rng, min_reserve=8),
+                     rng=rng)
+        planner = solve(sol, dpomdp)
+        translate_policy(planner, dpomdp, pomdp, dpomdp)
+    end
+
 )
 
 @show N=500
