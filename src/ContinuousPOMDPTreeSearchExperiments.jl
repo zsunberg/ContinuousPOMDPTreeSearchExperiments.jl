@@ -64,6 +64,7 @@ export
     metadata_as_pairs,
 
     SimpleLightDark,
+    DSimpleLightDark,
     LDHeuristic,
     LDHSolver,
 

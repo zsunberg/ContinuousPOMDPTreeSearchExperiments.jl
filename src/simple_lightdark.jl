@@ -40,6 +40,24 @@ function initial_state_distribution(p::SimpleLightDark)
     return SparseCat(-p.radius:p.radius, ones(2*p.radius+1))
 end
 
+@with_kw struct DSimpleLightDark <: POMDPs.POMDP{Int, Int, Int}
+    sld::SimpleLightDark = SimpleLightDark()
+end
+
+generate_o(p::DSimpleLightDark, sp, rng::AbstractRNG) = floor(Int, rand(rng, observation(p.sld, sp)))
+
+discount(p::DSimpleLightDark) = discount(p.sld)
+isterminal(p::DSimpleLightDark, s::Number) = isterminal(p.sld, s)
+actions(p::DSimpleLightDark) = actions(p.sld)
+n_actions(p::DSimpleLightDark) = n_actions(p.sld)
+action_index(p::DSimpleLightDark, a::Int) = action_index(p.sld, a)
+states(p::DSimpleLightDark) = states(p.sld)
+n_states(p::DSimpleLightDark) = n_states(p.sld)
+state_index(p::DSimpleLightDark, s::Int) = state_index(p.sld, s)
+transition(p::DSimpleLightDark, s::Int, a::Int) = transition(p.sld, s, a)
+reward(p::DSimpleLightDark, s, a) = reward(p.sld, s, a)
+initial_state_distribution(p::DSimpleLightDark) = initial_state_distribution(p.sld)
+
 struct LDHeuristic <: Policy
     p::SimpleLightDark
     q::QMDPPolicy{SimpleLightDark, Int}
