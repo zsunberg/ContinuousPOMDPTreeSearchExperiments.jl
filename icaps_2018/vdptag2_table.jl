@@ -97,7 +97,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = ToNextMLSolver(rng)
         b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
         sol = DESPOTSolver(lambda=0.01,
-                     K=500,
+                     K=100,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
@@ -124,12 +124,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end
 )
 
-@show N=1
+@show N=1000
 
 alldata = DataFrame()
-# for (k, solver) in solvers
-test = ["pomcpdpw"]
-for (k, solver) in [(s, solvers[s]) for s in test]
+for (k, solver) in solvers
+# test = ["pomcpdpw"]
+# for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -153,8 +153,8 @@ for (k, solver) in [(s, solvers[s]) for s in test]
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

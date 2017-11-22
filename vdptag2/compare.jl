@@ -90,9 +90,9 @@ solvers = Dict{String, Union{Solver,Policy}}(
 @show N=500
 
 alldata = DataFrame()
-for (k, solver) in solvers
-# s = "pft"
-# for (k, solver) in [(s, solvers[s])]
+# for (k, solver) in solvers
+test = ["pft"]
+for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
