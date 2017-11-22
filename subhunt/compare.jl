@@ -11,10 +11,13 @@ using SubHunt
 pomdp = SubHuntPOMDP()
 
 vs = ValueIterationSolver()
-vp = solve(vs, pomdp, verbose=true)
+if !isdefined(:vp) || vp.mdp != pomdp
+    vp = solve(vs, pomdp, verbose=true)
+end
 qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
+
 
 @show max_time = 2.0
 @show max_depth = 20

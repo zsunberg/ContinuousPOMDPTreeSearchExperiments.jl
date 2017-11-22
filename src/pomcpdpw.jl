@@ -46,7 +46,7 @@ function PDPWTree(pomdp::POMDP, sz::Int=1000)
 
                           sizehint!(zeros(Int, length(acts)), sz),
                           sizehint!(zeros(Float64, length(acts)), sz),
-                          sizehint!(Vector{Int}[], sz),
+                          sizehint!(fill(Int[], length(acts)), sz),
                           sizehint!(acts, sz)
                          )
 end    
@@ -73,9 +73,7 @@ function insert_action_node!(t::PDPWTree, h::Int, a)
     return length(t.n)
 end
 
-abstract type BeliefNode <: AbstractStateNode end
-
-struct PDPWObsNode{A,O} <: BeliefNode
+struct PDPWObsNode{A,O} <: BasicPOMCP.BeliefNode
     tree::PDPWTree{A,O}
     node::Int
 end
@@ -90,7 +88,7 @@ mutable struct PDPWPlanner{P, SE, RNG} <: Policy
 end
 
 function PDPWPlanner(solver::PDPWSolver, pomdp::POMDP)
-    se = convert_estimator(solver.estimate_value, solver, pomdp)
+    se = BasicPOMCP.convert_estimator(solver.estimate_value, solver, pomdp)
     @assert solver.enable_action_pw == false
     @assert solver.check_repeat_obs == false
     @assert solver.check_repeat_act == false
@@ -109,7 +107,7 @@ function action(p::PDPWPlanner, b)
         p._tree = Nullable(tree)
     catch ex
         # Note: this might not be type stable, but it shouldn't matter too much here
-        a = convert(action_type(p.problem), default_action(p.solver.default_action, p.problem, b, ex))
+        a = convert(action_type(p.problem), BasicPOMCP.default_action(p.solver.default_action, p.problem, b, ex))
     end
     return a
 end
@@ -182,11 +180,11 @@ function simulate(p::PDPWPlanner, s, hnode::PDPWObsNode, steps::Int)
         sp, o, r = generate_sor(p.problem, s, a, p.rng)
 
         hao = insert_obs_node!(t, p.problem, ha, o, sp)
-        v = estimate_value(p.solved_estimator,
-                           p.problem,
-                           sp,
-                           PDPWObsNode(t, hao),
-                           steps-1)
+        v = BasicPOMCP.estimate_value(p.solved_estimator,
+                                      p.problem,
+                                      sp,
+                                      PDPWObsNode(t, hao),
+                                      steps-1)
         R = r + discount(p.problem)*v
     else
         hao = rand(p.rng, t.ha_children[ha])

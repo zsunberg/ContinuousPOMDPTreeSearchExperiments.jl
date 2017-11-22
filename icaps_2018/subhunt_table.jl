@@ -23,7 +23,7 @@ qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
-@show max_time = 1.0
+@show max_time = 2.0
 @show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -125,14 +125,30 @@ solvers = Dict{String, Union{Solver,Policy}}(
                    )
         solve(sol, dpomdp)
     end,
+
+    "pomcpdpw" => begin
+        rng = MersenneTwister(13)
+        solver = PDPWSolver(tree_queries=10_000_000,
+                            c=100.0,
+                            max_depth=max_depth,
+                            max_time=max_time,
+                            enable_action_pw=false,
+                            k_observation=1.0,
+                            alpha_observation=1/10,
+                            estimate_value=FOValue(vp),
+                            check_repeat_obs=false,
+                            # default_action=ReportWhenUsed(-1),
+                            rng=rng
+                           )
+    end,
 )
 
 @show N=500
 
 alldata = DataFrame()
-# for (k, solver) in solvers
-test = ["qmdp", "pomcpow", "pft"]
-for (k, solver) in [(s, solvers[s]) for s in test]
+for (k, solver) in solvers
+# test = ["qmdp", "pomcpow", "pft"]
+# for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)

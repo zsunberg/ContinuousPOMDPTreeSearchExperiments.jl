@@ -22,8 +22,8 @@ using SubHunt
 
 using DataFrames
 using DataArrays
-using PmapProgressMeter
 using ProgressMeter
+using CPUTime
 
 # using VDPTag
 using VDPTag2
