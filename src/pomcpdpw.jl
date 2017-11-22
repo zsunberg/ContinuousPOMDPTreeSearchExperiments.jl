@@ -1,4 +1,5 @@
 @with_kw mutable struct PDPWSolver <: AbstractPOMCPSolver
+    rng::AbstractRNG        = Base.GLOBAL_RNG
     max_depth::Int          = 20
     c::Float64              = 1.0
     tree_queries::Int       = 1000
@@ -10,8 +11,8 @@
     enable_action_pw::Bool      = false
     check_repeat_obs::Bool      = false
     check_repeat_act::Bool      = false
+    next_action::Any        = RandomActionGenerator(rng)
     default_action::Any     = ExceptionRethrow()
-    rng::AbstractRNG        = Base.GLOBAL_RNG
     estimate_value::Any     = RolloutEstimator(RandomSolver(rng))
 end
 
@@ -51,16 +52,18 @@ function PDPWTree(pomdp::POMDP, sz::Int=1000)
                          )
 end    
 
-function insert_obs_node!(t::PDPWTree, pomdp::POMDP, ha::Int, o, s)
+function insert_obs_node!(t::PDPWTree, pomdp::POMDP, ha::Int, o, s, enable_apw::Bool)
     push!(t.total_n, 0)
     push!(t.children, sizehint!(Int[], n_actions(pomdp)))
     push!(t.B, [s])
     push!(t.o_labels, o)
     hao = length(t.total_n)
     # t.o_lookup[(ha, o)] = hao
-    for a in iterator(actions(pomdp))
-        n = insert_action_node!(t, hao, a)
-        push!(t.children[hao], n)
+    if !enable_apw
+        for a in iterator(actions(pomdp))
+            n = insert_action_node!(t, hao, a)
+            push!(t.children[hao], n)
+        end
     end
     return hao
 end
@@ -78,10 +81,11 @@ struct PDPWObsNode{A,O} <: BasicPOMCP.BeliefNode
     node::Int
 end
 
-mutable struct PDPWPlanner{P, SE, RNG} <: Policy
+mutable struct PDPWPlanner{P, SE, NA, RNG} <: Policy
     solver::PDPWSolver
     problem::P
     solved_estimator::SE
+    next_action::NA
     rng::RNG
     _best_node_mem::Vector{Int}
     _tree::Nullable
@@ -89,10 +93,9 @@ end
 
 function PDPWPlanner(solver::PDPWSolver, pomdp::POMDP)
     se = BasicPOMCP.convert_estimator(solver.estimate_value, solver, pomdp)
-    @assert solver.enable_action_pw == false
     @assert solver.check_repeat_obs == false
     @assert solver.check_repeat_act == false
-    return PDPWPlanner(solver, pomdp, se, solver.rng, Int[], Nullable())
+    return PDPWPlanner(solver, pomdp, se, solver.next_action, solver.rng, Int[], Nullable())
 end
 
 solve(solver::PDPWSolver, pomdp::POMDP) = PDPWPlanner(solver, pomdp)
@@ -153,6 +156,14 @@ function simulate(p::PDPWPlanner, s, hnode::PDPWObsNode, steps::Int)
     t = hnode.tree
     h = hnode.node
 
+    ka = p.solver.k_action
+    aa = p.solver.alpha_action
+    if p.solver.enable_action_pw && length(t.children[h]) <= ka*t.total_n[h]^aa
+        a = next_action(p.next_action, p.problem, t.B, hnode)
+        n = insert_action_node!(t, h, a)
+        push!(t.children[h], n)
+    end
+
     ltn = log(t.total_n[h])
     best_nodes = empty!(p._best_node_mem)
     best_criterion_val = -Inf
@@ -179,7 +190,7 @@ function simulate(p::PDPWPlanner, s, hnode::PDPWObsNode, steps::Int)
     if length(t.ha_children[ha]) <= p.solver.k_observation*t.n[ha]^p.solver.alpha_observation
         sp, o, r = generate_sor(p.problem, s, a, p.rng)
 
-        hao = insert_obs_node!(t, p.problem, ha, o, sp)
+        hao = insert_obs_node!(t, p.problem, ha, o, sp, p.solver.enable_action_pw)
         v = BasicPOMCP.estimate_value(p.solved_estimator,
                                       p.problem,
                                       sp,
