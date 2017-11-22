@@ -1,3 +1,60 @@
+Tue 21 Nov 2017 05:44:55 PM PST
+
+Acceptable results for the table
+
+max_time = 2.0 = 2.0
+max_depth = 20 = 20
+N = 1000 = 1000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+k = "ar_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:39
+reward: 26.745 ±  1.325
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:12
+reward: 45.500 ±  1.458
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:09:17
+reward: 27.810 ±  1.342
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:06:45
+reward: 74.784 ±  1.163
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:39
+reward: 27.099 ±  1.329
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:45
+reward: 28.159 ±  1.346
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:45
+reward: 28.166 ±  1.346
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Tuesday_21_Nov_17_39.csv...
+done.
+
+
+Tue 21 Nov 2017 04:44:42 PM PST
+
+Ok, I think we're good with the new VDPTag
+max_time = 1.0 = 1.0
+max_depth = 10 = 10
+N = 500 = 500
+k = "manage_uncertainty"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:08
+reward: 11.808 ±  2.287
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:39
+reward: 40.189 ±  1.119
+k = "to_next"
+Simulating...100%|██████████████████████████████████████| Time: 0:01:52
+reward: -16.876 ±  0.547
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:19
+reward: 31.420 ±  1.316
+
 Mon 20 Nov 2017 04:07:36 PM PST
 
 Wooooo!

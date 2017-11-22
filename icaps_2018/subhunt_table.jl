@@ -143,7 +143,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 )
 
-@show N=500
+@show N=1000
 
 alldata = DataFrame()
 for (k, solver) in solvers

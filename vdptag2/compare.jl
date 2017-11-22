@@ -87,12 +87,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 )
 
-@show N=1
+@show N=500
 
 alldata = DataFrame()
-# for (k, solver) in solvers
-test = ["d_despot"]
-for (k, solver) in [(s, solvers[s]) for s in test]
+for (k, solver) in solvers
+# s = "pft"
+# for (k, solver) in [(s, solvers[s])]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -116,13 +116,14 @@ for (k, solver) in [(s, solvers[s]) for s in test]
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
 end
 
+#=
 datestring = Dates.format(now(), "E_d_u_HH_MM")
 copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_table_$(datestring).jl")
 write(copyname, file_contents)
@@ -130,3 +131,4 @@ filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data",
 println("saving to $filename...")
 writetable(filename, alldata)
 println("done.")
+=#
