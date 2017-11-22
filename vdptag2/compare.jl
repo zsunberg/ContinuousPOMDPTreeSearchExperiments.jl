@@ -16,7 +16,7 @@ file_contents = readstring(@__FILE__())
 pomdp = VDPTagPOMDP()
 
 
-@show max_time = 0.1
+@show max_time = 1.0
 @show max_depth = 10
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -70,7 +70,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 )
 
-@show N=1
+@show N=500
 
 alldata = DataFrame()
 for (k, solver) in solvers
@@ -99,13 +99,14 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
 end
 
+#=
 datestring = Dates.format(now(), "E_d_u_HH_MM")
 copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_table_$(datestring).jl")
 write(copyname, file_contents)
@@ -113,3 +114,4 @@ filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data",
 println("saving to $filename...")
 writetable(filename, alldata)
 println("done.")
+=#
