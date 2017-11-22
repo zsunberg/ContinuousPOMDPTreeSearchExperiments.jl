@@ -1,5 +1,5 @@
 @with_kw struct SimpleLightDark <: POMDPs.POMDP{Int,Int,Float64}
-    discount::Float64       = 1.0
+    discount::Float64       = 0.95
     correct_r::Float64      = 10.0
     incorrect_r::Float64    = -10.0
     light_loc::Int          = 10
