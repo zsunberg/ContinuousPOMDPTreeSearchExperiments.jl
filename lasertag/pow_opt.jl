@@ -34,8 +34,7 @@ function gen_sims(x::Vector{Float64}, n, k)
                           )
 
 
-    sims = []
-    for i in 1:n
+    sims = pmap(1:n) do i
         pomdp = gen_lasertag(MersenneTwister(i+70_000*k))
         planner = solve(solver, pomdp)
         filter = ObsAdaptiveParticleFilter(deepcopy(pomdp),
@@ -51,8 +50,7 @@ function gen_sims(x::Vector{Float64}, n, k)
                   max_steps=100,
                   metadata=Dict(:i=>i, :k=>k)
                  )
-
-        push!(sims, sim)
+        return sim
     end
     
     return sims
