@@ -42,9 +42,10 @@ end
 
 @with_kw struct DSimpleLightDark <: POMDPs.POMDP{Int, Int, Int}
     sld::SimpleLightDark = SimpleLightDark()
+    binsize::Float64     = 1.0
 end
 
-generate_o(p::DSimpleLightDark, sp, rng::AbstractRNG) = floor(Int, rand(rng, observation(p.sld, sp)))
+generate_o(p::DSimpleLightDark, sp, rng::AbstractRNG) = floor(Int, rand(rng, observation(p.sld, sp))/p.binsize)
 generate_o(p::DSimpleLightDark, a, sp, rng::AbstractRNG) = generate_o(p, sp, rng)
 function generate_sor(p::DSimpleLightDark, s, a, rng::AbstractRNG)
     sp = generate_s(p, s, a, rng)
