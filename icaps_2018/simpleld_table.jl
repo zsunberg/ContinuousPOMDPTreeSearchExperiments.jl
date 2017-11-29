@@ -142,7 +142,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
         sol = DESPOTSolver(lambda=0.01,
                      epsilon_0=0.0,
-                     K=1000,
+                     K=500,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
@@ -158,7 +158,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "heuristic_01" => LDHSolver(std_thresh=0.1)
 )
 
-@show N=100
+@show N=500
 
 # for (k, solver) in solvers
 test = ["d_despot"]
