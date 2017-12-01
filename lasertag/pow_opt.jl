@@ -11,31 +11,45 @@ using Distributions
 using LaserTag
 using DiscreteValueIteration
 
-function gen_sims(x::Vector{Float64}, n, k)
+@everywhere begin
+    using LaserTag    
+    using POMDPs
+    using ParticleFilters
+    using POMDPToolbox
+    using ContinuousPOMDPTreeSearchExperiments
+end
+
+function gen_sims(x::Vector{Float64}, n, k, seed)
     c = max(0.0, x[1])
-    k_obs = max(1.0, x[2])
-    inv_alpha_obs = max(0.1, x[3])
+    k_obs = x[2]
+    @assert k_obs >= 1.0
+    inv_alpha_obs = x[3]
+    @assert inv_alpha_obs >= 0.1
 
-    rng = MersenneTwister(0)
-    ro = ValueIterationSolver()
-    solver = POMCPOWSolver(tree_queries=10_000_000,
-                           criterion=MaxUCB(c),
-                           final_criterion=MaxTries(),
-                           max_depth=90,
-                           max_time=1.0,
-                           k_observation=k_obs,
-                           alpha_observation=1/inv_alpha_obs,
-                           estimate_value=FORollout(ro),
-                           enable_action_pw=false,
-                           check_repeat_obs=true,
-                           # default_action=ReportWhenUsed(TagAction(false, 0.0)),
-                           # default_action=TagAction(false, 0.0),
-                           rng=rng
-                          )
+    problems, ropols = gen_problems_and_ropols(n, seed)
+
+    sims = []
+
+    for i in 1:n
+        rng = MersenneTwister(0)
+        ro = ropols[i]
+        solver = POMCPOWSolver(tree_queries=10_000_000,
+                               criterion=MaxUCB(c),
+                               final_criterion=MaxTries(),
+                               max_depth=90,
+                               max_time=1.0,
+                               k_observation=k_obs,
+                               alpha_observation=1/inv_alpha_obs,
+                               estimate_value=FOValue(ro),
+                               enable_action_pw=false,
+                               check_repeat_obs=true,
+                               # default_action=ReportWhenUsed(TagAction(false, 0.0)),
+                               # default_action=TagAction(false, 0.0),
+                               rng=rng
+                              )
 
 
-    sims = pmap(1:n) do i
-        pomdp = gen_lasertag(rng=MersenneTwister(i+70_000*k))
+        pomdp = problems[i]
         planner = solve(solver, pomdp)
         filter = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(10_000),
@@ -50,45 +64,48 @@ function gen_sims(x::Vector{Float64}, n, k)
                   max_steps=100,
                   metadata=Dict(:i=>i, :k=>k)
                  )
-        return sim
+        push!(sims, sim)
     end
     
     return sims
 end
 
-#=
-gen_syms(x::Vector{Float64}, n, k) = Any[k=>copy(x) for i in 1:n]
-
-function run_parallel(sims::Vector{Any})
-    ks = Int[]
-    rewards = Float64[]
-    for (k, v) in sims
-        push!(ks, k)
-        push!(rewards, -sum(x->x^2, v - [40.0, 30.0, 20.0, 3.1, 28.0]) + 10.0*rand())
+function gen_problems_and_ropols(n, seed)
+    rng = MersenneTwister(seed)
+    solver = ValueIterationSolver()
+    tuples = pmap(1:n) do i
+        problem = gen_lasertag(rng=rng)
+        pol = solve(solver, problem)
+        return (problem, pol)
     end
-    return DataFrame(k=ks, reward=rewards)
+    problems = collect(first(t) for t in tuples)
+    ropols = collect(last(t) for t in tuples)
+    return problems, ropols
 end
-=#
 
-start_mean = [20.0, 4.0, 10.0]
+start_mean = [80.0, 4.0, 15.0]
 start_cov = diagm([40.0^2, 10.0^2, 10.0^2])
 d = MvNormal(start_mean, start_cov)
 rng = MersenneTwister(15)
-K = 80  # 200
-n = 40  # 40
-m = 20  # 50
-max_iters = 2
+K = 60  # 200
+n = 100 # 40
+m = 15  # 50
+max_iters = 100
 
 for i in 1:max_iters
     sims = []
     params = Vector{Vector{Float64}}(K)
+    print("creating $K simulation sets")
     for k in 1:K
         p = rand(d)
+        p[2] = max(1.0, p[2])
+        p[3] = max(0.1, p[3])
         params[k] = p
-        k_sims = gen_sims(p, n, k)
-        println("appending $(length(k_sims)) simulations")
+        k_sims = gen_sims(p, n, k, i)
+        print(".")
         append!(sims, k_sims)
     end
+    println()
     results = run_parallel(sims)
     # results = run(sims)
     combined = by(results, :k) do df
@@ -113,6 +130,8 @@ for i in 1:max_iters
     end
     println("iteration $i")
     @show mean(d)
-    @show eigvals(cov(d))
-    @show eigvecs(cov(d))
+    @show ev = eigvals(cov(d))
+    for j in 1:length(ev)
+        @show eigvecs(cov(d))[:,j]
+    end
 end

@@ -1,3 +1,27 @@
+Thu 30 Nov 2017 07:41:52 PM PST
+
+Lasertag parameter optimization (with different problems at each iter)
+
+iteration 8
+mean(d) = [83.1987, 4.23302, 14.2264]
+eigvals(cov(d)) = [0.0490264, 4.54873, 1051.37]
+eigvecs(cov(d)) = [-0.0110958 0.00449547 0.999928; 0.99624 0.0859784 0.0106683; -0.0859243 0.996287 -0.00543256]
+creating 80 simulation sets................................................................................
+Simulating...100%|██████████████████████████████████████| Time: 0:43:31
+mean(combined[:mean_reward]) = -12.143111447669922
+
+Thu 30 Nov 2017 10:17:26 AM PST
+
+Lasertag parameter optimization
+(running on the same 80 problems each time)
+
+Simulating...100%|██████████████████████████████████████| Time: 0:46:57
+mean(combined[:mean_reward]) = -12.885963286130709
+iteration 24
+mean(d) = [69.2461, -2.111, 10.5063]
+eigvals(cov(d)) = [0.0479565, 0.436726, 4.66563]
+eigvecs(cov(d)) = [-0.101515 -0.465128 -0.879404; -0.160202 -0.864791 0.475892; 0.98185 -0.189192 -0.0132753]
+
 Wed 22 Nov 2017 03:26:06 AM PST
 
 simple LD results
