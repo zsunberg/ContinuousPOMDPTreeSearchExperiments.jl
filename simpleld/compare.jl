@@ -9,9 +9,10 @@ using MCTS
 using DiscreteValueIteration
 using POMDPToolbox
 
-@show max_time = 0.1
+@show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
+dpomdp = DSimpleLightDark(pomdp, 1.0)
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
@@ -19,7 +20,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = ValueIterationSolver()
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(40.0),
+                               criterion=MaxUCB(100.0),
                                final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
@@ -38,7 +39,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = ValueIterationSolver()
         POMCPSolver(max_depth=max_depth,
                     max_time=max_time,
-                    c=40.0,
+                    c=100.0,
                     tree_queries=typemax(Int),
                     # default_action=ro,
                     estimate_value=FORollout(ro),
@@ -46,11 +47,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
                    )
     end,
 
+    #=
     "despot_0" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
         # b = IndependentBounds(DefaultPolicyLB(ro), FullyObservableValueUB(ro))
-        b = IndependentBounds(DefaultPolicyLB(ro), 10.0, check_terminal=true)
+        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.0,
                      epsilon_0=0.0,
                      K=500,
@@ -58,14 +60,15 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     default_action=solve(ro, pomdp),
                      rng=rng)
     end,
+    =#
 
     "despot_01" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
-        b = IndependentBounds(DefaultPolicyLB(ro), 10.0, check_terminal=true)
+        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.01,
                      epsilon_0=0.0,
                      K=500,
@@ -73,7 +76,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     # default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     default_action=solve(ro, pomdp),
                      rng=rng)
     end,
 
@@ -81,7 +85,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = ValueIterationSolver()
         solver = PDPWSolver(tree_queries=10_000_000,
-                            c=40.0,
+                            c=100.0,
                             max_depth=max_depth,
                             max_time=max_time,
                             enable_action_pw=false,
@@ -102,7 +106,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                            LowVarianceResampler(m),
                                            0.05, rng)            
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=40.0,
+                           exploration_constant=100.0,
                            depth=max_depth,
                            max_time=max_time,
                            k_state=4.0,
@@ -118,18 +122,48 @@ solvers = Dict{String, Union{Solver,Policy}}(
         solve(solver, belief_mdp)
     end,
 
-    # "d_pomcp"
+    "d_pomcp" => begin
+        rng = MersenneTwister(13)
+        ro = ValueIterationSolver()
+        sol = POMCPSolver(max_depth=max_depth,
+                    max_time=max_time,
+                    c=100.0,
+                    tree_queries=typemax(Int),
+                    # default_action=ro,
+                    estimate_value=FORollout(ro),
+                    rng=rng
+                   )
+        solve(sol, dpomdp)
+    end,
 
-    # "d_despot"
+    "d_despot" => begin
+        rng = MersenneTwister(13)
+        ro = QMDPSolver()
+        # b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
+        b = IndependentBounds(-100.0, 100.0, check_terminal=true)
+        sol = DESPOTSolver(lambda=0.01,
+                     epsilon_0=0.0,
+                     K=10000,
+                     D=max_depth,
+                     max_trials=1_000_000,
+                     T_max=max_time,
+                     bounds=b,
+                     default_action=ReportWhenUsed(solve(ro, pomdp)),
+                     # default_action=solve(ro, pomdp),
+                     rng=rng)
+        solve(sol, dpomdp)
+    end,
 
     "qmdp" => QMDPSolver(),
     "heuristic_1" => LDHSolver(std_thresh=0.1),
     "heuristic_01" => LDHSolver(std_thresh=0.1)
 )
 
-@show N=1
+@show N=100
 
-for (k, solver) in solvers
+# for (k, solver) in solvers
+test = ["d_despot"]
+for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -154,8 +188,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))

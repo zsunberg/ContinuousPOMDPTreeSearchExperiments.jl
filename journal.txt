@@ -1,3 +1,15 @@
+Fri 01 Dec 2017 01:50:51 PM PST
+
+Woo - discretized DESPOT works with -100, 100 bounds, and it doesn't work TOO well!
+
+zach@Theresa:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 4 simpleld/compare.jl 
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 100 = 100
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:26
+reward: 33.394 ±  6.001
+
 Thu 30 Nov 2017 07:41:52 PM PST
 
 Lasertag parameter optimization (with different problems at each iter)
