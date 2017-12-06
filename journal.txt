@@ -1,3 +1,13 @@
+Mon 04 Dec 2017 05:11:41 PM PST
+
+mean(combined[:mean_reward]) = -9.947048511007113
+iteration 88
+mean(d) = [26.3468, 3.62511, 35.0585]
+ev = eigvals(cov(d)) = [2.93607e-11, 6.44598e-8, 0.00381188]
+(eigvecs(cov(d)))[:, j] = [0.00247583, -0.998464, -0.0553574]
+(eigvecs(cov(d)))[:, j] = [0.381521, -0.0502272, 0.922995]
+(eigvecs(cov(d)))[:, j] = [-0.924357, -0.0234052, 0.38081]
+
 Thu 30 Nov 2017 07:41:52 PM PST
 
 Lasertag parameter optimization (with different problems at each iter)
