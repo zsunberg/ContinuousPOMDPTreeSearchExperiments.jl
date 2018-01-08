@@ -12,7 +12,7 @@ using POMDPToolbox
 @show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
-dpomdp = DSimpleLightDark(pomdp)
+dpomdp = DSimpleLightDark(pomdp, 1.0)
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
@@ -139,16 +139,15 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "d_despot" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
-        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
+        b = IndependentBounds(-100.0, 100.0, check_terminal=true)
         sol = DESPOTSolver(lambda=0.01,
                      epsilon_0=0.0,
-                     K=500,
+                     K=5000,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
                      default_action=ReportWhenUsed(solve(ro, pomdp)),
-                     # default_action=solve(ro, pomdp),
                      rng=rng)
         solve(sol, dpomdp)
     end,
