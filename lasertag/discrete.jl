@@ -60,7 +60,6 @@ file_contents = readstring(@__FILE__())
 
         # "move_towards_sampled" => MoveTowardsSampled(MersenneTwister(17)),
 
-
         # "ml" => OptimalMLSolver(ValueIterationSolver()),
 
         # "be" => BestExpectedSolver(ValueIterationSolver()),

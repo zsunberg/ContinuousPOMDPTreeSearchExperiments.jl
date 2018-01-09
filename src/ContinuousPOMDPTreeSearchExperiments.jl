@@ -68,7 +68,9 @@ export
     LDHeuristic,
     LDHSolver,
 
-    PDPWSolver
+    PDPWSolver,
+
+    GBMDPSolver
 
 
 include("simple_lightdark.jl")
