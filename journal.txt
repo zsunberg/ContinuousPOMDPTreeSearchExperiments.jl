@@ -1,3 +1,107 @@
+Thu 11 Jan 2018 10:16:27 AM PST
+
+Discretization preview
+
+zach@Theresa:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018$ julia -p 6 ld_discretization.jl 
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 100 = 100
+(k, d) = ("qmdp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:18
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:51
+reward: 43.628 ±  2.737
+(k, d) = ("d_despot", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:12
+reward: 26.876 ±  6.423
+(k, d) = ("qmdp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:13
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:06:03
+reward: 40.452 ±  2.953
+(k, d) = ("d_despot", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:09
+reward: 23.634 ±  6.640
+(k, d) = ("qmdp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:12
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:06:00
+reward: 41.328 ±  2.530
+(k, d) = ("d_despot", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:09
+reward: 27.366 ±  6.400
+(k, d) = ("qmdp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:13
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:05:27
+reward: 43.276 ±  2.464
+(k, d) = ("d_despot", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:08
+reward: 23.861 ±  6.655
+(k, d) = ("qmdp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 43.687 ±  2.447
+(k, d) = ("d_despot", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:07
+reward: 32.498 ±  6.166
+(k, d) = ("qmdp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:12
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:43
+reward: 45.848 ±  2.185
+(k, d) = ("d_despot", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:07
+reward: 28.075 ±  6.377
+(k, d) = ("qmdp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:12
+reward:  0.814 ±  3.655
+(k, d) = ("d_pomcp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:51
+reward: 43.919 ±  2.123
+(k, d) = ("d_despot", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:08
+reward: 27.151 ±  6.431
+
+
+Thu 11 Jan 2018 10:13:09 AM PST
+
+Laser Tag Table:
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 27 icaps_2018/lasertag_table.jl 
+max_time = 1.0 = 1.0
+max_depth = 90 = 90
+N = 1000 = 1000
+k = "ar_despot"
+Creating Simulations...100%|████████████████████████████| Time: 0:10:01
+Simulating...100%|██████████████████████████████████████| Time: 0:21:34
+reward: -8.977 ±  0.188
+k = "pomcpow"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:42
+Simulating...100%|██████████████████████████████████████| Time: 0:39:19
+reward: -13.219 ±  0.226
+k = "pomcpdpw"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:23
+Simulating...100%|██████████████████████████████████████| Time: 0:25:44
+reward: -10.751 ±  0.193
+k = "pft"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:23
+Simulating...100%|██████████████████████████████████████| Time: 0:20:40
+reward: -11.736 ±  0.155
+k = "pomcp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:21
+Simulating...100%|██████████████████████████████████████| Time: 0:50:60
+reward: -15.441 ±  0.195
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Thursday_11_Jan_02_35.csv...
+done.
+
 Mon 04 Dec 2017 05:11:41 PM PST
 
 mean(combined[:mean_reward]) = -9.947048511007113
