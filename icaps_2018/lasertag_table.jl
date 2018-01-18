@@ -12,11 +12,21 @@ using POMDPToolbox
 using LaserTag
 using DataFrames
 using CSV
+using ProgressMeter
+using PmapProgressMeter
+
+@everywhere using LaserTag
+@everywhere using ContinuousPOMDPTreeSearchExperiments
+@everywhere using POMDPs
+@everywhere using ParticleFilters
 
 file_contents = readstring(@__FILE__())
 
 @show max_time = 1.0
 @show max_depth = 90
+@show exploration = 26.0
+
+P = typeof(gen_lasertag(rng=MersenneTwister(18)))
 
 solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => QMDPSolver(),
@@ -33,19 +43,20 @@ solvers = Dict{String, Union{Solver,Policy}}(
     (eigvecs(cov(d)))[:, j] = [-0.924357, -0.0234052, 0.38081]
     =#
 
+    #=
     "pomcpow" => begin
         rng = MersenneTwister(13)
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(25.0),
+                               criterion=MaxUCB(exploration),
                                final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
                                enable_action_pw=false,
                                k_observation=4.0,
                                alpha_observation=1/35,
-                               estimate_value=FORollout(ValueIterationSolver()),
+                               estimate_value=FOValue(ValueIterationSolver()),
                                check_repeat_obs=false,
-                               default_action=ReportWhenUsed(NoGapTag()),
+                               default_action=LaserTag.TAG_ACTION,
                                rng=rng
                               )
     end,
@@ -54,7 +65,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         m = 20
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=25.0,
+                           exploration_constant=exploration,
                            depth=max_depth,
                            max_time=max_time,
                            k_state=4.0,
@@ -66,23 +77,24 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            # default_action=ReportWhenUsed(NoGapTag()),
                            rng=rng
                           )
-        GBMDPSolver(solver, pomdp->ObsAdaptiveParticleFilter(deepcopy(pomdp),
+        GBMDPSolver(solver, pomdp->ObsAdaptiveParticleFilter(pomdp,
                                                              LowVarianceResampler(m),
                                                              0.1, rng))
     end,
 
     "ar_despot" => begin
         rng = MersenneTwister(13)
-        b = IndependentBounds(DefaultPolicyLB(QMDPSolver()), 100.0, check_terminal=true)
+        # b = IndependentBounds(DefaultPolicyLB(QMDPSolver()), 100.0, check_terminal=true)
+        bounds = LaserBounds{P}()
         K = 500
         DESPOTSolver(lambda=0.01,
-                     epsilon_0=0.0,
                      K=K,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
-                     bounds=b,
-                     default_action=ReportWhenUsed(NoGapTag()),
+                     bounds=bounds,
+                     bounds_warnings=false,
+                     default_action=LaserTag.TAG_ACTION,
                      random_source=MemorizingSource(K, max_depth, rng, min_reserve=10),
                      rng=rng)
     end,
@@ -91,9 +103,9 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         POMCPSolver(max_depth=max_depth,
                     max_time=max_time,
-                    c=100.0,
+                    c=exploration,
                     tree_queries=typemax(Int),
-                    default_action=ReportWhenUsed(NoGapTag()),
+                    default_action=LaserTag.TAG_ACTION,
                     estimate_value=FOValue(ValueIterationSolver()),
                     rng=rng
                    )
@@ -102,7 +114,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "pomcpdpw" => begin
         rng = MersenneTwister(13)
         solver = PDPWSolver(tree_queries=10_000_000,
-                            c=25.0,
+                            c=exploration,
                             max_depth=max_depth,
                             max_time=max_time,
                             enable_action_pw=false,
@@ -114,10 +126,10 @@ solvers = Dict{String, Union{Solver,Policy}}(
                             rng=rng
                            )
     end,
+    =#
 )
 
-@show N=1
-
+@show N=1000
 
 alldata = DataFrame()
 for (k, solver) in solvers
@@ -126,28 +138,26 @@ for (k, solver) in solvers
 # k = "qmdp"
 # solver = QMDPSolver()
     @show k
-    sims = []
-    for i in 1:N
-        pomdp = gen_lasertag(rng=MersenneTwister(i+700_000))
+    prog = Progress(N, desc="Creating Simulations...")
+    sims = pmap(prog, 1:N) do i
+        pomdp = gen_lasertag(rng=MersenneTwister(i+300_000))
         planner = solve(solver, pomdp)
         srand(planner, i+50_000)
         up_rng = MersenneTwister(i+140_000)
-        filter = ObsAdaptiveParticleFilter(deepcopy(pomdp), LowVarianceResampler(100_000), 0.05, up_rng)
+        filter = ObsAdaptiveParticleFilter(pomdp, LowVarianceResampler(100_000), 0.05, up_rng)
 
         md = Dict(:solver=>k, :i=>i)
-        sim = Sim(deepcopy(pomdp),
-                  planner,
-                  filter,
-                  rng=MersenneTwister(i+70_000),
-                  max_steps=100,
-                  metadata=md
-                 )
-
-        push!(sims, sim)
+        return Sim(pomdp,
+            planner,
+            filter,
+            rng=MersenneTwister(i+70_000),
+            max_steps=100,
+            metadata=md
+           )
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
 
     rs = data[:reward]

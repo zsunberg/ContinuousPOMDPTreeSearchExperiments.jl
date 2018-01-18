@@ -1,3 +1,78 @@
+Thu 18 Jan 2018 03:21:14 PM PST
+
+XXXX GOOD LASERTAG
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/lasertag_table.jl 
+max_time = 1.0 = 1.0
+max_depth = 90 = 90
+exploration = 26.0 = 26.0
+N = 1000 = 1000
+k = "ar_despot"
+Creating Simulations...100%|████████████████████████████| Time: 0:07:29
+Simulating...100%|██████████████████████████████████████| Time: 0:13:47
+reward: -8.919 ±  0.188
+k = "pomcpow"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:28
+Simulating...100%|██████████████████████████████████████| Time: 0:12:20
+reward: -10.283 ±  0.182
+k = "pomcpdpw"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:14:20
+reward: -10.428 ±  0.202
+k = "pft"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:12
+Simulating... 26%|██████████                            |  ETA: 0:08:44^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[Simulating...100%|██████████████████████████████████████| Time: 0:11:05
+reward: -11.586 ±  0.166
+k = "pomcp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:27:05
+reward: -14.497 ±  0.213
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Thursday_18_Jan_15_16.csv...
+done.
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/lasertag_table.jl 
+max_time = 1.0 = 1.0
+max_depth = 90 = 90
+exploration = 26.0 = 26.0
+N = 1000 = 1000
+k = "qmdp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:20
+Simulating...100%|██████████████████████████████████████| Time: 0:01:37
+reward: -10.486 ±  0.204
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Thursday_18_Jan_15_20.csv...
+done.
+
+Thu 18 Jan 2018 01:21:35 PM PST
+
+with exploration = 25
+(oops: pomcpow used FORollout instead of FOValue
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 27 icaps_2018/lasertag_table.jl
+max_time = 1.0 = 1.0
+max_depth = 90 = 90
+N = 1000 = 1000
+k = "ar_despot"
+Creating Simulations...100%|████████████████████████████| Time: 0:10:01
+Simulating...100%|██████████████████████████████████████| Time: 0:21:34
+reward: -8.977 ±  0.188
+k = "pomcpow"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:42
+Simulating...100%|██████████████████████████████████████| Time: 0:39:19
+reward: -13.219 ±  0.226
+k = "pomcpdpw"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:23
+Simulating...100%|██████████████████████████████████████| Time: 0:25:44
+reward: -10.751 ±  0.193
+k = "pft"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:23
+Simulating...100%|██████████████████████████████████████| Time: 0:20:40
+reward: -11.736 ±  0.155
+k = "pomcp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:21
+Simulating...100%|██████████████████████████████████████| Time: 0:50:60
+reward: -15.441 ±  0.195
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Thursday_11_Jan_02_35.csv...
+done.
+
 Mon 04 Dec 2017 05:11:41 PM PST
 
 mean(combined[:mean_reward]) = -9.947048511007113
