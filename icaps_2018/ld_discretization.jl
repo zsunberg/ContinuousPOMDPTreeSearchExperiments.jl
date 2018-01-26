@@ -8,12 +8,38 @@ using QMDP
 using MCTS
 using DiscreteValueIteration
 using POMDPToolbox
+using ProgressMeter
+using PmapProgressMeter
+
+@everywhere using ContinuousPOMDPTreeSearchExperiments
+@everywhere using POMDPs
+@everywhere using ParticleFilters
 
 @show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
 
 solvers = Dict{String, Union{Solver,Policy}}(
+
+    "pomcpow" => begin
+        rng = MersenneTwister(13)
+        ro = ValueIterationSolver()
+        solver = POMCPOWSolver(tree_queries=10_000_000,
+                               criterion=MaxUCB(90.0),
+                               final_criterion=MaxTries(),
+                               max_depth=max_depth,
+                               max_time=max_time,
+                               enable_action_pw=false,
+                               k_observation=5.0,
+                               alpha_observation=1/15.0,
+                               estimate_value=FOValue(ro),
+                               check_repeat_obs=false,
+                               # default_action=ReportWhenUsed(-1),
+                               rng=rng
+                              )
+    end,
+
+
     "d_pomcp" => begin
         rng = MersenneTwister(13)
         ro = ValueIterationSolver()
@@ -45,7 +71,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => QMDPSolver(),
 )
 
-@show N=100
+@show N=1000
 
 # for (k, solver) in solvers
 test = keys(solvers)
@@ -58,6 +84,8 @@ for d in logspace(-2, 1, 7)
         else
             planner = solver
         end
+        # prog = Progress(N, desc="Creating Simulations...")
+        # sims = pmap(prog, 1:N) do i
         sims = []
         for i in 1:N
             srand(planner, i+50_000)
@@ -66,12 +94,12 @@ for d in logspace(-2, 1, 7)
                                                0.05, MersenneTwister(i+90_000))            
 
             sim = Sim(deepcopy(pomdp),
-                      deepcopy(planner),
-                      filter,
-                      rng=MersenneTwister(i+70_000),
-                      max_steps=100,
-                      metadata=Dict(:d=>d, :solver=>k, :i=>i)
-                     )
+                planner,
+                filter,
+                rng=MersenneTwister(i+70_000),
+                max_steps=100,
+                metadata=Dict(:d=>d, :solver=>k, :i=>i)
+               )
 
             push!(sims, sim)
         end

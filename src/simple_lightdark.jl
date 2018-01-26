@@ -54,6 +54,11 @@ function generate_sor(p::DSimpleLightDark, s, a, rng::AbstractRNG)
     return sp, o, r
 end
 
+function ParticleFilters.obs_weight(p::DSimpleLightDark, sp::Int, o::Int)
+    cod = observation(p.sld, sp)
+    return cdf(cod, (o+1)*p.binsize) - cdf(cod, o*p.binsize)
+end
+
 discount(p::DSimpleLightDark) = discount(p.sld)
 isterminal(p::DSimpleLightDark, s::Number) = isterminal(p.sld, s)
 actions(p::DSimpleLightDark) = actions(p.sld)

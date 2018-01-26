@@ -12,7 +12,6 @@ using POMDPToolbox
 @show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
-dpomdp = DSimpleLightDark(pomdp, 1.0)
 
 solvers = Dict{String, Union{Solver,Policy}}(
 
@@ -20,13 +19,13 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = ValueIterationSolver()
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(100.0),
-                               final_criterion=MaxTries(),
+                               criterion=MaxUCB(90.0),
+                               # final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
                                enable_action_pw=false,
-                               k_observation=4.0,
-                               alpha_observation=1/10,
+                               k_observation=5.0,
+                               alpha_observation=1/15.0,
                                estimate_value=FOValue(ro),
                                check_repeat_obs=false,
                                # default_action=ReportWhenUsed(-1),
@@ -133,6 +132,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     estimate_value=FORollout(ro),
                     rng=rng
                    )
+        dpomdp = DSimpleLightDark(pomdp, 0.05)
         solve(sol, dpomdp)
     end,
 
@@ -149,19 +149,20 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      bounds=b,
                      default_action=ReportWhenUsed(solve(ro, pomdp)),
                      rng=rng)
+        dpomdp = DSimpleLightDark(pomdp, 1.0)
         solve(sol, dpomdp)
     end,
 
     "qmdp" => QMDPSolver(),
     "heuristic_1" => LDHSolver(std_thresh=0.1),
-    "heuristic_01" => LDHSolver(std_thresh=0.1)
+    "heuristic_01" => LDHSolver(std_thresh=0.01)
 )
 
-@show N=500
+@show N=5000
 
-# for (k, solver) in solvers
-test = ["d_despot"]
-for (k, solver) in [(k, solvers[k]) for k in test]
+for (k, solver) in solvers
+# test = ["d_despot"]
+# for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -176,7 +177,7 @@ for (k, solver) in [(k, solvers[k]) for k in test]
                                            0.05, MersenneTwister(i+90_000))            
 
         sim = Sim(deepcopy(pomdp),
-                  deepcopy(planner),
+                  planner,
                   filter,
                   rng=MersenneTwister(i+70_000),
                   max_steps=100,

@@ -10,6 +10,7 @@ using MCTS
 using SubHunt
 using POMDPToolbox
 using DataFrames
+using CSV
 
 file_contents = readstring(@__FILE__())
 
@@ -24,10 +25,10 @@ qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
 @show max_depth = 20
-@show N = 1
+@show N = 1000
 
 alldata = DataFrame()
-for max_time in logspace(-2, 1, 7)
+for max_time in logspace(-2, 0, 5)
     @show max_time
     solvers = Dict{String, Union{Solver,Policy}}(
         "qmdp" => qp,
@@ -41,9 +42,9 @@ for max_time in logspace(-2, 1, 7)
                                    max_depth=max_depth,
                                    max_time=max_time,
                                    enable_action_pw=false,
-                                   k_observation=1.0,
+                                   k_observation=4.0,
                                    alpha_observation=1/10,
-                                   estimate_value=FORollout(vp),
+                                   estimate_value=FOValue(vp),
                                    check_repeat_obs=false,
                                    default_action=ReportWhenUsed(qp),
                                    rng=rng
@@ -118,9 +119,9 @@ for max_time in logspace(-2, 1, 7)
 end
 
 datestring = Dates.format(now(), "E_d_u_HH_MM")
-copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_table_$(datestring).jl")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_time_$(datestring).jl")
 write(copyname, file_contents)
-filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_$(datestring).csv")
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_time_$(datestring).csv")
 println("saving to $filename...")
-writetable(filename, alldata)
+CSV.write(filename, alldata)
 println("done.")

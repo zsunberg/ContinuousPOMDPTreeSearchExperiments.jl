@@ -9,6 +9,8 @@ using DataFrames
 using ARDESPOT
 using Distributions
 using DiscreteValueIteration
+using SubHunt
+using QMDP
 
 @everywhere begin
     using POMDPs
@@ -17,10 +19,19 @@ using DiscreteValueIteration
     using ContinuousPOMDPTreeSearchExperiments
 end
 
-pomdp = SimpleLightDark()
+pomdp = SubHuntPOMDP()
+vs = ValueIterationSolver()
+if !isdefined(:vp) || vp.mdp != pomdp
+    vp = solve(vs, pomdp, verbose=true)
+end
+qs = QMDPSolver()
+qp = QMDP.create_policy(qs, pomdp)
+qp.alphas[:] = vp.qmat
+
 
 function gen_sims(x::Vector{Float64}, n, k, seed)
-    c = max(0.0, x[1])
+    c = x[1]
+    @assert c >= 0.0
     k_obs = x[2]
     @assert k_obs >= 1.0
     inv_alpha_obs = x[3]
@@ -31,20 +42,21 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
     for i in 1:n
         rng = MersenneTwister(0)
         ro = ValueIterationSolver()
+
         solver = POMCPOWSolver(tree_queries=10_000_000,
                                criterion=MaxUCB(c),
                                final_criterion=MaxTries(),
-                               max_depth=90,
+                               max_depth=20,
                                max_time=1.0,
+                               enable_action_pw=false,
                                k_observation=k_obs,
                                alpha_observation=1/inv_alpha_obs,
-                               estimate_value=FOValue(ro),
-                               enable_action_pw=false,
-                               check_repeat_obs=true,
-                               # default_action=ReportWhenUsed(TagAction(false, 0.0)),
-                               # default_action=TagAction(false, 0.0),
+                               estimate_value=FOValue(vp),
+                               check_repeat_obs=false,
+                               default_action=ReportWhenUsed(qp),
                                rng=rng
                               )
+
 
         planner = solve(solver, pomdp)
         filter = ObsAdaptiveParticleFilter(deepcopy(pomdp),
@@ -54,7 +66,7 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
 
         srand(planner, i+40000*k)
         sim = Sim(deepcopy(pomdp),
-                  deepcopy(planner),
+                  planner,
                   filter,
                   rng=MersenneTwister(i+50_000*k),
                   max_steps=100,
@@ -66,8 +78,10 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
     return sims
 end
 
-start_mean = [115.0, 4.0, 14.0]
-start_cov = diagm([25.0^2, 3.0^2, 5.0^2])
+# start_mean = [100.0, 2.0, 10.0]
+# start_cov = diagm([100.0^2, 10.0^2, 20.0^2])
+start_mean = [23.4068, 6.07487, 36.9538]
+start_cov = diagm([66.0, 10.0, 235.0])
 d = MvNormal(start_mean, start_cov)
 K = 60  # 60 # number of parameter samples
 n = 100 # 100 # number of evaluation simulations
@@ -80,6 +94,7 @@ for i in 1:max_iters
     print("creating $K simulation sets")
     for k in 1:K
         p = rand(d)
+        p[1] = max(0.0, p[1])
         p[2] = max(1.0, p[2])
         p[3] = max(0.1, p[3])
         params[k] = p
