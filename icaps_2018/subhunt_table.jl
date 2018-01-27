@@ -30,16 +30,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => qp,
     "ping_first" => PingFirst(qp),
 
+    # parameter adjustments from 1/25 Cross Entropy
     "pomcpow" => begin
         rng = MersenneTwister(13)
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(100.0),
+                               criterion=MaxUCB(17.0),
                                final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
                                enable_action_pw=false,
-                               k_observation=1.0,
-                               alpha_observation=1/10,
+                               k_observation=6.0,
+                               alpha_observation=1/50.0,
                                estimate_value=FOValue(vp),
                                check_repeat_obs=false,
                                default_action=ReportWhenUsed(qp),
