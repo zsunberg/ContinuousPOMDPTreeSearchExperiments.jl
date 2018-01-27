@@ -23,7 +23,7 @@ qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
-@show max_time = 2.0
+@show max_time = 5.0
 @show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -33,14 +33,14 @@ solvers = Dict{String, Union{Solver,Policy}}(
     # parameter adjustments from 1/25 Cross Entropy
     "pomcpow" => begin
         rng = MersenneTwister(13)
-        solver = POMCPOWSolver(tree_queries=10_000_000,
+        solver = POMCPOWSolver(tree_queries=10_000_000_000,
                                criterion=MaxUCB(17.0),
                                final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
                                enable_action_pw=false,
                                k_observation=6.0,
-                               alpha_observation=1/50.0,
+                               alpha_observation=1/100.0,
                                estimate_value=FOValue(vp),
                                check_repeat_obs=false,
                                default_action=ReportWhenUsed(qp),
@@ -179,7 +179,11 @@ for (k, solver) in solvers
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
-    alldata = vcat(alldata, data)
+    if isempty(alldata)
+        alldata = data
+    else
+        alldata = vcat(alldata, data)
+    end
 end
 
 datestring = Dates.format(now(), "E_d_u_HH_MM")

@@ -28,7 +28,7 @@ qp.alphas[:] = vp.qmat
 @show N = 1000
 
 alldata = DataFrame()
-for max_time in logspace(-2, 0, 5)
+for max_time in logspace(-2, 1, 7)
     @show max_time
     solvers = Dict{String, Union{Solver,Policy}}(
         "qmdp" => qp,
@@ -36,14 +36,14 @@ for max_time in logspace(-2, 0, 5)
 
         "pomcpow" => begin
             rng = MersenneTwister(13)
-            solver = POMCPOWSolver(tree_queries=10_000_000,
-                                   criterion=MaxUCB(100.0),
+            solver = POMCPOWSolver(tree_queries=10_000_000_000,
+                                   criterion=MaxUCB(17.0),
                                    final_criterion=MaxTries(),
                                    max_depth=max_depth,
                                    max_time=max_time,
                                    enable_action_pw=false,
-                                   k_observation=4.0,
-                                   alpha_observation=1/10,
+                                   k_observation=6.0,
+                                   alpha_observation=1/100,
                                    estimate_value=FOValue(vp),
                                    check_repeat_obs=false,
                                    default_action=ReportWhenUsed(qp),
