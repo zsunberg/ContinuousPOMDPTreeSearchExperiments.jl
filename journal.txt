@@ -1,4 +1,46 @@
+Sat 27 Jan 2018 04:45:16 PM PST
+
+RESULT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/subhunt_table
+.jl
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 1000 = 1000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:49
+reward: 27.991 ±  1.344
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+k = "ar_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:21
+reward: 27.092 ±  1.329
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:33
+reward: 61.809 ±  1.367
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:16
+reward: 27.801 ±  1.341
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:38
+reward: 72.675 ±  1.205
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:19
+reward: 27.185 ±  1.331
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 27.786 ±  1.340
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:36
+reward: 27.980 ±  1.343
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Saturday_27_Jan_13_26.csv...
+ERROR: LoadError: UndefVarError: CSV not defined
+
+
 Fri 26 Jan 2018 04:45:55 PM PST
+
+RESULT
 
 zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/subhunt_discr
 etization.jl

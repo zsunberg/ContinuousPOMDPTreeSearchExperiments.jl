@@ -10,6 +10,7 @@ using MCTS
 using SubHunt
 using POMDPToolbox
 using DataFrames
+using CSV
 
 file_contents = readstring(@__FILE__())
 
@@ -23,7 +24,7 @@ qs = QMDPSolver()
 qp = QMDP.create_policy(qs, pomdp)
 qp.alphas[:] = vp.qmat
 
-@show max_time = 5.0
+@show max_time = 1.0
 @show max_depth = 20
 
 solvers = Dict{String, Union{Solver,Policy}}(
@@ -191,5 +192,5 @@ copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data",
 write(copyname, file_contents)
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_$(datestring).csv")
 println("saving to $filename...")
-writetable(filename, alldata)
+CSV.write(filename, alldata)
 println("done.")
