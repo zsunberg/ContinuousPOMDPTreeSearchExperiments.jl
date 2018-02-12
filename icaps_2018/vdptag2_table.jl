@@ -11,6 +11,7 @@ using VDPTag2
 using POMDPToolbox
 using DataFrames
 
+
 file_contents = readstring(@__FILE__())
 
 pomdp = VDPTagPOMDP()
@@ -55,10 +56,10 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            exploration_constant=65.0,
                            depth=max_depth,
                            max_time=max_time,
-                           k_action = 12.0, 
-                           alpha_action = 1/8,
-                           k_state = 4.0,
-                           alpha_state = 1/20,
+                           k_action = 18.0, 
+                           alpha_action = 1/13,
+                           k_state = 16.0,
+                           alpha_state = 1/7,
                            check_repeat_state=false,
                            check_repeat_action=false,
                            estimate_value=RolloutEstimator(ro),
@@ -88,8 +89,6 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     next_action=RootToNextMLFirst(rng),
                     rng=rng
                    )
-        planner = solve(sol, dpomdp)
-        translate_policy(planner, dpomdp, pomdp, dpomdp)
     end,
 
     "d_despot" => begin

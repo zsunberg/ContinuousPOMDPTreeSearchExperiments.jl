@@ -1,3 +1,47 @@
+Mon 12 Feb 2018 10:39:56 AM PST
+
+zsunberg@tula:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 38 icaps_2018/vdptag2_table.jl 
+max_time = 1.0 = 1.0
+max_depth = 10 = 10
+N = 1000 = 1000
+k = "manage_uncertainty"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:30
+reward: 14.228 ±  1.621
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:33
+reward: 38.650 ±  0.848
+k = "to_next"
+Simulating...100%|██████████████████████████████████████| Time: 0:06:35
+reward: -15.811 ±  0.438
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:06:53
+reward: 34.617 ±  0.870
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:41:00
+reward: -11.674 ±  0.516
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:46:20
+reward: -13.107 ±  0.549
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:54:34
+reward: -18.505 ±  0.265
+
+
+Sat 10 Feb 2018 01:05:37 PM PST
+
+pft opt for vdptag2
+
+mean(combined[:mean_reward]) = 34.811950775101714
+iteration 39
+mean(d) = [8.64351, 17.79, 12.6579, 15.6675, 6.73998]
+det(cov(d)) = 1.759567322143827e-8
+ev = eigvals(cov(d)) = [0.000120243, 0.0171848, 0.0604909, 0.121802, 1.15574]
+(eigvecs(cov(d)))[:, j] = [-0.38064, -0.583394, 0.611271, -0.343526, -0.151995]
+(eigvecs(cov(d)))[:, j] = [0.878822, -0.441938, 0.0182528, -0.175703, -0.0340483]
+(eigvecs(cov(d)))[:, j] = [0.0417059, -0.228413, 0.347697, 0.70925, 0.567591]
+(eigvecs(cov(d)))[:, j] = [-0.24289, -0.435707, -0.589299, -0.289784, 0.565611]
+(eigvecs(cov(d)))[:, j] = [0.148496, 0.471518, 0.397302, -0.513914, 0.577636]
+
 Tue 30 Jan 2018 12:55:25 PM PST
 
 pow_opt for vdptag2

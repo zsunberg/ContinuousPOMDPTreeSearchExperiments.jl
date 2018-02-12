@@ -32,29 +32,44 @@ struct PDPWTree{A,O,S}
     a_labels::Vector{A}
 end
 
-function PDPWTree(pomdp::POMDP, sz::Int=1000)
-    acts = collect(iterator(actions(pomdp)))
+function PDPWTree(pomdp::POMDP, b::ParticleCollection, enable_apw::Bool, sz::Int=1000)
     A = action_type(pomdp)
     O = obs_type(pomdp)
     S = state_type(pomdp)
     sz = min(100_000, sz)
-    return PDPWTree{A,O,S}(sizehint!(Int[0], sz),
-                          sizehint!(Vector{Int}[collect(1:length(acts))], sz),
-                          sizehint!(Vector{O}(1), sz),
-                          sizehint!(Vector{S}[], sz),
+    if enable_apw
+        return PDPWTree{A,O,S}(sizehint!(Int[0], sz),
+                               sizehint!(Vector{Int}[Int[]], sz),
+                               sizehint!(Vector{O}(1), sz),
+                               sizehint!([particles(b)], sz),
 
-                          # sizehint!(Dict{Tuple{Int,O},Int}(), sz),
+                               sizehint!(Int[], sz),
+                               sizehint!(Float64[], sz),
+                               sizehint!(Vector{Int}[], sz),
+                               sizehint!(A[], sz)
+                             )
+    else
+        acts = collect(iterator(actions(pomdp)))
+        return PDPWTree{A,O,S}(sizehint!(Int[0], sz),
+                              sizehint!(Vector{Int}[collect(1:length(acts))], sz),
+                              sizehint!(Vector{O}(1), sz),
+                              sizehint!([particles(b)], sz),
 
-                          sizehint!(zeros(Int, length(acts)), sz),
-                          sizehint!(zeros(Float64, length(acts)), sz),
-                          sizehint!(fill(Int[], length(acts)), sz),
-                          sizehint!(acts, sz)
-                         )
+                              sizehint!(zeros(Int, length(acts)), sz),
+                              sizehint!(zeros(Float64, length(acts)), sz),
+                              sizehint!(fill(Int[], length(acts)), sz),
+                              sizehint!(acts, sz)
+                             )
+    end
 end    
 
 function insert_obs_node!(t::PDPWTree, pomdp::POMDP, ha::Int, o, s, enable_apw::Bool)
     push!(t.total_n, 0)
-    push!(t.children, sizehint!(Int[], n_actions(pomdp)))
+    if enable_apw
+        push!(t.children, Int[])
+    else
+        push!(t.children, sizehint!(Int[], n_actions(pomdp)))
+    end
     push!(t.B, [s])
     push!(t.o_labels, o)
     hao = length(t.total_n)
@@ -81,6 +96,9 @@ struct PDPWObsNode{A,O} <: BasicPOMCP.BeliefNode
     node::Int
 end
 
+MCTS.isroot(n::PDPWObsNode) = n.node == 1
+MCTS.n_children(n::PDPWObsNode) = length(n.tree.children[n.node])
+
 mutable struct PDPWPlanner{P, SE, NA, RNG} <: Policy
     solver::PDPWSolver
     problem::P
@@ -105,7 +123,7 @@ Base.srand(p::PDPWPlanner, seed) = srand(p.rng, seed)
 function action(p::PDPWPlanner, b)
     local a::action_type(p.problem)
     try
-        tree = PDPWTree(p.problem, p.solver.tree_queries)
+        tree = PDPWTree(p.problem, b, p.solver.enable_action_pw, p.solver.tree_queries)
         a = search(p, b, tree)
         p._tree = Nullable(tree)
     catch ex
@@ -159,7 +177,7 @@ function simulate(p::PDPWPlanner, s, hnode::PDPWObsNode, steps::Int)
     ka = p.solver.k_action
     aa = p.solver.alpha_action
     if p.solver.enable_action_pw && length(t.children[h]) <= ka*t.total_n[h]^aa
-        a = next_action(p.next_action, p.problem, t.B, hnode)
+        a = next_action(p.next_action, p.problem, ParticleCollection(t.B[h]), hnode)
         n = insert_action_node!(t, h, a)
         push!(t.children[h], n)
     end
