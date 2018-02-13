@@ -133,8 +133,7 @@ Fri 26 Jan 2018 04:45:55 PM PST
 
 RESULT
 
-zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/subhunt_discr
-etization.jl
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/subhunt_discretization.jl
 max_depth = 20 = 20
 max_time = 1.0 = 1.0
 N = 1000 = 1000

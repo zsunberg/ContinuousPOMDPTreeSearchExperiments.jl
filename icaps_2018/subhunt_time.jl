@@ -43,7 +43,7 @@ for max_time in logspace(-2, 1, 7)
                                    max_time=max_time,
                                    enable_action_pw=false,
                                    k_observation=6.0,
-                                   alpha_observation=1/100,
+                                   alpha_observation=1/30,
                                    estimate_value=FOValue(vp),
                                    check_repeat_obs=false,
                                    default_action=ReportWhenUsed(qp),
