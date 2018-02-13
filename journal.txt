@@ -1,5 +1,7 @@
 Mon 12 Feb 2018 10:39:56 AM PST
 
+RESULT
+
 zsunberg@tula:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 38 icaps_2018/vdptag2_table.jl 
 max_time = 1.0 = 1.0
 max_depth = 10 = 10
