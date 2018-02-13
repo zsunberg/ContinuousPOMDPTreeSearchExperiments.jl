@@ -26,7 +26,7 @@ file_contents = readstring(@__FILE__())
 @show max_depth = 90
 @show exploration = 26.0
 
-P = typeof(gen_lasertag(rng=MersenneTwister(18)))
+P = typeof(gen_lasertag(rng=MersenneTwister(18), robot_position_known=false))
 
 solvers = Dict{String, Union{Solver,Policy}}(
     "qmdp" => QMDPSolver(),
@@ -43,7 +43,6 @@ solvers = Dict{String, Union{Solver,Policy}}(
     (eigvecs(cov(d)))[:, j] = [-0.924357, -0.0234052, 0.38081]
     =#
 
-    #=
     "pomcpow" => begin
         rng = MersenneTwister(13)
         solver = POMCPOWSolver(tree_queries=10_000_000,
@@ -126,7 +125,6 @@ solvers = Dict{String, Union{Solver,Policy}}(
                             rng=rng
                            )
     end,
-    =#
 )
 
 @show N=1000
