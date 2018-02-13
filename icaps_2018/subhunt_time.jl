@@ -51,9 +51,32 @@ for max_time in logspace(-2, 1, 7)
                                   )
         end,
 
-        "pft" => begin
+        "pft_20" => begin
             rng = MersenneTwister(13)
             m = 20
+            node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
+                                               LowVarianceResampler(m),
+                                               0.1, rng)            
+            solver = DPWSolver(n_iterations=typemax(Int),
+                               exploration_constant=100.0,
+                               depth=max_depth,
+                               max_time=max_time,
+                               k_state=2.0,
+                               alpha_state=1/10,
+                               check_repeat_state=false,
+                               check_repeat_action=false,
+                               estimate_value=RolloutEstimator(qp),
+                               enable_action_pw=false,
+                               # default_action=ReportWhenUsed(qp),
+                               rng=rng
+                              )
+            belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
+            solve(solver, belief_mdp)
+        end,
+
+        "pft_10" => begin
+            rng = MersenneTwister(13)
+            m = 10
             node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                                LowVarianceResampler(m),
                                                0.1, rng)            
