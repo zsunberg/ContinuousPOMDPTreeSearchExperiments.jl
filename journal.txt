@@ -1,4 +1,36 @@
+Mon 12 Feb 2018 07:20:31 PM PST
+
+RESULT
+
+k = "qmdp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:20
+Simulating...100%|██████████████████████████████████████| Time: 0:01:35
+reward: -10.545 ±  0.195
+k = "ar_despot"
+Creating Simulations...100%|████████████████████████████| Time: 0:07:46
+Simulating...100%|██████████████████████████████████████| Time: 0:14:20
+reward: -8.745 ±  0.180
+k = "pomcpow"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:19
+Simulating...100%|██████████████████████████████████████| Time: 0:11:33
+reward: -9.951 ±  0.176
+k = "pomcpdpw"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:14:14
+reward: -10.746 ±  0.189
+k = "pft"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:12
+Simulating...100%|██████████████████████████████████████| Time: 0:11:46
+reward: -11.910 ±  0.161
+k = "pomcp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:26:17
+reward: -14.276 ±  0.211
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Monday_12_Feb_18_59.csv...
+
 Mon 12 Feb 2018 10:39:56 AM PST
+
+RESULT
 
 zsunberg@tula:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 38 icaps_2018/vdptag2_table.jl 
 max_time = 1.0 = 1.0
