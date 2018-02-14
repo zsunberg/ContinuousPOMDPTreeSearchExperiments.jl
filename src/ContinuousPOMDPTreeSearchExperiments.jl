@@ -67,6 +67,8 @@ export
     DSimpleLightDark,
     LDHeuristic,
     LDHSolver,
+    LDSide,
+    LDSidePolicy,
 
     PDPWSolver,
 

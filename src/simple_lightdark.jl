@@ -105,3 +105,19 @@ function action(p::LDHeuristic, b::AbstractParticleBelief)
         end
     end
 end
+
+struct LDSide <: Solver end
+
+mutable struct LDSidePolicy{LD} <: Policy
+    q::QMDPPolicy{LD, Int}
+end
+
+solve(solver::LDSide, pomdp::Union{SimpleLightDark,DSimpleLightDark}) = LDSidePolicy(solve(QMDPSolver(), pomdp))
+
+function action(p::LDSidePolicy, b)
+    if pdf(b, mode(b)) > 0.9
+        return action(p.q, b)
+    else
+        return -10
+    end
+end

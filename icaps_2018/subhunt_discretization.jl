@@ -96,7 +96,7 @@ for binsize in logspace(-2, 1, 7)
             srand(planner, i+50_000)
             filter = SIRParticleFilter(deepcopy(pomdp), 100_000, rng=MersenneTwister(i+90_000))            
 
-            md = Dict(:solver=>k, :i=>i, :max_time=>max_time)
+            md = Dict(:solver=>k, :i=>i, :max_time=>max_time, :binsize=>binsize)
             sim = Sim(deepcopy(pomdp),
                       planner,
                       filter,
