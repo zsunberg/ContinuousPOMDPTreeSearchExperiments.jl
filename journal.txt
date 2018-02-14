@@ -1,3 +1,121 @@
+Wed 14 Feb 2018 01:33:13 PM PST
+
+RESULT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/subhunt_discr
+etization.jl
+max_depth = 20 = 20
+max_time = 1.0 = 1.0
+N = 1000 = 1000
+max_time = 1.0
+(k, binsize) = ("qmdp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:47
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:32
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 62.105 ±  1.361
+(k, binsize) = ("d_despot", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:19
+reward: 29.104 ±  1.356
+(k, binsize) = ("d_pomcp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 28.083 ±  1.345
+(k, binsize) = ("qmdp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:42
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:32
+reward: 64.007 ±  1.333
+(k, binsize) = ("d_despot", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:18
+reward: 26.684 ±  1.325
+(k, binsize) = ("d_pomcp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 28.168 ±  1.346
+(k, binsize) = ("qmdp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:43
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:33
+reward: 62.163 ±  1.360
+(k, binsize) = ("d_despot", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:18
+reward: 26.690 ±  1.325
+(k, binsize) = ("d_pomcp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 28.077 ±  1.345
+(k, binsize) = ("qmdp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:42
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:31
+reward: 62.531 ±  1.355
+(k, binsize) = ("d_despot", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:18
+reward: 25.946 ±  1.314
+(k, binsize) = ("d_pomcp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:34
+reward: 28.269 ±  1.348
+(k, binsize) = ("qmdp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:43
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:29
+reward: 63.835 ±  1.339
+(k, binsize) = ("d_despot", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:18
+reward: 27.278 ±  1.332
+(k, binsize) = ("d_pomcp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 27.355 ±  1.336
+(k, binsize) = ("qmdp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:42
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:30
+reward: 61.437 ±  1.371
+(k, binsize) = ("d_despot", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:22
+reward: 26.314 ±  1.319
+(k, binsize) = ("d_pomcp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 28.632 ±  1.352
+(k, binsize) = ("qmdp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:43
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:31
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:56
+reward: 39.193 ±  1.440
+(k, binsize) = ("d_despot", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:42
+reward: 26.627 ±  1.325
+(k, binsize) = ("d_pomcp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:31
+reward: 28.576 ±  1.356
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_discretization_Wednesday_14_Feb_13_32.csv...
+done.
+
 Wed 14 Feb 2018 11:46:27 AM PST
 
 RESULT
