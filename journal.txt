@@ -1,5 +1,7 @@
 Wed 14 Feb 2018 09:46:58 AM PST
 
+RESULT
+
 zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/ld_discretiza
 tion.jl
 max_time = 1.0 = 1.0
