@@ -1,3 +1,45 @@
+Wed 14 Feb 2018 11:46:27 AM PST
+
+RESULT
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 51 icaps_2018/simpleld_table.jl
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 1000 = 1000
+k = "heuristic_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:06
+reward: 24.876 ±  0.861
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:10
+reward: -6.369 ±  1.029
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:32:23
+reward: -7.269 ±  0.997
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:38
+reward: 57.624 ±  0.475
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:03
+reward: 61.182 ±  0.435
+k = "heuristic_1"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:02
+reward: 27.612 ±  0.917
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:21
+reward: -6.819 ±  1.020
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:29:37
+reward: -7.813 ±  0.991
+k = "side"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:02
+reward: 42.417 ±  0.432
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:31
+reward: 49.366 ±  0.690
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:17
+reward: 55.540 ±  0.974
+
 Wed 14 Feb 2018 09:46:58 AM PST
 
 RESULT
