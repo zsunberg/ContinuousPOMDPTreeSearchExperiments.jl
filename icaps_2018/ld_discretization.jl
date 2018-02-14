@@ -15,6 +15,8 @@ using PmapProgressMeter
 @everywhere using POMDPs
 @everywhere using ParticleFilters
 
+file_contents = readstring(@__FILE__())
+
 @show max_time = 1.0
 @show max_depth = 20
 pomdp = SimpleLightDark()
@@ -69,6 +71,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 
     "qmdp" => QMDPSolver(),
+    "side" => LDSide()
 )
 
 @show N=1000
@@ -111,3 +114,11 @@ for d in logspace(-2, 1, 7)
         println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
     end
 end
+
+datestring = Dates.format(now(), "E_d_u_HH_MM")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "ld_discretization_$(datestring).jl")
+write(copyname, file_contents)
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "ld_discretization_$(datestring).csv")
+println("saving to $filename...")
+CSV.write(filename, alldata)
+println("done.")

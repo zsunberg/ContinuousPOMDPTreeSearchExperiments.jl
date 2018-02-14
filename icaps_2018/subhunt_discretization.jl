@@ -124,9 +124,9 @@ end
 
 
 datestring = Dates.format(now(), "E_d_u_HH_MM")
-copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_time_$(datestring).jl")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_discretization_$(datestring).jl")
 write(copyname, file_contents)
-filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_time_$(datestring).csv")
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_discretization_$(datestring).csv")
 println("saving to $filename...")
 CSV.write(filename, alldata)
 println("done.")
