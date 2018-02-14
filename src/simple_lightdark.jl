@@ -3,7 +3,7 @@
     correct_r::Float64      = 100.0
     incorrect_r::Float64    = -100.0
     light_loc::Int          = 10
-    radius::Int             = 30
+    radius::Int             = 60
 end
 discount(p::SimpleLightDark) = p.discount
 isterminal(p::SimpleLightDark, s::Number) = !(s in -p.radius:p.radius)
@@ -37,7 +37,9 @@ function reward(p::SimpleLightDark, s, a)
 end
 
 function initial_state_distribution(p::SimpleLightDark)
-    return SparseCat(-p.radius:p.radius, ones(2*p.radius+1))
+    ps = ones(2*div(p.radius,2)+1)
+    ps /= length(ps)
+    return SparseCat(div(-p.radius,2):div(p.radius,2), ps)
 end
 
 @with_kw struct DSimpleLightDark <: POMDPs.POMDP{Int, Int, Int}
@@ -113,11 +115,12 @@ mutable struct LDSidePolicy{LD} <: Policy
 end
 
 solve(solver::LDSide, pomdp::Union{SimpleLightDark,DSimpleLightDark}) = LDSidePolicy(solve(QMDPSolver(), pomdp))
+Base.srand(p::LDSidePolicy, s) = p
 
 function action(p::LDSidePolicy, b)
     if pdf(b, mode(b)) > 0.9
         return action(p.q, b)
     else
-        return -10
+        return 10
     end
 end

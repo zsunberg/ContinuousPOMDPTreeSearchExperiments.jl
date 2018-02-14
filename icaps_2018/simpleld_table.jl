@@ -46,24 +46,6 @@ solvers = Dict{String, Union{Solver,Policy}}(
                    )
     end,
 
-    #=
-    "despot_0" => begin
-        rng = MersenneTwister(13)
-        ro = QMDPSolver()
-        # b = IndependentBounds(DefaultPolicyLB(ro), FullyObservableValueUB(ro))
-        b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
-        DESPOTSolver(lambda=0.0,
-                     epsilon_0=0.0,
-                     K=500,
-                     D=max_depth,
-                     max_trials=1_000_000,
-                     T_max=max_time,
-                     bounds=b,
-                     default_action=solve(ro, pomdp),
-                     rng=rng)
-    end,
-    =#
-
     "despot_01" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
@@ -155,13 +137,14 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "qmdp" => QMDPSolver(),
     "heuristic_1" => LDHSolver(std_thresh=0.1),
-    "heuristic_01" => LDHSolver(std_thresh=0.01)
+    "heuristic_01" => LDHSolver(std_thresh=0.01),
+    "side" => LDSide()
 )
 
-@show N=5000
+@show N=1000
 
 for (k, solver) in solvers
-# test = ["d_despot"]
+# test = ["side"]
 # for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
     if isa(solver, Solver)

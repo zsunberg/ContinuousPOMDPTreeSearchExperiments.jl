@@ -1,3 +1,7 @@
+Tue 13 Feb 2018 09:00:06 PM PST
+
+SWITCHED TO NEW LD Definition to prevent good side strategy
+
 Mon 12 Feb 2018 07:20:31 PM PST
 
 RESULT
