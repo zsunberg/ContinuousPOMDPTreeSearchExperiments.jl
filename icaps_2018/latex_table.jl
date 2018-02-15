@@ -20,17 +20,18 @@ problem_order = ["lasertag", "lightdark", "subhunt", "vdptag"]
 
 data = Dict(
     "lightdark" => Dict(
-        "heuristic_01" => (24.469, 0.854),
-        "despot" => (6.659, 1.267),
-        "qmdp" => (5.287, 1.248),
-        "pomcpow" => (62.179, 0.511),
-        "pomcpdpw" => (5.297, 1.254),
-        "pft" => (57.123, 0.396),
-        "d_pomcp" => (64.496, 0.383),
-        "d_despot" => (52.163, 1.346),
-        "heuristic_1" => (28.216, 0.898),
-        "pomcp" => (4.491, 1.238),
-        "limits" => (0.0, 80.0),
+        "heuristic_01" => (24.876, 0.861),
+        "qmdp" => (-6.369, 1.029),
+        "pomcpdpw" => (-7.269, 0.997),
+        "pomcpow" => (57.624, 0.475),
+        "d_pomcp" => (61.182, 0.435),
+        "heuristic_1" => (27.612, 0.917),
+        "despot" => (-6.819, 1.020),
+        "pomcp" => (-7.813, 0.991),
+        "side" => (42.417, 0.432),
+        "pft" => (49.366, 0.690),
+        "d_despot" => (55.540, 0.974),
+        "limits" => (-20.0, 80.0),
         "name" => "Light Dark"
     ), 
 

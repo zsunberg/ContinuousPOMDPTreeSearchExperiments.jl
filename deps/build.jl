@@ -1,6 +1,6 @@
 using POMDPs
 
-# POMDPs.add("BasicPOMCP")
+POMDPs.add("BasicPOMCP")
 POMDPs.add("QMDP")
 POMDPs.add("POMCPOW")
 POMDPs.add("DESPOT")
