@@ -12,6 +12,8 @@ Experiments for POMCPOW
 
 Paper available at https://arxiv.org/abs/1709.06196.
 
+The POMCPOW implementation with basic documentation is available at https://github.com/JuliaPOMDP/POMCPOW.jl.
+
 This requires Julia version 0.6.
 
 To reproduce the results in the table, get the dependencies with `Pkg.build("ContinuousPOMDPTreeSearchExperiments")` and then run the scripts in `icaps_2018` with `table` in their names.
