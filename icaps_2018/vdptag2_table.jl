@@ -14,7 +14,7 @@ using DataFrames
 
 file_contents = readstring(@__FILE__())
 
-pomdp = VDPTagPOMDP()
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(agent_speed=1.5))
 dpomdp = AODiscreteVDPTagPOMDP(pomdp, 30, 0.5)
 
 @show max_time = 1.0
@@ -28,13 +28,13 @@ solvers = Dict{String, Union{Solver,Policy}}(
         rng = MersenneTwister(13)
         ro = ToNextMLSolver(rng)
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(65.0),
+                               criterion=MaxUCB(32.0),
                                final_criterion=MaxTries(),
                                max_depth=max_depth,
                                max_time=max_time,
-                               k_action=20.0,
-                               alpha_action=1/10.0,
-                               k_observation=4.0,
+                               k_action=26.0,
+                               alpha_action=1/8.0,
+                               k_observation=5.0,
                                alpha_observation=1/100.0,
                                estimate_value=FORollout(ro),
                                next_action=RootToNextMLFirst(rng),
@@ -125,10 +125,10 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 @show N=1000
 
-alldata = DataFrame()
-for (k, solver) in solvers
-# test = ["pomcpdpw"]
-# for (k, solver) in [(s, solvers[s]) for s in test]
+# alldata = DataFrame()
+# for (k, solver) in solvers
+test = ["pomcpow", "pft"]
+for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)

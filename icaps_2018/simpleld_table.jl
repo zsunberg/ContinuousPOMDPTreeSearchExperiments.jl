@@ -41,7 +41,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     # default_action=ro,
-                    estimate_value=FORollout(ro),
+                    estimate_value=FOValue(ro),
                     rng=rng
                    )
     end,
@@ -111,7 +111,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     # default_action=ro,
-                    estimate_value=FORollout(ro),
+                    estimate_value=FOValue(ro),
                     rng=rng
                    )
         dpomdp = DSimpleLightDark(pomdp, 0.05)
@@ -143,8 +143,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 @show N=1000
 
-for (k, solver) in solvers
-# test = ["side"]
+# for (k, solver) in solvers
+# test = ["pomcpow", "pft"]
 # for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
     if isa(solver, Solver)
