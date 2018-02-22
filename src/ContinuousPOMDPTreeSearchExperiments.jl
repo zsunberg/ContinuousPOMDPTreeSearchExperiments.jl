@@ -56,6 +56,7 @@ export
     ModeMDPSolver,
     nogap_tag,
     VDPUpper,
+    SampleRollout,
 
     Sim,
     # SimQueue,

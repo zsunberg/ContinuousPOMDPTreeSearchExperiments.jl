@@ -179,3 +179,13 @@ function ARDESPOT.ubound(ub::VDPUpper, pomdp::POMDP, b::ScenarioBelief)
         return mdp(cproblem(pomdp)).tag_reward
     end
 end
+
+struct SampleRollout{P<:Policy, RNG<:AbstractRNG}
+    policy::P
+    rng::RNG
+end
+
+function MCTS.estimate_value(ro::SampleRollout, mdp::GenerativeBeliefMDP, b, depth::Int)
+    sfo = SolvedFORollout(ro.policy, ro.rng)
+    return rollout(sfo, mdp.pomdp, rand(ro.rng, b), depth)
+end
