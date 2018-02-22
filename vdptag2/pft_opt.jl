@@ -57,7 +57,7 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
                            alpha_state = 1/inv_alpha_obs,
                            check_repeat_state=false,
                            check_repeat_action=false,
-                           estimate_value=RolloutEstimator(ro),
+                           estimate_value=ev,
                            next_action=RootToNextMLFirst(rng),
                            rng=rng
                           )
@@ -69,6 +69,7 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
             try
                 a = action(planner, s)
             catch ex
+                rethrow(ex)
                 @show typeof(ex)
                 warn("error in policy evaluation; using default")
                 a = TagAction(false, 0.0)

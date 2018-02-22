@@ -185,7 +185,11 @@ struct SampleRollout{P<:Policy, RNG<:AbstractRNG}
     rng::RNG
 end
 
-function MCTS.estimate_value(ro::SampleRollout, mdp::GenerativeBeliefMDP, b, depth::Int)
-    sfo = SolvedFORollout(ro.policy, ro.rng)
-    return rollout(sfo, mdp.pomdp, rand(ro.rng, b), depth)
+function MCTS.estimate_value(ro::SampleRollout, mdp::GenerativeBeliefMDP, b, steps::Int)
+    start_state = rand(ro.rng, b)
+    sim = POMDPToolbox.RolloutSimulator(ro.rng,
+                                        Nullable{Any}(start_state),
+                                        Nullable{Float64}(),
+                                        Nullable{Int}(steps))
+    return POMDPToolbox.simulate(sim, mdp.pomdp, ro.policy, start_state)
 end
