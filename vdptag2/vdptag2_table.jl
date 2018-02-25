@@ -14,11 +14,13 @@ using DataFrames
 
 file_contents = readstring(@__FILE__())
 
-pomdp = VDPTagPOMDP(mdp=VDPTagMDP(agent_speed=1.5))
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 1.8)))
 dpomdp = AODiscreteVDPTagPOMDP(pomdp, 30, 0.5)
 
 @show max_time = 1.0
 @show max_depth = 10
+@show RO = RandomSolver
+# @show RO = ToNextMLSolver
 
 solvers = Dict{String, Union{Solver,Policy}}(
     "to_next" => ToNextML(mdp(pomdp)),
@@ -26,16 +28,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
         rng = MersenneTwister(13)
-        ro = ToNextMLSolver(rng)
+        # ro = ToNextMLSolver(rng)::RO
+        ro = RandomSolver(rng)::RO
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(22.0),
+                               criterion=MaxUCB(100.0),
                                final_criterion=MaxQ(),
                                max_depth=max_depth,
                                max_time=max_time,
-                               k_action=35.0,
-                               alpha_action=1/15.0,
-                               k_observation=3.0,
-                               alpha_observation=1/100.0,
+                               k_action=25.0,
+                               alpha_action=1/20,
+                               k_observation=6.0,
+                               alpha_observation=1/100,
                                estimate_value=FORollout(ro),
                                next_action=RootToNextMLFirst(rng),
                                check_repeat_obs=false,
@@ -51,19 +54,22 @@ solvers = Dict{String, Union{Solver,Policy}}(
         node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(m),
                                            0.05, rng)            
-        ro = ToNextML(mdp(pomdp), rng)
+        # ro = ToNextMLSolver(rng)::RO
+        ro = RandomSolver(rng)::RO
+        ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=72.0,
+                           exploration_constant=90.0,
                            depth=max_depth,
                            max_time=max_time,
-                           k_action = 25.0, 
-                           alpha_action = 1/17,
-                           k_state = 28.0,
-                           alpha_state = 1/1.6,
+                           k_action = 20.0, 
+                           alpha_action = 1/20,
+                           k_state = 6.0,
+                           alpha_state = 1/55,
                            check_repeat_state=false,
                            check_repeat_action=false,
-                           estimate_value=RolloutEstimator(ro),
+                           estimate_value=ev,
                            next_action=RootToNextMLFirst(rng),
+                           default_action=ReportWhenUsed(TagAction(false, 0.0)),
                            rng=rng
                           )
         belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
@@ -72,7 +78,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpdpw" => begin
         rng = MersenneTwister(13)
-        ro = ToNextMLSolver(rng)
+        # ro = ToNextMLSolver(rng)
+        ro = RandomSolver(rng)::RO
         sol = PDPWSolver(max_depth=max_depth,
                     max_time=max_time,
                     c=65.0,
@@ -93,6 +100,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "d_despot" => begin
         rng = MersenneTwister(13)
+        # ro = ToNextMLSolver(rng)
         ro = ToNextMLSolver(rng)
         b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
         sol = DESPOTSolver(lambda=0.01,
@@ -127,7 +135,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 # alldata = DataFrame()
 # for (k, solver) in solvers
-test = ["pomcpow", "pft"]
+# test = ["pomcpow", "pft"]
+test = ["manage_uncertainty", "pomcpow", "pft"]
 for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)

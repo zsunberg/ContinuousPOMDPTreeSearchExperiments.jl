@@ -81,7 +81,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                                              0.1, rng))
     end,
 
-    "ar_despot" => begin
+    "despot" => begin
         rng = MersenneTwister(13)
         # b = IndependentBounds(DefaultPolicyLB(QMDPSolver()), 100.0, check_terminal=true)
         bounds = LaserBounds{P}()

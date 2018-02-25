@@ -13,6 +13,8 @@ using POMDPToolbox
 @show max_depth = 20
 pomdp = SimpleLightDark()
 
+file_contents = readstring(@__FILE__())
+
 solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
@@ -143,7 +145,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 @show N=1000
 
-# for (k, solver) in solvers
+alldata = DataFrame()
+for (k, solver) in solvers
 # test = ["pomcpow", "pft"]
 # for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
@@ -175,4 +178,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
+    if isempty(alldata)
+        alldata = data
+    else
+        alldata = vcat(alldata, data)
+    end
 end
+
+datestring = Dates.format(now(), "E_d_u_HH_MM")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "simpleld_table_$(datestring).jl")
+write(copyname, file_contents)
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "simpleld_$(datestring).csv")
+println("saving to $filename...")
+CSV.write(filename, alldata)
+println("done.")

@@ -10,21 +10,17 @@ using MCTS
 using VDPTag2
 using POMDPToolbox
 using DataFrames
-using Plots
-using StatPlots
-using Missings
 
-@everywhere using POMDPToolbox
-@everywhere using Missings
 
 file_contents = readstring(@__FILE__())
 
-# pomdp = VDPTagPOMDP(mdp=VDPTagMDP(agent_speed=2.0#=, dt=0.01=#))
-pomdp = VDPTagPOMDP()
-dpomdp = AODiscreteVDPTagPOMDP(pomdp, 30, 0.5)
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 1.8)))
+dpomdp = AODiscreteVDPTagPOMDP(pomdp, 25, 0.2)
 
 @show max_time = 1.0
 @show max_depth = 10
+@show RO = RandomSolver
+# @show RO = ToNextMLSolver
 
 solvers = Dict{String, Union{Solver,Policy}}(
     "to_next" => ToNextML(mdp(pomdp)),
@@ -32,17 +28,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
         rng = MersenneTwister(13)
-        ro = ToNextMLSolver(rng)
-        ro = RandomSolver(rng)
+        # ro = ToNextMLSolver(rng)::RO
+        ro = RandomSolver(rng)::RO
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(90.0),
+                               criterion=MaxUCB(100.0),
                                final_criterion=MaxQ(),
                                max_depth=max_depth,
                                max_time=max_time,
-                               k_action=20.0,
+                               k_action=25.0,
                                alpha_action=1/20,
                                k_observation=6.0,
-                               alpha_observation=1/55,
+                               alpha_observation=1/100,
                                estimate_value=FORollout(ro),
                                next_action=RootToNextMLFirst(rng),
                                check_repeat_obs=false,
@@ -54,12 +50,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pft" => begin
         rng = MersenneTwister(13)
-        m = 15
+        m = 10
         node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(m),
                                            0.05, rng)            
-        ro = ToNextML(mdp(pomdp), rng)
-        ro = RandomSolver(rng)
+        # ro = ToNextMLSolver(rng)::RO
+        ro = RandomSolver(rng)::RO
         ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
                            exploration_constant=90.0,
@@ -79,16 +75,70 @@ solvers = Dict{String, Union{Solver,Policy}}(
         belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
         solve(solver, belief_mdp)
     end,
+
+    "pomcpdpw" => begin
+        rng = MersenneTwister(13)
+        # ro = ToNextMLSolver(rng)
+        ro = RandomSolver(rng)::RO
+        sol = PDPWSolver(max_depth=max_depth,
+                    max_time=max_time,
+                    c=100.0,
+                    k_action=25.0,
+                    alpha_action=1/20.0,
+                    k_observation=6.0,
+                    alpha_observation=1/100.0,
+                    enable_action_pw=true,
+                    check_repeat_obs=false,
+                    check_repeat_act=false,
+                    tree_queries=typemax(Int),
+                    # default_action=ReportWhenUsed(1),
+                    estimate_value=FORollout(ro),
+                    next_action=RootToNextMLFirst(rng),
+                    rng=rng
+                   )
+    end,
+
+    "d_despot" => begin
+        rng = MersenneTwister(13)
+        # ro = ToNextMLSolver(rng)
+        ro = RandomSolver(rng)::RO
+        b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
+        sol = DESPOTSolver(lambda=0.01,
+                     K=100,
+                     D=max_depth,
+                     max_trials=1_000_000,
+                     T_max=max_time,
+                     bounds=b,
+                     random_source=MemorizingSource(500, 10, rng, min_reserve=8),
+                     rng=rng)
+        planner = solve(sol, dpomdp)
+        translate_policy(planner, dpomdp, pomdp, dpomdp)
+    end, 
+
+    "d_pomcp" => begin
+        rng = MersenneTwister(13)
+        # ro = ToNextMLSolver(rng)
+        ro = RandomSolver(rng)::RO
+        sol = POMCPSolver(max_depth=max_depth,
+                    max_time=max_time,
+                    c=100.0,
+                    tree_queries=typemax(Int),
+                    default_action=ReportWhenUsed(1),
+                    estimate_value=FORollout(ro),
+                    rng=rng
+                   )
+        planner = solve(sol, dpomdp)
+        translate_policy(planner, dpomdp, pomdp, dpomdp)
+    end
 )
 
 @show N=1000
 
 alldata = DataFrame()
 
-# for (k, solver) in solvers
-test = ["pft", "pomcpow"]
-# test = ["to_next", "manage_uncertainty"]
-for (k, solver) in [(s, solvers[s]) for s in test]
+for (k, solver) in solvers
+# test = ["manage_uncertainty", "pomcpow", "pft"]
+# for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -101,63 +151,34 @@ for (k, solver) in [(s, solvers[s]) for s in test]
         filter = SIRParticleFilter(deepcopy(pomdp), 100_000, rng=MersenneTwister(i+90_000))            
 
         md = Dict(:solver=>k, :i=>i)
-        hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i+70_000), capture_exception=true)
         sim = Sim(deepcopy(pomdp),
                   planner,
                   filter,
-                  simulator=hr,
-                  metadata=md,
+                  rng=MersenneTwister(i+70_000),
+                  max_steps=100,
+                  metadata=md
                  )
 
         push!(sims, sim)
     end
 
-    data = run_parallel(sims) do sim, hist
-        if isnull(hist.exception)
-            tq = [get(info, :tree_queries, missing) for info in eachstep(hist,"ai")]
-            if isempty(tq)
-                println("Empty history?")
-                @show n_steps(hist)
-                iters = missing
-            else
-                iters = mean(tq)
-            end
-            return [:steps=>n_steps(hist),
-                    :reward=>discounted_reward(hist),
-                    :iterations=>iters
-                   ]
-        else
-            println("Simulator Caught a $(typeof(get(hist.exception)))")
-            return [:exception_type => string(typeof(get(hist.exception)))]
-        end
-    end
+    data = run_parallel(sims)
     # data = run(sims)
-
-    rs = data[:reward]
-    println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
-    is = data[:iterations]
-    println(@sprintf("iterations: mean: %6.3f", mean(is)))
 
     if isempty(alldata)
         alldata = data
     else
         alldata = vcat(alldata, data)
     end
+
+    rs = data[:reward]
+    println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
 end
 
-# p = plot()
-# for data in groupby(alldata, :solver)
-#     histogram!(p, data[:steps], label=first(data[:solver]))
-# end
-# 
-# gui(p)
-
-#=
 datestring = Dates.format(now(), "E_d_u_HH_MM")
-copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_table_$(datestring).jl")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "vdpbarrier_table_$(datestring).jl")
 write(copyname, file_contents)
-filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "subhunt_$(datestring).csv")
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "bdpbarrier_$(datestring).csv")
 println("saving to $filename...")
 writetable(filename, alldata)
 println("done.")
-=#
