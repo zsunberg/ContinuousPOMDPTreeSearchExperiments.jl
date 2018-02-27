@@ -55,6 +55,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                alpha_observation=1/35,
                                estimate_value=FOValue(ValueIterationSolver()),
                                check_repeat_obs=false,
+                               tree_in_info=false,
                                default_action=LaserTag.TAG_ACTION,
                                rng=rng
                               )
@@ -71,6 +72,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            alpha_state=1/35,
                            check_repeat_state=false,
                            check_repeat_action=false,
+                           tree_in_info=false,
                            estimate_value=RolloutEstimator(QMDPSolver()),
                            enable_action_pw=false,
                            # default_action=ReportWhenUsed(NoGapTag()),
@@ -81,7 +83,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                                              0.1, rng))
     end,
 
-    "ar_despot" => begin
+    "despot" => begin
         rng = MersenneTwister(13)
         # b = IndependentBounds(DefaultPolicyLB(QMDPSolver()), 100.0, check_terminal=true)
         bounds = LaserBounds{P}()
@@ -104,6 +106,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     max_time=max_time,
                     c=exploration,
                     tree_queries=typemax(Int),
+                    tree_in_info=false,
                     default_action=LaserTag.TAG_ACTION,
                     estimate_value=FOValue(ValueIterationSolver()),
                     rng=rng

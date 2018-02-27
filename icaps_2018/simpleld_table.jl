@@ -13,6 +13,8 @@ using POMDPToolbox
 @show max_depth = 20
 pomdp = SimpleLightDark()
 
+file_contents = readstring(@__FILE__())
+
 solvers = Dict{String, Union{Solver,Policy}}(
 
     "pomcpow" => begin
@@ -28,6 +30,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                alpha_observation=1/15.0,
                                estimate_value=FOValue(ro),
                                check_repeat_obs=false,
+                               tree_in_info=false,
                                # default_action=ReportWhenUsed(-1),
                                rng=rng
                               )
@@ -42,6 +45,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     tree_queries=typemax(Int),
                     # default_action=ro,
                     estimate_value=FOValue(ro),
+                    tree_in_info=false,
                     rng=rng
                    )
     end,
@@ -96,6 +100,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            check_repeat_action=false,
                            estimate_value=RolloutEstimator(ro),
                            enable_action_pw=false,
+                           tree_in_info=false,
                            # default_action=ReportWhenUsed(qp),
                            rng=rng
                           )
@@ -111,6 +116,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     # default_action=ro,
+                    tree_in_info=false,
                     estimate_value=FOValue(ro),
                     rng=rng
                    )
@@ -143,7 +149,8 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 @show N=1000
 
-# for (k, solver) in solvers
+alldata = DataFrame()
+for (k, solver) in solvers
 # test = ["pomcpow", "pft"]
 # for (k, solver) in [(k, solvers[k]) for k in test]
     @show k
@@ -175,4 +182,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     rs = data[:reward]
     println(@sprintf("reward: %6.3f ± %6.3f", mean(rs), std(rs)/sqrt(length(rs))))
+    if isempty(alldata)
+        alldata = data
+    else
+        alldata = vcat(alldata, data)
+    end
 end
+
+datestring = Dates.format(now(), "E_d_u_HH_MM")
+copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "simpleld_table_$(datestring).jl")
+write(copyname, file_contents)
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "simpleld_$(datestring).csv")
+println("saving to $filename...")
+CSV.write(filename, alldata)
+println("done.")

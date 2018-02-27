@@ -12,12 +12,15 @@ using POMDPToolbox
 using DataFrames
 using Plots
 using StatPlots
+using Missings
 
 @everywhere using POMDPToolbox
+@everywhere using Missings
 
 file_contents = readstring(@__FILE__())
 
-pomdp = VDPTagPOMDP(mdp=VDPTagMDP(agent_speed=2.0#=, dt=0.01=#))
+# pomdp = VDPTagPOMDP(mdp=VDPTagMDP(agent_speed=2.0#=, dt=0.01=#))
+pomdp = VDPTagPOMDP()
 dpomdp = AODiscreteVDPTagPOMDP(pomdp, 30, 0.5)
 
 @show max_time = 1.0
@@ -32,14 +35,14 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = ToNextMLSolver(rng)
         ro = RandomSolver(rng)
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(22.0),
+                               criterion=MaxUCB(90.0),
                                final_criterion=MaxQ(),
                                max_depth=max_depth,
                                max_time=max_time,
-                               k_action=35.0,
-                               alpha_action=1/15.0,
-                               k_observation=3.0,
-                               alpha_observation=1/100.0,
+                               k_action=20.0,
+                               alpha_action=1/20,
+                               k_observation=6.0,
+                               alpha_observation=1/55,
                                estimate_value=FORollout(ro),
                                next_action=RootToNextMLFirst(rng),
                                check_repeat_obs=false,
@@ -51,7 +54,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pft" => begin
         rng = MersenneTwister(13)
-        m = 10
+        m = 15
         node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(m),
                                            0.05, rng)            
@@ -59,17 +62,18 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = RandomSolver(rng)
         ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=72.0,
+                           exploration_constant=90.0,
                            depth=max_depth,
                            max_time=max_time,
-                           k_action = 25.0, 
-                           alpha_action = 1/17,
-                           k_state = 28.0,
-                           alpha_state = 1/1.6,
+                           k_action = 20.0, 
+                           alpha_action = 1/20,
+                           k_state = 6.0,
+                           alpha_state = 1/55,
                            check_repeat_state=false,
                            check_repeat_action=false,
                            estimate_value=ev,
                            next_action=RootToNextMLFirst(rng),
+                           default_action=ReportWhenUsed(TagAction(false, 0.0)),
                            rng=rng
                           )
         belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
@@ -77,12 +81,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 )
 
-@show N=10
+@show N=1000
 
 alldata = DataFrame()
 
 # for (k, solver) in solvers
-test = ["pomcpow", "pft"]
+test = ["pft", "pomcpow"]
 # test = ["to_next", "manage_uncertainty"]
 for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
@@ -97,23 +101,35 @@ for (k, solver) in [(s, solvers[s]) for s in test]
         filter = SIRParticleFilter(deepcopy(pomdp), 100_000, rng=MersenneTwister(i+90_000))            
 
         md = Dict(:solver=>k, :i=>i)
+        hr = HistoryRecorder(max_steps=100, rng=MersenneTwister(i+70_000), capture_exception=true)
         sim = Sim(deepcopy(pomdp),
                   planner,
                   filter,
-                  rng=MersenneTwister(i+70_000),
-                  max_steps=100,
-                  metadata=md
+                  simulator=hr,
+                  metadata=md,
                  )
 
         push!(sims, sim)
     end
 
     data = run_parallel(sims) do sim, hist
-
-        return [:steps=>n_steps(hist),
-                :reward=>discounted_reward(hist),
-                :iterations=>mean(info[:tree_queries] for info in eachstep(hist,"ai"))
-               ]
+        if isnull(hist.exception)
+            tq = [get(info, :tree_queries, missing) for info in eachstep(hist,"ai")]
+            if isempty(tq)
+                println("Empty history?")
+                @show n_steps(hist)
+                iters = missing
+            else
+                iters = mean(tq)
+            end
+            return [:steps=>n_steps(hist),
+                    :reward=>discounted_reward(hist),
+                    :iterations=>iters
+                   ]
+        else
+            println("Simulator Caught a $(typeof(get(hist.exception)))")
+            return [:exception_type => string(typeof(get(hist.exception)))]
+        end
     end
     # data = run(sims)
 
@@ -129,12 +145,12 @@ for (k, solver) in [(s, solvers[s]) for s in test]
     end
 end
 
-p = plot()
-for data in groupby(alldata, :solver)
-    histogram!(p, data[:steps], label=first(data[:solver]))
-end
-
-gui(p)
+# p = plot()
+# for data in groupby(alldata, :solver)
+#     histogram!(p, data[:steps], label=first(data[:solver]))
+# end
+# 
+# gui(p)
 
 #=
 datestring = Dates.format(now(), "E_d_u_HH_MM")
