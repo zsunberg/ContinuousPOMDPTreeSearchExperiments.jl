@@ -74,7 +74,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         solve(solver, belief_mdp)
     end,
 
-    "ar_despot" => begin
+    "despot" => begin
         rng = MersenneTwister(13)
         b = IndependentBounds(DefaultPolicyLB(qp), 100.0, check_terminal=true)
         DESPOTSolver(lambda=0.01,

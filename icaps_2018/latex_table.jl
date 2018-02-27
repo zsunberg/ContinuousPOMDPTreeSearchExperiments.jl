@@ -1,4 +1,6 @@
 using DataFrames
+using DataFramesMeta
+using CSV
 
 d = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018","data")
 
@@ -19,11 +21,10 @@ cardinality = Dict("lasertag" => "(D, D, D)",
 
 problem_order = ["lasertag", "lightdark", "subhunt", "vdpbarrier"]
 
-filenames = Dict("lasertag" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Monday
-_26_Feb_18_46.csv",
-                 "lightdark" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/simpleld_Monday_26_Feb_20_13.csv",
-                 "subhunt" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Monday_26_Feb_20_44.csv",
-                 "vdpbarrier" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/bdpbarrier_Monday_26_Feb_21_42.csv")
+filenames = Dict("lasertag" => "$(Pkg.dir("ContinuousPOMDPTreeSearchExperiments"))/icaps_2018/data/lasertag_Monday_26_Feb_18_46.csv",
+                 "lightdark" => "$(Pkg.dir("ContinuousPOMDPTreeSearchExperiments"))/icaps_2018/data/simpleld_Monday_26_Feb_20_13.csv",
+                 "subhunt" => "$(Pkg.dir("ContinuousPOMDPTreeSearchExperiments"))/icaps_2018/data/subhunt_Monday_26_Feb_20_44.csv",
+                 "vdpbarrier" => "$(Pkg.dir("ContinuousPOMDPTreeSearchExperiments"))/icaps_2018/data/bdpbarrier_Monday_26_Feb_21_42.csv")
 
 data = Dict(
     "lightdark" => Dict(
@@ -44,17 +45,31 @@ data = Dict(
     "vdptag" => Dict(
         "limits" => (-20.0, 40.0),
         "name" => "VDP Tag"
-    )
+    ),
 
     "vdpbarrier" => Dict(
-        "limits" => (-20.0, 40.0),
+        "limits" => (0.0, 31.0),
         "name" => "VDP Tag"
-    )
+    ),
 
 )
 
 for p in problem_order
-    
+    df = CSV.read(filenames[p])
+    d = data[p]
+    for s in unique(df[:solver])
+        rs = @where(df, :solver.==s)[:reward]
+        m = mean(rs)
+        sem = std(rs)/sqrt(length(rs))
+        if s == "ar_despot"
+            s = "despot"
+        elseif s == "despot_01"
+            s = "despot"
+        elseif p == "lasertag" && s == "pomcp"
+            s = "d_pomcp"
+        end
+        d[s] = (m, sem)
+    end
 end
 
 hbuf = IOBuffer()

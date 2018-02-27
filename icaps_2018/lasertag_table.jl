@@ -100,7 +100,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                      rng=rng)
     end,
 
-    "pomcp" => begin
+    "d_pomcp" => begin
         rng = MersenneTwister(13)
         POMCPSolver(max_depth=max_depth,
                     max_time=max_time,

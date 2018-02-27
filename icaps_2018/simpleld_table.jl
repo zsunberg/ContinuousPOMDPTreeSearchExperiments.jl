@@ -50,7 +50,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                    )
     end,
 
-    "despot_01" => begin
+    "despot" => begin
         rng = MersenneTwister(13)
         ro = QMDPSolver()
         b = IndependentBounds(DefaultPolicyLB(ro), 100.0, check_terminal=true)
