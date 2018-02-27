@@ -56,6 +56,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     tree_queries=typemax(Int),
                     default_action=ReportWhenUsed(qp),
                     estimate_value=FOValue(vp),
+                    tree_in_info=false,
                     rng=rng
                    )
     end,
@@ -73,6 +74,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                estimate_value=FOValue(vp),
                                check_repeat_obs=false,
                                default_action=ReportWhenUsed(qp),
+                               tree_in_info=false,
                                rng=rng
                               )
     end

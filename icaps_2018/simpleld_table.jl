@@ -30,6 +30,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                alpha_observation=1/15.0,
                                estimate_value=FOValue(ro),
                                check_repeat_obs=false,
+                               tree_in_info=false,
                                # default_action=ReportWhenUsed(-1),
                                rng=rng
                               )
@@ -44,6 +45,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     tree_queries=typemax(Int),
                     # default_action=ro,
                     estimate_value=FOValue(ro),
+                    tree_in_info=false,
                     rng=rng
                    )
     end,
@@ -98,6 +100,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            check_repeat_action=false,
                            estimate_value=RolloutEstimator(ro),
                            enable_action_pw=false,
+                           tree_in_info=false,
                            # default_action=ReportWhenUsed(qp),
                            rng=rng
                           )
@@ -113,6 +116,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                     c=100.0,
                     tree_queries=typemax(Int),
                     # default_action=ro,
+                    tree_in_info=false,
                     estimate_value=FOValue(ro),
                     rng=rng
                    )

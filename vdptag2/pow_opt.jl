@@ -12,7 +12,7 @@ using DiscreteValueIteration
 using VDPTag2
 using QMDP
 
-pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 1.8)))
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 2.8)))
 
 @show max_time = 1.0
 @show max_depth = 10

@@ -14,7 +14,7 @@ using DataFrames
 
 file_contents = readstring(@__FILE__())
 
-pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 1.8)))
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 2.8)))
 dpomdp = AODiscreteVDPTagPOMDP(pomdp, 25, 0.2)
 
 @show max_time = 1.0
@@ -31,18 +31,19 @@ solvers = Dict{String, Union{Solver,Policy}}(
         # ro = ToNextMLSolver(rng)::RO
         ro = RandomSolver(rng)::RO
         solver = POMCPOWSolver(tree_queries=10_000_000,
-                               criterion=MaxUCB(100.0),
+                               criterion=MaxUCB(110.0),
                                final_criterion=MaxQ(),
                                max_depth=max_depth,
                                max_time=max_time,
-                               k_action=25.0,
-                               alpha_action=1/20,
-                               k_observation=6.0,
+                               k_action=30.0,
+                               alpha_action=1/30,
+                               k_observation=5.0,
                                alpha_observation=1/100,
                                estimate_value=FORollout(ro),
                                next_action=RootToNextMLFirst(rng),
                                check_repeat_obs=false,
                                check_repeat_act=false,
+                               tree_in_info=false,
                                default_action=ReportWhenUsed(TagAction(false, 0.0)),
                                rng=rng
                               )
@@ -50,7 +51,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pft" => begin
         rng = MersenneTwister(13)
-        m = 10
+        m = 15
         node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
                                            LowVarianceResampler(m),
                                            0.05, rng)            
@@ -58,15 +59,16 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = RandomSolver(rng)::RO
         ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=90.0,
+                           exploration_constant=85.0,
                            depth=max_depth,
                            max_time=max_time,
                            k_action = 20.0, 
                            alpha_action = 1/20,
-                           k_state = 6.0,
-                           alpha_state = 1/55,
+                           k_state = 8.0,
+                           alpha_state = 1/60,
                            check_repeat_state=false,
                            check_repeat_action=false,
+                           tree_in_info=false,
                            estimate_value=ev,
                            next_action=RootToNextMLFirst(rng),
                            default_action=ReportWhenUsed(TagAction(false, 0.0)),
@@ -82,10 +84,10 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = RandomSolver(rng)::RO
         sol = PDPWSolver(max_depth=max_depth,
                     max_time=max_time,
-                    c=100.0,
-                    k_action=25.0,
-                    alpha_action=1/20.0,
-                    k_observation=6.0,
+                    c=110.0,
+                    k_action=30.0,
+                    alpha_action=1/30.0,
+                    k_observation=5.0,
                     alpha_observation=1/100.0,
                     enable_action_pw=true,
                     check_repeat_obs=false,
@@ -104,7 +106,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
         ro = RandomSolver(rng)::RO
         b = IndependentBounds(DefaultPolicyLB(ro), VDPUpper())
         sol = DESPOTSolver(lambda=0.01,
-                     K=100,
+                     K=200,
                      D=max_depth,
                      max_trials=1_000_000,
                      T_max=max_time,
@@ -148,7 +150,7 @@ for (k, solver) in solvers
     sims = []
     for i in 1:N
         srand(planner, i+50_000)
-        filter = SIRParticleFilter(deepcopy(pomdp), 100_000, rng=MersenneTwister(i+90_000))            
+        filter = SIRParticleFilter(deepcopy(pomdp), 10_000, rng=MersenneTwister(i+90_000))            
 
         md = Dict(:solver=>k, :i=>i)
         sim = Sim(deepcopy(pomdp),
@@ -180,5 +182,5 @@ copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data",
 write(copyname, file_contents)
 filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "bdpbarrier_$(datestring).csv")
 println("saving to $filename...")
-writetable(filename, alldata)
+CSV.write(filename, alldata)
 println("done.")

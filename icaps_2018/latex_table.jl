@@ -13,72 +13,49 @@ solver_order = ["pomcpow" => "POMCPOW",
 cardinality = Dict("lasertag" => "(D, D, D)",
                    "lightdark" => "(D, D, C)",
                    "subhunt" => "(D, D, C)",
+                   "vdpbarrier" => "(C, C, C)",
                    "vdptag" => "(C, C, C)")
 
 
-problem_order = ["lasertag", "lightdark", "subhunt", "vdptag"]
+problem_order = ["lasertag", "lightdark", "subhunt", "vdpbarrier"]
+
+filenames = Dict("lasertag" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Monday
+_26_Feb_18_46.csv",
+                 "lightdark" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/simpleld_Monday_26_Feb_20_13.csv",
+                 "subhunt" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Monday_26_Feb_20_44.csv",
+                 "vdpbarrier" => "~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/bdpbarrier_Monday_26_Feb_21_42.csv")
 
 data = Dict(
     "lightdark" => Dict(
-        "heuristic_01" => (24.876, 0.861),
-        "qmdp" => (-6.369, 1.029),
-        "pomcpdpw" => (-7.269, 0.997),
-        "pomcpow" => (57.624, 0.475),
-        "d_pomcp" => (61.182, 0.435),
-        "heuristic_1" => (27.612, 0.917),
-        "despot" => (-6.819, 1.020),
-        "pomcp" => (-7.813, 0.991),
-        "side" => (42.417, 0.432),
-        "pft" => (49.366, 0.690),
-        "d_despot" => (55.540, 0.974),
         "limits" => (-20.0, 80.0),
         "name" => "Light Dark"
     ), 
 
     "subhunt" => Dict(
-        "qmdp" => (27.991,  1.344),
-        "ping_first" => (79.014,  1.081),
-        "despot" => (27.092,  1.329),
-        "pomcpow" => (61.809,  1.367),
-        "pomcpdpw" => (27.801,  1.341),
-        "pft" => (72.675,  1.205),
-        "d_despot" => (27.185,  1.331),
-        "d_pomcp" => (27.786,  1.340),
-        "pomcp" => (27.980,  1.343),
         "limits" => (0.0, 80.0),
         "name" => "Sub Hunt"
     ),
 
     "lasertag" => Dict(
-        "qmdp" => (-10.545, 0.195),
-        "despot" => (-8.745, 0.180),
-        "d_despot" => (-8.745, 0.180),
-        "pomcpow" => (-9.951, 0.176),
-        "pomcpdpw" => (-10.746, 0.189),
-        "pft" => (-11.910, 0.161),
-        "d_pomcp" => (-14.276, 0.211),
         "limits" => (-20.0, -8.0),
         "name" => "Laser Tag"
     ),
 
     "vdptag" => Dict(
-        "manage_uncertainty" => (14.228, 1.621),
-        "pomcpow" => (38.650, 0.848),
-        "to_next" => (-15.811, 0.438),
-        "pft" => (34.617, 0.870),
-        "pomcpdpw" => (-11.674, 0.516),
-        "d_despot" => (-13.107, 0.549),
-        "d_pomcp" => (-18.505, 0.265),
-        # "pomcpow" => (38.1, 0.8),
-        # "pomcpdpw" => (-18.9, 0.2),
-        # "pft" => (32.9, 0.9),
-        # "d_pomcp" => (-18.5, 0.2),
-        # "d_despot" => (-16.2, 0.4),
+        "limits" => (-20.0, 40.0),
+        "name" => "VDP Tag"
+    )
+
+    "vdpbarrier" => Dict(
         "limits" => (-20.0, 40.0),
         "name" => "VDP Tag"
     )
 
 )
+
+for p in problem_order
+    
+end
 
 hbuf = IOBuffer()
 
@@ -142,3 +119,67 @@ println(tabletex)
 #     \vspace{1mm}
 #     \end{tabular}
 # """
+
+#=
+data = Dict(
+    "lightdark" => Dict(
+        "heuristic_01" => (24.876, 0.861),
+        "qmdp" => (-6.369, 1.029),
+        "pomcpdpw" => (-7.269, 0.997),
+        "pomcpow" => (57.624, 0.475),
+        "d_pomcp" => (61.182, 0.435),
+        "heuristic_1" => (27.612, 0.917),
+        "despot" => (-6.819, 1.020),
+        "pomcp" => (-7.813, 0.991),
+        "side" => (42.417, 0.432),
+        "pft" => (49.366, 0.690),
+        "d_despot" => (55.540, 0.974),
+        "limits" => (-20.0, 80.0),
+        "name" => "Light Dark"
+    ), 
+
+    "subhunt" => Dict(
+        "qmdp" => (27.991,  1.344),
+        "ping_first" => (79.014,  1.081),
+        "despot" => (27.092,  1.329),
+        "pomcpow" => (61.809,  1.367),
+        "pomcpdpw" => (27.801,  1.341),
+        "pft" => (72.675,  1.205),
+        "d_despot" => (27.185,  1.331),
+        "d_pomcp" => (27.786,  1.340),
+        "pomcp" => (27.980,  1.343),
+        "limits" => (0.0, 80.0),
+        "name" => "Sub Hunt"
+    ),
+
+    "lasertag" => Dict(
+        "qmdp" => (-10.545, 0.195),
+        "despot" => (-8.745, 0.180),
+        "d_despot" => (-8.745, 0.180),
+        "pomcpow" => (-9.951, 0.176),
+        "pomcpdpw" => (-10.746, 0.189),
+        "pft" => (-11.910, 0.161),
+        "d_pomcp" => (-14.276, 0.211),
+        "limits" => (-20.0, -8.0),
+        "name" => "Laser Tag"
+    ),
+
+    "vdptag" => Dict(
+        "manage_uncertainty" => (14.228, 1.621),
+        "pomcpow" => (38.650, 0.848),
+        "to_next" => (-15.811, 0.438),
+        "pft" => (34.617, 0.870),
+        "pomcpdpw" => (-11.674, 0.516),
+        "d_despot" => (-13.107, 0.549),
+        "d_pomcp" => (-18.505, 0.265),
+        # "pomcpow" => (38.1, 0.8),
+        # "pomcpdpw" => (-18.9, 0.2),
+        # "pft" => (32.9, 0.9),
+        # "d_pomcp" => (-18.5, 0.2),
+        # "d_despot" => (-16.2, 0.4),
+        "limits" => (-20.0, 40.0),
+        "name" => "VDP Tag"
+    )
+
+)
+=#

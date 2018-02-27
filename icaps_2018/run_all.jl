@@ -25,4 +25,9 @@ for dt in ["subhunt_discretization.jl", "ld_discretization.jl"]
     end
 end
 
+println("\nFILENAMES\n")
+for (k, v) in filenames
+    println("$k => $v")
+end
 
+@show filenames

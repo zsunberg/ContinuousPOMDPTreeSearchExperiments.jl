@@ -16,7 +16,7 @@ using MCTS
 @everywhere using VDPTag2
 @everywhere using POMDPs
 
-pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 1.8)))
+pomdp = VDPTagPOMDP(mdp=VDPTagMDP(barriers=CardinalBarriers(0.2, 2.8)))
 
 @show max_time = 1.0
 @show max_depth = 10
@@ -97,7 +97,7 @@ end
 
 # start_mean = [100.0, 2.0, 10.0]
 # start_cov = diagm([100.0^2, 10.0^2, 20.0^2])
-start_mean =        [10.0,   90.0,   20.0,   20.0,   6.0,   60.0]
+start_mean =        [14.0,   75.0,   20.0,   20.0,   8.0,   60.0]
 start_cov = diagm([8.0^2, 60.0^2,  10.0^2, 10.0^2, 5.0^2, 30.0^2])
 d = MvNormal(start_mean, start_cov)
 K = 160 # 60 # number of parameter samples
