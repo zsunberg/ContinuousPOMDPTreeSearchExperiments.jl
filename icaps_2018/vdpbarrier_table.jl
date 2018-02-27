@@ -180,7 +180,7 @@ end
 datestring = Dates.format(now(), "E_d_u_HH_MM")
 copyname = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "vdpbarrier_table_$(datestring).jl")
 write(copyname, file_contents)
-filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "bdpbarrier_$(datestring).csv")
+filename = Pkg.dir("ContinuousPOMDPTreeSearchExperiments", "icaps_2018", "data", "vdpbarrier_$(datestring).csv")
 println("saving to $filename...")
 CSV.write(filename, alldata)
 println("done.")
