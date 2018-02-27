@@ -57,6 +57,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                                            0.05, rng)            
         ro = ToNextML(mdp(pomdp), rng)
         ro = RandomSolver(rng)
+        ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
                            exploration_constant=72.0,
                            depth=max_depth,
@@ -67,7 +68,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            alpha_state = 1/1.6,
                            check_repeat_state=false,
                            check_repeat_action=false,
-                           estimate_value=RolloutEstimator(ro),
+                           estimate_value=ev,
                            next_action=RootToNextMLFirst(rng),
                            rng=rng
                           )
@@ -76,7 +77,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
     end,
 )
 
-@show N=100
+@show N=10
 
 alldata = DataFrame()
 
