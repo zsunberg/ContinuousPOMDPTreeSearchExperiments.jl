@@ -1,3 +1,423 @@
+Tue 27 Feb 2018 11:02:59 PM PST
+
+zsunberg@jodhpur:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018$ julia -p 51 run_all.jl
+
+LASERTAG
+
+max_time = 1.0 = 1.0
+max_depth = 90 = 90
+exploration = 26.0 = 26.0
+N = 1000 = 1000
+k = "qmdp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:20
+Simulating...100%|██████████████████████████████████████| Time: 0:01:37
+reward: -10.545 ±  0.195
+k = "pomcpow"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:12:51
+reward: -10.275 ±  0.171
+k = "pomcpdpw"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:11
+Simulating...100%|██████████████████████████████████████| Time: 0:14:17
+reward: -10.657 ±  0.191
+k = "pft"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:12
+Simulating...100%|██████████████████████████████████████| Time: 0:10:36
+reward: -10.576 ±  0.162
+k = "despot"
+Creating Simulations...100%|████████████████████████████| Time: 0:08:09
+Simulating...100%|██████████████████████████████████████| Time: 0:14:30
+reward: -8.983 ±  0.180
+k = "pomcp"
+Creating Simulations...100%|████████████████████████████| Time: 0:00:29
+Simulating...100%|██████████████████████████████████████| Time: 0:26:04
+reward: -14.226 ±  0.211
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Monday
+_26_Feb_18_46.csv...
+done.
+
+SIMPLELD
+
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 1000 = 1000
+k = "heuristic_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:03
+reward: 24.876 ±  0.861
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:32:21
+reward: -6.940 ±  1.006
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:38
+reward: 57.691 ±  0.491
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:16
+reward: 61.032 ±  0.395
+k = "heuristic_1"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:02
+reward: 27.612 ±  0.917
+k = "despot_01"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:29
+reward: -6.819 ±  1.020
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:28:59
+reward: -6.874 ±  1.009
+k = "side"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:02
+reward: 42.417 ±  0.432
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:27
+reward: 57.086 ±  0.450
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:09:18
+reward: 54.609 ±  1.029
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/simpleld_Monday
+_26_Feb_20_13.csv...
+done.
+
+SUBHUNT
+
+[Iteration 1   ] residual:        100 | iteration runtime:    562.230 ms, (     0.562 s total)
+[Iteration 2   ] residual:         99 | iteration runtime:    564.119 ms, (      1.13 s total)
+[Iteration 3   ] residual:         98 | iteration runtime:    562.861 ms, (      1.69 s total)
+[Iteration 4   ] residual:       95.5 | iteration runtime:    596.654 ms, (      2.29 s total)
+[Iteration 5   ] residual:       90.8 | iteration runtime:    672.064 ms, (      2.96 s total)
+[Iteration 6   ] residual:       88.9 | iteration runtime:    633.517 ms, (      3.59 s total)
+[Iteration 7   ] residual:       84.4 | iteration runtime:    608.742 ms, (       4.2 s total)
+[Iteration 8   ] residual:       77.8 | iteration runtime:    605.443 ms, (      4.81 s total)
+[Iteration 9   ] residual:       73.7 | iteration runtime:    564.188 ms, (      5.37 s total)
+[Iteration 10  ] residual:       35.2 | iteration runtime:    596.072 ms, (      5.97 s total)
+[Iteration 11  ] residual:       32.7 | iteration runtime:    612.366 ms, (      6.58 s total)
+[Iteration 12  ] residual:       25.8 | iteration runtime:    612.047 ms, (      7.19 s total)
+[Iteration 13  ] residual:       6.78 | iteration runtime:    607.669 ms, (       7.8 s total)
+[Iteration 14  ] residual:       1.69 | iteration runtime:    560.812 ms, (      8.36 s total)
+[Iteration 15  ] residual:      0.272 | iteration runtime:    627.969 ms, (      8.99 s total)
+[Iteration 16  ] residual:     0.0281 | iteration runtime:    614.489 ms, (       9.6 s total)
+[Iteration 17  ] residual:     0.0018 | iteration runtime:    618.567 ms, (      10.2 s total)
+[Iteration 18  ] residual:   7.91E-05 | iteration runtime:    615.621 ms, (      10.8 s total)
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 1000 = 1000
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:47
+reward: 27.991 ±  1.344
+k = "ping_first"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:32
+reward: 79.014 ±  1.081
+k = "ar_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:22
+reward: 27.002 ±  1.328
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:32
+reward: 69.221 ±  1.259
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:27
+reward: 27.614 ±  1.339
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:29
+reward: 78.683 ±  1.056
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:03:23
+reward: 27.370 ±  1.333
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:38
+reward: 27.814 ±  1.342
+k = "pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:38
+reward: 28.786 ±  1.353
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Monday_
+26_Feb_20_44.csv...
+done.
+
+VDPBARRIER
+
+max_time = 1.0 = 1.0
+max_depth = 10 = 10
+RO = RandomSolver = POMDPToolbox.RandomSolver
+N = 1000 = 1000
+k = "manage_uncertainty"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:17
+reward: -7.969 ±  1.331
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:06:42
+reward: 30.573 ±  0.829
+k = "to_next"
+Simulating...100%|██████████████████████████████████████| Time: 0:00:25
+reward: -17.279 ±  0.317
+k = "pft"
+Simulating...100%|██████████████████████████████████████| Time: 0:08:12
+reward: 23.208 ±  0.896
+k = "pomcpdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:13:46
+reward: 16.035 ±  0.966
+k = "d_despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:49
+reward: 12.789 ±  0.926
+k = "d_pomcp"
+Simulating...100%|██████████████████████████████████████| Time: 0:13:42
+reward: 16.108 ±  0.984
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/bdpbarrier_Mond
+ay_26_Feb_21_42.csv...
+done.
+
+SUBHUNT_DISCRETIZATION.JL
+
+max_depth = 20 = 20
+max_time = 1.0 = 1.0
+N = 1000 = 1000
+max_time = 1.0
+(k, binsize) = ("qmdp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:38
+reward: 69.147 ±  1.258
+(k, binsize) = ("d_despot", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:20
+reward: 28.926 ±  1.354
+(k, binsize) = ("d_pomcp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 27.986 ±  1.344
+(k, binsize) = ("qmdp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:38
+reward: 69.297 ±  1.254
+(k, binsize) = ("d_despot", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:21
+reward: 26.500 ±  1.322
+(k, binsize) = ("d_pomcp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 28.334 ±  1.348
+(k, binsize) = ("qmdp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:35
+reward: 68.457 ±  1.275
+(k, binsize) = ("d_despot", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:21
+reward: 26.690 ±  1.325
+(k, binsize) = ("d_pomcp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 28.067 ±  1.344
+(k, binsize) = ("qmdp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:39
+reward: 67.440 ±  1.289
+(k, binsize) = ("d_despot", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:22
+reward: 25.947 ±  1.314
+(k, binsize) = ("d_pomcp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 27.978 ±  1.343
+(k, binsize) = ("qmdp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:40
+reward: 66.194 ±  1.310
+(k, binsize) = ("d_despot", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:22
+reward: 27.184 ±  1.330
+(k, binsize) = ("d_pomcp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 28.521 ±  1.350
+(k, binsize) = ("qmdp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:38
+reward: 68.064 ±  1.278
+(k, binsize) = ("d_despot", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:25
+reward: 26.223 ±  1.318
+(k, binsize) = ("d_pomcp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:37
+reward: 28.174 ±  1.346
+(k, binsize) = ("qmdp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:46
+reward: 27.991 ±  1.344
+(k, binsize) = ("ping_first", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:33
+reward: 79.014 ±  1.081
+(k, binsize) = ("pomcpow", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:05:00
+reward: 44.517 ±  1.455
+(k, binsize) = ("d_despot", 10.0)
+Simulating... 92%|███████████████████████████████████   |  ETA: 0:00:19^[[B
+Simulating...100%|██████████████████████████████████████| Time: 12:20:46
+reward: 26.903 ±  1.329
+(k, binsize) = ("d_pomcp", 10.0)
+Simulating... 30%|████████████                          |  ETA: 0:03:21
+Simulating...100%|██████████████████████████████████████| Time: 0:05:37
+reward: 28.562 ±  1.355
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_discret
+ization_Tuesday_27_Feb_11_38.csv...
+done.
+
+LD_DISCRETIZATION.JL
+
+max_time = 1.0 = 1.0
+max_depth = 20 = 20
+N = 1000 = 1000
+(k, d) = ("qmdp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:02
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:15
+reward: 59.594 ±  0.409
+(k, d) = ("d_pomcp", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:41
+reward: 57.645 ±  0.445
+(k, d) = ("d_despot", 0.01)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:10
+reward: -28.822 ±  2.424
+(k, d) = ("qmdp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:27
+reward: 59.297 ±  0.414
+(k, d) = ("d_pomcp", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:07
+reward: 60.991 ±  0.412
+(k, d) = ("d_despot", 0.03162277660168379)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:07
+reward: -12.637 ±  2.401
+(k, d) = ("qmdp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:33
+reward: 58.598 ±  0.427
+(k, d) = ("d_pomcp", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:05:11
+reward: 53.900 ±  0.771
+(k, d) = ("d_despot", 0.1)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:53
+reward:  2.588 ±  2.252
+(k, d) = ("qmdp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:03:36
+reward: 58.141 ±  0.428
+(k, d) = ("d_pomcp", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:28:46
+reward: -9.846 ±  0.824
+(k, d) = ("d_despot", 0.31622776601683794)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:34
+reward: 14.237 ±  2.115
+(k, d) = ("qmdp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:07
+reward: 53.684 ±  0.515
+(k, d) = ("d_pomcp", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:30:29
+reward: -11.405 ±  0.838
+(k, d) = ("d_despot", 1.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:32
+reward: 53.812 ±  1.071
+(k, d) = ("qmdp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:04:20
+reward: 52.095 ±  0.579
+(k, d) = ("d_pomcp", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:30:51
+reward: -13.575 ±  0.707
+(k, d) = ("d_despot", 3.1622776601683795)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:56
+reward: 54.556 ±  1.112
+(k, d) = ("qmdp", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:11
+reward: -6.369 ±  1.029
+(k, d) = ("side", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:00:01
+reward: 42.417 ±  0.432
+(k, d) = ("pomcpow", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:06:18
+reward: 40.621 ±  0.911
+(k, d) = ("d_pomcp", 10.0)
+Simulating... 32%|████████████                          |  ETA: 0:22:05
+Simulating...100%|██████████████████████████████████████| Time: 0:32:13
+reward: -16.725 ±  0.536
+(k, d) = ("d_despot", 10.0)
+Simulating...100%|██████████████████████████████████████| Time: 0:08:18
+reward: 39.906 ±  1.656
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/ld_discretizati
+on_Tuesday_27_Feb_15_23.csv...
+done.
+
+FILENAMES
+
+ld_discretization.jl => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/l
+d_discretization_Tuesday_27_Feb_15_23.csv
+simpleld => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/simpleld_Mond
+ay_26_Feb_20_13.csv
+subhunt => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Monday
+_26_Feb_20_44.csv
+lasertag => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Mond
+ay_26_Feb_18_46.csv
+subhunt_discretization.jl => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/d
+ata/subhunt_discretization_Tuesday_27_Feb_11_38.csv
+vdpbarrier => /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/bdpbarrier_
+Monday_26_Feb_21_42.csv
+filenames = Dict("ld_discretization.jl"=>"/home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments
+/icaps_2018/data/ld_discretization_Tuesday_27_Feb_15_23.csv","simpleld"=>"/home/zsunberg/.julia/v0.6/Cont
+inuousPOMDPTreeSearchExperiments/icaps_2018/data/simpleld_Monday_26_Feb_20_13.csv","subhunt"=>"/home/zsun
+berg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/subhunt_Monday_26_Feb_20_44.csv","l
+asertag"=>"/home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/lasertag_Monda
+y_26_Feb_18_46.csv","subhunt_discretization.jl"=>"/home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExp
+eriments/icaps_2018/data/subhunt_discretization_Tuesday_27_Feb_11_38.csv","vdpbarrier"=>"/home/zsunberg/.
+julia/v0.6/ContinuousPOMDPTreeSearchExperiments/icaps_2018/data/bdpbarrier_Monday_26_Feb_21_42.csv")
+
 Mon 26 Feb 2018 09:47:36 AM PST
 
 pow_opt after barrier fix
