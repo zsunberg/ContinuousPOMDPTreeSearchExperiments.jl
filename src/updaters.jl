@@ -39,8 +39,8 @@ immutable ObsAdaptiveParticleFilter{P<:POMDP,S,R,RNG<:AbstractRNG} <: Updater
     resample::R
     max_frac_replaced::Float64
     rng::RNG
-    _pm::Array{S}
-    _wm::Array{Float64}
+    _pm::Vector{S}
+    _wm::Vector{Float64}
 end
 
 function ObsAdaptiveParticleFilter(p::POMDP, resample, max_frac_replaced, rng::AbstractRNG)
@@ -160,7 +160,7 @@ reset_distribution(p::PowseekerPOMDP, a::GPSOrAngle, o::SkierObs) = SkierUnif(o.
 
 max_possible_weight(pomdp::VDPTagPOMDP, a::TagAction, o) = 0.0
 
-new_particle(pomdp::VDPTagPOMDP, a::TagAction, o::Float64) = error("shouldn't get here")
+new_particle(pomdp::VDPTagPOMDP, a::TagAction, o) = error("shouldn't get here")
 
 function reset_distribution(p::LaserTagPOMDP, b::ParticleCollection, a, o)
     # warn("Resetting Particle Filter Distribution")

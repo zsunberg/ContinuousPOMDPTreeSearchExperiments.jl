@@ -57,6 +57,7 @@ export
     nogap_tag,
     VDPUpper,
     SampleRollout,
+    MeanRewardBeliefMDP,
 
     Sim,
     # SimQueue,
@@ -80,6 +81,7 @@ include("simple_lightdark.jl")
 
 include("policies.jl")
 include("updaters.jl")
+include("belief_mdp.jl")
 include("action_gen.jl")
 
 include("sr_filter.jl")

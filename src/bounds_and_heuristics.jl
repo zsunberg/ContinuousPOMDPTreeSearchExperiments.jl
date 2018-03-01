@@ -143,7 +143,7 @@ function MCTS.next_action(gen::RootToNextMLFirst, p::VDPTagPOMDP, b, node)
     end
 end
 
-MCTS.next_action(gen::RootToNextMLFirst, p::GenerativeBeliefMDP, b, node) = next_action(gen, p.pomdp, b, node)
+MCTS.next_action(gen::RootToNextMLFirst, p::Union{GenerativeBeliefMDP,MeanRewardBeliefMDP}, b, node) = next_action(gen, p.pomdp, b, node)
 
 # XXXD
 # function MCTS.next_action(gen::RootToNextMLFirst, p::VDPTag.DiscreteVDPTagProblem, b, node)
@@ -185,7 +185,7 @@ struct SampleRollout{P<:Policy, RNG<:AbstractRNG}
     rng::RNG
 end
 
-function MCTS.estimate_value(ro::SampleRollout, mdp::GenerativeBeliefMDP, b, steps::Int)
+function MCTS.estimate_value(ro::SampleRollout, mdp::Union{GenerativeBeliefMDP, MeanRewardBeliefMDP}, b, steps::Int)
     start_state = rand(ro.rng, b)
     sim = POMDPToolbox.RolloutSimulator(ro.rng,
                                         Nullable{Any}(start_state),
