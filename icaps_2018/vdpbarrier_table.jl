@@ -52,21 +52,19 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
     "pft" => begin
         rng = MersenneTwister(13)
-        m = 15
-        node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
-                                           LowVarianceResampler(m),
-                                           0.05, rng)            
-        # ro = ToNextMLSolver(rng)::RO
+        m = 20
+
         ro = RandomSolver(rng)::RO
+        # ev = RolloutEstimator(ro)
         ev = SampleRollout(solve(ro, pomdp), rng)
         solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=85.0,
+                           exploration_constant=70.0,
                            depth=max_depth,
                            max_time=max_time,
                            k_action = 20.0, 
-                           alpha_action = 1/20,
+                           alpha_action = 1/25,
                            k_state = 8.0,
-                           alpha_state = 1/60,
+                           alpha_state = 1/85,
                            check_repeat_state=false,
                            check_repeat_action=false,
                            tree_in_info=false,
@@ -75,37 +73,12 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            default_action=ReportWhenUsed(TagAction(false, 0.0)),
                            rng=rng
                           )
-        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
-        solve(solver, belief_mdp)
-    end,
 
-    "mr_pft" => begin
-        rng = MersenneTwister(13)
-        m = 15
-
-        ro = RandomSolver(rng)::RO
-        # ev = RolloutEstimator(ro)
-        ev = SampleRollout(solve(ro, pomdp), rng)
-        solver = DPWSolver(n_iterations=typemax(Int),
-                           exploration_constant=85.0,
-                           depth=max_depth,
-                           max_time=max_time,
-                           k_action = 20.0, 
-                           alpha_action = 1/20,
-                           k_state = 8.0,
-                           alpha_state = 1/60,
-                           check_repeat_state=false,
-                           check_repeat_action=false,
-                           tree_in_info=false,
-                           estimate_value=ev,
-                           next_action=RootToNextMLFirst(rng),
-                           # default_action=ReportWhenUsed(TagAction(false, 0.0)),
-                           rng=rng
-                          )
         belief_mdp = MeanRewardBeliefMDP(pomdp,
                                          LowVarianceResampler(m),
                                          0.05
                                         )
+
         solve(solver, belief_mdp)
     end,
 
@@ -169,9 +142,9 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 alldata = DataFrame()
 
-# for (k, solver) in solvers
-test = ["mr_pft"]
-for (k, solver) in [(s, solvers[s]) for s in test]
+for (k, solver) in solvers
+# test = ["pft"]
+# for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)
         planner = solve(solver, pomdp)
@@ -181,7 +154,10 @@ for (k, solver) in [(s, solvers[s]) for s in test]
     sims = []
     for i in 1:N
         srand(planner, i+50_000)
-        filter = SIRParticleFilter(deepcopy(pomdp), 10_000, rng=MersenneTwister(i+90_000))            
+        # filter = SIRParticleFilter(deepcopy(pomdp), 10_000, rng=MersenneTwister(i+90_000))            
+        filter = ObsAdaptiveParticleFilter(pomdp,
+                                           LowVarianceResampler(10_000),
+                                           0.0, rng)            
 
         md = Dict(:solver=>k, :i=>i)
         sim = Sim(deepcopy(pomdp),
@@ -195,8 +171,8 @@ for (k, solver) in [(s, solvers[s]) for s in test]
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     if isempty(alldata)
         alldata = data

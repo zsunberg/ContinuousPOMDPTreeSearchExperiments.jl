@@ -21,7 +21,7 @@ function MeanRewardBeliefMDP(pomdp::P, resampler, max_frac_replaced) where {P<:P
 end
 
 function generate_sr(bmdp::MeanRewardBeliefMDP, b, a, rng::AbstractRNG)
-    s = rand(rng, b)
+    s = rand(rng, filter(s->!isterminal(bmdp.pomdp, s), particles(b)))
     sp, o = generate_so(bmdp.pomdp, s, a, rng)
 
     if n_particles(b) > 2*bmdp.resample.n

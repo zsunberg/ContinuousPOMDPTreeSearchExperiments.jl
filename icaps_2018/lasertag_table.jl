@@ -134,7 +134,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 alldata = DataFrame()
 for (k, solver) in solvers
-# test = ["qmdp", "pomcpow", "pft"]
+# test = ["pft"]
 # for (k, solver) in [(s, solvers[s]) for s in test]
 # k = "qmdp"
 # solver = QMDPSolver()

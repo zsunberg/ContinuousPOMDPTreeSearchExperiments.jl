@@ -11,19 +11,19 @@ for t in tests
         include(t*"_table.jl")
         filenames[t] = filename
     catch ex
-        showerror(ex)
+        showerror(STDERR, ex)
     end
 end
 
-for dt in ["subhunt_discretization.jl", "ld_discretization.jl"]
-    try
-        println("\n$(uppercase(dt))\n")
-        include(dt)
-        filenames[dt] = filename
-    catch ex
-        showerror(ex)
-    end
-end
+# for dt in ["subhunt_discretization.jl", "ld_discretization.jl"]
+#     try
+#         println("\n$(uppercase(dt))\n")
+#         include(dt)
+#         filenames[dt] = filename
+#     catch ex
+#         showerror(STDERR, ex)
+#     end
+# end
 
 println("\nFILENAMES\n")
 for (k, v) in filenames

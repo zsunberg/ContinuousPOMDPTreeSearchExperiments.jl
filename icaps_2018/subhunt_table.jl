@@ -53,9 +53,6 @@ solvers = Dict{String, Union{Solver,Policy}}(
     "pft" => begin
         rng = MersenneTwister(13)
         m = 20
-        node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
-                                           LowVarianceResampler(m),
-                                           0.1, rng)            
         solver = DPWSolver(n_iterations=typemax(Int),
                            exploration_constant=100.0,
                            depth=max_depth,
@@ -70,7 +67,17 @@ solvers = Dict{String, Union{Solver,Policy}}(
                            tree_in_info=false,
                            rng=rng
                           )
-        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
+
+        # node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
+        #                                    LowVarianceResampler(m),
+        #                                    0.1, rng)            
+        # belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
+
+        belief_mdp = MeanRewardBeliefMDP(pomdp,
+                                         LowVarianceResampler(m),
+                                         0.1
+                                        )
+
         solve(solver, belief_mdp)
     end,
 
@@ -153,7 +160,7 @@ solvers = Dict{String, Union{Solver,Policy}}(
 
 alldata = DataFrame()
 for (k, solver) in solvers
-# test = ["qmdp", "pomcpow", "pft"]
+# test = ["pft"]
 # for (k, solver) in [(s, solvers[s]) for s in test]
     @show k
     if isa(solver, Solver)

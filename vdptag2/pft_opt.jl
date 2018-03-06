@@ -41,9 +41,10 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
     for i in 1:n
         rng = MersenneTwister(0)
 
-        node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
-                                           LowVarianceResampler(m),
-                                           0.05, rng)            
+        # node_updater = ObsAdaptiveParticleFilter(deepcopy(pomdp),
+        #                                    LowVarianceResampler(m),
+        #                                    0.05, rng)            
+
         # ro = ToNextML(mdp(pomdp), rng)
         ro = RandomSolver(rng)::RO
         ev = SampleRollout(solve(ro, pomdp), rng)
@@ -61,7 +62,12 @@ function gen_sims(x::Vector{Float64}, n, k, seed)
                            next_action=RootToNextMLFirst(rng),
                            rng=rng
                           )
-        belief_mdp = GenerativeBeliefMDP(deepcopy(pomdp), node_updater)
+
+        belief_mdp = MeanRewardBeliefMDP(pomdp,
+                                         LowVarianceResampler(m),
+                                         0.05
+                                        )
+ 
         planner = solve(solver, belief_mdp)
 
         policy = PolicyWrapper(planner) do planner, s
@@ -97,7 +103,7 @@ end
 
 # start_mean = [100.0, 2.0, 10.0]
 # start_cov = diagm([100.0^2, 10.0^2, 20.0^2])
-start_mean =        [14.0,   75.0,   20.0,   20.0,   8.0,   60.0]
+start_mean =        [15.0,   85.0,   20.0,   20.0,   8.0,   60.0]
 start_cov = diagm([8.0^2, 60.0^2,  10.0^2, 10.0^2, 5.0^2, 30.0^2])
 d = MvNormal(start_mean, start_cov)
 K = 160 # 60 # number of parameter samples
