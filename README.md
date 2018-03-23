@@ -8,7 +8,7 @@
 
 Experiments for POMCPOW
 
-> Zachary N. Sunberg and Mykel J. Kochenderfer. “POMCPOW: an online algorithm for POMDPs with continuous state, action, and observation spaces”. In: International Conference on Automated Planning and Scheduling (ICAPS). 2018.
+> Zachary N. Sunberg and Mykel J. Kochenderfer. “Online algorithms for POMDPs with continuous state, action, and observation spaces”. In: International Conference on Automated Planning and Scheduling (ICAPS). 2018.
 
 Paper available at https://arxiv.org/abs/1709.06196.
 
