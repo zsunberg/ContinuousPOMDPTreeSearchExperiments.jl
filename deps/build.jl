@@ -7,7 +7,7 @@ POMDPs.add("DESPOT")
 POMDPs.add("DiscreteValueIteration")
 POMDPs.add("ARDESPOT")
 
-# try Pkg.clone("https://github.com/slundberg/PmapProgressMeter.jl.git") end
+try Pkg.clone("https://github.com/slundberg/PmapProgressMeter.jl.git") end
 
 try Pkg.clone("https://github.com/zsunberg/LightDarkPOMDPs.jl") end
 try Pkg.clone("https://github.com/zsunberg/VDPTag.jl.git") end
