@@ -64,6 +64,10 @@ export
     run_parallel,
     run,
     metadata_as_pairs,
+    Staged,
+    LQG1D,
+    LinearFeedback,
+    Kalman1D,
 
     SimpleLightDark,
     DSimpleLightDark,
@@ -78,6 +82,7 @@ export
 
 
 include("simple_lightdark.jl")
+include("lqg_example.jl")
 
 include("policies.jl")
 include("updaters.jl")
