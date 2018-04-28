@@ -32,32 +32,32 @@ dpws = DPWSolver(depth=max_depth,
                 )
 
 solvers = Dict{String, Solver}(
-    "qmdp" => QBSolver(dpws),
-    "pftdpw" => begin
-        m = 10
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
-        rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
-    end,
-    "pomcpow" => begin
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05) 
-        POMCPOWSolver(tree_queries=n_iters,
-                               criterion=MaxUCB(8.0),
-                               max_depth=max_depth,
-                               max_time=max_time,
-                               enable_action_pw=false,
-                               k_observation=4.5,
-                               alpha_observation=1/10.0,
-                               estimate_value=FORollout(val),
-                               # estimate_value=val,
-                               check_repeat_obs=false,
-                               node_sr_belief_updater=AggressivenessPOWFilter(wup)
-                              )
-    end,
+    # "qmdp" => QBSolver(dpws),
+    # "pftdpw" => begin
+    #     m = 10
+    #     wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+    #     rng = MersenneTwister(123)
+    #     up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
+    #     ABMDPSolver(dpws, up)
+    # end,
+    # "pomcpow" => begin
+    #     wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05) 
+    #     POMCPOWSolver(tree_queries=n_iters,
+    #                            criterion=MaxUCB(8.0),
+    #                            max_depth=max_depth,
+    #                            max_time=max_time,
+    #                            enable_action_pw=false,
+    #                            k_observation=4.5,
+    #                            alpha_observation=1/10.0,
+    #                            estimate_value=FORollout(val),
+    #                            # estimate_value=val,
+    #                            check_repeat_obs=false,
+    #                            node_sr_belief_updater=AggressivenessPOWFilter(wup)
+    #                           )
+    # end,
     "despot" => begin
         rng = MersenneTwister(13)
-        b = IndependentBounds(DefaultPolicyLB(val), 1.01)
+        b = IndependentBounds(DefaultPolicyLB(val), 1.01, check_terminal=true)
         sol = DESPOTSolver(lambda=0.01,
                      K=100,
                      D=max_depth,
@@ -65,7 +65,7 @@ solvers = Dict{String, Solver}(
                      T_max=max_time,
                      bounds=b,
                      random_source=MemorizingSource(500, max_depth, rng, min_reserve=25),
-                     default_action=MLAction(0.0, 0.0),
+                     default_action=ReportWhenUsed(MLAction(0.0, 0.0)),
                      rng=rng)
     end, 
 )
