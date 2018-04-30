@@ -33,8 +33,22 @@ dpws = DPWSolver(depth=max_depth,
 
 solvers = Dict{String, Solver}(
     "qmdp" => QBSolver(dpws),
-    "pftdpw" => begin
+    "pftdpw_5" => begin
+        m = 5
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        ABMDPSolver(dpws, up)
+    end,
+    "pftdpw_10" => begin
         m = 10
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        ABMDPSolver(dpws, up)
+    end,
+    "pftdpw_15" => begin
+        m = 15
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
         rng = MersenneTwister(123)
         up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
@@ -68,6 +82,7 @@ solvers = Dict{String, Solver}(
                      default_action=ReportWhenUsed(MLAction(0.0, 0.0)),
                      rng=rng)
     end, 
+    "simple" => SimpleSolver()
 )
 
 behaviors = standard_uniform(correlation=cor)
