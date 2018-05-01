@@ -54,6 +54,13 @@ solvers = Dict{String, Solver}(
         up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
         ABMDPSolver(dpws, up)
     end,
+    "pftdpw_20" => begin
+        m = 20
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        ABMDPSolver(dpws, up)
+    end,
     "pomcpow" => begin
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05) 
         POMCPOWSolver(tree_queries=n_iters,
@@ -71,7 +78,7 @@ solvers = Dict{String, Solver}(
     end,
     "despot" => begin
         rng = MersenneTwister(13)
-        b = IndependentBounds(DefaultPolicyLB(val), 1.01, check_terminal=true)
+        b = IndependentBounds(DefaultPolicyLB(val), 1.02, check_terminal=true)
         sol = DESPOTSolver(lambda=0.01,
                      K=100,
                      D=max_depth,
