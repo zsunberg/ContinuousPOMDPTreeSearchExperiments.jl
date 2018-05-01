@@ -40,7 +40,7 @@ solvers = Dict{String, Solver}(
         up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
         ABMDPSolver(dpws, up)
     end,
-    "pftdpw_10" => begin
+    "pftdpw" => begin
         m = 10
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
         rng = MersenneTwister(123)
@@ -56,6 +56,13 @@ solvers = Dict{String, Solver}(
     end,
     "pftdpw_20" => begin
         m = 20
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        ABMDPSolver(dpws, up)
+    end,
+    "pftdpw_50" => begin
+        m = 50
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
         rng = MersenneTwister(123)
         up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)

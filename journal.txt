@@ -1,3 +1,65 @@
+Mon 30 Apr 2018 07:31:47 PM PDT
+
+looks like m=10 is indeed the best for pftdpw
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:13:16
+reward:  0.258 ±  0.008
+k = "pftdpw_5"
+Simulating...100%|██████████████████████████████████████| Time: 0:15:21
+reward:  0.174 ±  0.008
+k = "pftdpw_20"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:48
+reward:  0.189 ±  0.009
+k = "pftdpw_15"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:45
+reward:  0.206 ±  0.008
+k = "pftdpw_50"
+Simulating...100%|██████████████████████████████████████| Time: 0:20:16
+reward:  0.028 ±  0.008
+
+Mon 30 Apr 2018 08:19:37 PM PDT
+
+zsunberg@bethpage:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 54 multilane/compare.jl
+cor = 0.75 = 0.75
+lambda = 2.0 = 2.0
+N = 1000 = 1000
+n_iters = 1000000 = 1000000
+max_time = 1.0 = 1.0
+max_depth = 40 = 40
+val = SimpleSolver() = Multilane.SimpleSolver()
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:13:16
+reward:  0.258 ±  0.008
+k = "pftdpw_5"
+Simulating...100%|██████████████████████████████████████| Time: 0:15:21
+reward:  0.174 ±  0.008
+k = "pftdpw_20"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:48
+reward:  0.189 ±  0.009
+k = "pftdpw_15"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:45
+reward:  0.206 ±  0.008
+k = "pftdpw_50"
+Simulating...100%|██████████████████████████████████████| Time: 0:20:16
+reward:  0.028 ±  0.008
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:12:55
+reward:  0.260 ±  0.008
+k = "simple"
+Simulating...100%|██████████████████████████████████████| Time: 0:05:04
+reward:  0.047 ±  0.008
+k = "pftdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:46
+reward:  0.199 ±  0.008
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:12:23
+reward:  0.289 ±  0.008
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/multilane_Monday_30_Apr_20
+_16.csv...
+done.
+
+dangit - of course despot outperforms
+
 Mon 30 Apr 2018 03:53:00 PM PDT
 
 multilane comparison
