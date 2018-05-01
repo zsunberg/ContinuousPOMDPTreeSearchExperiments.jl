@@ -9,10 +9,10 @@ using CSV
 
 file_contents = readstring(@__FILE__())
 
-@show cor = 0.75
+@show cor = 0.0
 @show lambda = 2.0
 
-@show N = 1000
+@show N = 1
 @show n_iters = 1_000_000
 @show max_time = 1.0
 @show max_depth = 40
@@ -37,36 +37,8 @@ solvers = Dict{String, Solver}(
         m = 5
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
         rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
-    end,
-    "pftdpw" => begin
-        m = 10
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
-        rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
-    end,
-    "pftdpw_15" => begin
-        m = 15
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
-        rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
-    end,
-    "pftdpw_20" => begin
-        m = 20
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
-        rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
-    end,
-    "pftdpw_50" => begin
-        m = 50
-        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
-        rng = MersenneTwister(123)
-        up = AggressivenessUpdater(nothing, m, 0.0, 0.0, wup, rng)
-        ABMDPSolver(dpws, up)
+        up = BehaviorParticleUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        BBMDPSolver(dpws, up)
     end,
     "pomcpow" => begin
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05) 
@@ -80,7 +52,7 @@ solvers = Dict{String, Solver}(
                                estimate_value=FORollout(val),
                                # estimate_value=val,
                                check_repeat_obs=false,
-                               node_sr_belief_updater=AggressivenessPOWFilter(wup)
+                               node_sr_belief_updater=BehaviorPOWFilter(wup)
                               )
     end,
     "despot" => begin
@@ -123,7 +95,8 @@ for (k, solver) in solvers
         end
         srand(planner, i+50_000)
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05) 
-        filter = AggressivenessUpdater(pomdp, 5000, 0.0, 0.0, wup, MersenneTwister(i+50_000))
+        filter = BehaviorParticleUpdater(pomdp, 5000, 0.0, 0.0, wup, MersenneTwister(i+50_000))
+        # filter = AggressivenessUpdater(pomdp, 5000, 0.0, 0.0, wup, MersenneTwister(i+50_000))
 
         rng = MersenneTwister(i+70_000)
         is = initial_state(pomdp, rng)
@@ -143,7 +116,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    data = run_parallel(sims)
+    # data = run_parallel(sims)
+    data = run(sims)
 
     if isempty(alldata)
         alldata = data
