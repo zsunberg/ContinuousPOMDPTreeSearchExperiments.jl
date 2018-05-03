@@ -67,7 +67,7 @@ b = initial_state_distribution(m)
 rng = MersenneTwister(7)
 
 tree = POMCPOW.make_tree(planner, b)
-@showprogress for i in 1:1_000_000
+@showprogress for i in 1:100_000_000
     POMCPOW.simulate(planner, POWTreeObsNode(tree, 1), rand(rng, b), 3)
 end
 
