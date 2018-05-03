@@ -8,7 +8,35 @@ m = LQG1D(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 3)
 filter = Kalman1D(m)
 policy = LinearFeedback(1/2)
 
-@show N = 1_000_000
+@show N = 1_000_000_000
+
+ps = POMCPOWSolver(estimate_value=FORollout(policy),
+                   k_action=2.0,
+                   k_observation=2.0,
+                   alpha_action=1/8.0,
+                   alpha_observation=1/8.0,
+                   check_repeat_act=true,
+                   check_repeat_obs=false,
+                   criterion=MaxUCB(10.0),
+                   tree_queries=N
+                  )
+# pps = ParallelPOMCPOWSolver(ps, 500)
+planner = solve(ps, m)
+b = initial_state_distribution(m)
+
+rng = MersenneTwister(7)
+
+# a, info = action_info(planner, b)
+# @show maximum(info[:qs])
+
+tree = POMCPOW.make_tree(planner, b)
+@showprogress for i in 1:N
+    POMCPOW.simulate(planner, POWTreeObsNode(tree, 1), rand(rng, b), 3)
+end
+
+best_node = POMCPOW.select_best(MaxTries(), POWTreeObsNode(tree, 1), Base.GLOBAL_RNG)
+@show tree.v[best_node]
+@show [tree.v[i] for i in tree.children[1]]
 
 #=
 if !isdefined(:results)
@@ -51,25 +79,3 @@ end
 #     simulate(ro, m, policy, filter)
 # end
 # @show rsum/N
-
-ps = POMCPOWSolver(estimate_value=FORollout(policy),
-                   k_action=2.0,
-                   k_observation=2.0,
-                   alpha_action=1/8.0,
-                   alpha_observation=1/8.0,
-                   check_repeat_act=true,
-                   check_repeat_obs=false,
-                   criterion=MaxUCB(10.0)
-                  )
-planner = solve(ps, m)
-b = initial_state_distribution(m)
-
-rng = MersenneTwister(7)
-
-tree = POMCPOW.make_tree(planner, b)
-@showprogress for i in 1:100_000_000
-    POMCPOW.simulate(planner, POWTreeObsNode(tree, 1), rand(rng, b), 3)
-end
-
-best_node = POMCPOW.select_best(MaxTries(), POWTreeObsNode(tree, 1), Base.GLOBAL_RNG)
-@show tree.v[best_node]
