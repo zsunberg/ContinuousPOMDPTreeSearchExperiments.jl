@@ -1,3 +1,56 @@
+Tue 01 May 2018 02:07:41 PM PDT
+
+Dang - not even a billion will work, haha
+
+N = 1000000000 = 1000000000
+Progress: 100%|█████████████████████████████████████████| Time: 1:16:15
+tree.v[best_node] = -4.788946905946339
+
+Should be -5.33
+
+Tue 01 May 2018 08:52:06 AM PDT
+
+zsunberg@bethpage:~/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments$ julia -p 54 multilane/compare.jl
+cor = 0.0 = 0.0
+lambda = 2.0 = 2.0
+N = 1000 = 1000
+n_iters = 1000000 = 1000000
+max_time = 1.0 = 1.0
+max_depth = 40 = 40
+val = SimpleSolver() = Multilane.SimpleSolver()
+k = "qmdp"
+Simulating...100%|██████████████████████████████████████| Time: 0:11:54
+reward:  0.296 ±  0.009
+k = "pftdpw_5"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:18
+reward:  0.207 ±  0.008
+k = "pftdpw_10"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:32
+reward:  0.203 ±  0.009
+k = "pftdpw_20"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:31
+reward:  0.211 ±  0.009
+k = "simple"
+Simulating...100%|██████████████████████████████████████| Time: 0:04:27
+reward:  0.089 ±  0.008
+k = "pomcpow"
+Simulating...100%|██████████████████████████████████████| Time: 0:11:37
+reward:  0.309 ±  0.009
+k = "pftdpw"
+Simulating...100%|██████████████████████████████████████| Time: 0:14:31
+reward:  0.214 ±  0.009
+k = "despot"
+Simulating...100%|██████████████████████████████████████| Time: 0:10:42
+reward:  0.360 ±  0.008
+saving to /home/zsunberg/.julia/v0.6/ContinuousPOMDPTreeSearchExperiments/data/multilane_Monday_30_Apr_23_41.csv...
+done.
+
+
+Mon 30 Apr 2018 09:53:51 PM PDT
+
+for some reason it didn't save the journal, but in the below results, pomcpow was 0.260 and despot was .289
+the csv is there somewhere
+
 Mon 30 Apr 2018 07:31:47 PM PDT
 
 looks like m=10 is indeed the best for pftdpw

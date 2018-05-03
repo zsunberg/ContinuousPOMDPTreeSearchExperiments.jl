@@ -12,7 +12,7 @@ file_contents = readstring(@__FILE__())
 @show cor = 0.0
 @show lambda = 2.0
 
-@show N = 1
+@show N = 1000
 @show n_iters = 1_000_000
 @show max_time = 1.0
 @show max_depth = 40
@@ -33,8 +33,29 @@ dpws = DPWSolver(depth=max_depth,
 
 solvers = Dict{String, Solver}(
     "qmdp" => QBSolver(dpws),
+    "pftdpw" => begin
+        m = 15
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = BehaviorParticleUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        BBMDPSolver(dpws, up)
+    end,
     "pftdpw_5" => begin
         m = 5
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = BehaviorParticleUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        BBMDPSolver(dpws, up)
+    end,
+    "pftdpw_10" => begin
+        m = 10
+        wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
+        rng = MersenneTwister(123)
+        up = BehaviorParticleUpdater(nothing, m, 0.0, 0.0, wup, rng)
+        BBMDPSolver(dpws, up)
+    end,
+    "pftdpw_20" => begin
+        m = 20
         wup = WeightUpdateParams(smoothing=0.0, wrong_lane_factor=0.05)
         rng = MersenneTwister(123)
         up = BehaviorParticleUpdater(nothing, m, 0.0, 0.0, wup, rng)
@@ -64,7 +85,7 @@ solvers = Dict{String, Solver}(
                      max_trials=1_000_000,
                      T_max=max_time,
                      bounds=b,
-                     random_source=MemorizingSource(500, max_depth, rng, min_reserve=25),
+                     random_source=MemorizingSource(100, max_depth, rng, min_reserve=25),
                      default_action=ReportWhenUsed(MLAction(0.0, 0.0)),
                      rng=rng)
     end, 
@@ -116,8 +137,8 @@ for (k, solver) in solvers
         push!(sims, sim)
     end
 
-    # data = run_parallel(sims)
-    data = run(sims)
+    data = run_parallel(sims)
+    # data = run(sims)
 
     if isempty(alldata)
         alldata = data
