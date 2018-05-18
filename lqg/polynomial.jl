@@ -11,15 +11,18 @@ policy = LinearFeedback(1/2)
 # @show N = 1_000_000_000
 @show N = 1_000_000
 
+# XXX must be on polynomial branch of POMCPOW for this to work
+
 ps = POMCPOWSolver(estimate_value=FORollout(policy),
-                   k_action=2.0,
-                   k_observation=2.0,
-                   alpha_action=1/8.0,
-                   alpha_observation=1/8.0,
+                   k_action=1.0,
+                   k_observation=1.0,
+                   alpha_action=NaN,
+                   alpha_observation=NaN,
                    check_repeat_act=true,
                    check_repeat_obs=false,
-                   criterion=MaxUCB(10.0),
-                   tree_queries=N
+                   criterion=MaxPoly(2.0),
+                   tree_queries=N,
+                   max_depth=2
                   )
 # pps = ParallelPOMCPOWSolver(ps, 500)
 planner = solve(ps, m)
@@ -32,12 +35,13 @@ rng = MersenneTwister(7)
 
 tree = POMCPOW.make_tree(planner, b)
 @showprogress for i in 1:N
-    POMCPOW.simulate(planner, POWTreeObsNode(tree, 1), rand(rng, b), 3)
+    POMCPOW.simulate(planner, POWTreeObsNode(tree, 1), rand(rng, b), 2)
 end
 
 best_node = POMCPOW.select_best(MaxTries(), POWTreeObsNode(tree, 1), Base.GLOBAL_RNG)
 @show tree.v[best_node]
 @show [tree.v[i] for i in tree.tried[1]]
+# @show [tree.a_labels[i] for i in tree.tried[1]]
 
 #=
 if !isdefined(:results)
