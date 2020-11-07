@@ -23,7 +23,7 @@ rng = MersenneTwister(rng_seed)
 
 
 ## POMCPOW ##
-immutable OneStepValue end
+struct OneStepValue end
 POMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
 
 rng3 = copy(rng)

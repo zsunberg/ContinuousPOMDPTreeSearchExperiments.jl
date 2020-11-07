@@ -1,4 +1,4 @@
-@with_kw immutable SymmetricNormalResampler
+@with_kw struct SymmetricNormalResampler
     n::Int
     std::Float64
 end
@@ -12,7 +12,7 @@ function ParticleFilters.resample(r::SymmetricNormalResampler, b::WeightedPartic
     return collection
 end
 
-@with_kw immutable MinPopResampler
+@with_kw struct MinPopResampler
     n::Int
     min_pop::Int
     std::Float64
@@ -34,7 +34,7 @@ function ParticleFilters.resample(r::MinPopResampler, b, rng::AbstractRNG)
 end
 
 
-immutable ObsAdaptiveParticleFilter{P<:POMDP,S,R,RNG<:AbstractRNG} <: Updater
+struct ObsAdaptiveParticleFilter{P<:POMDP,S,R,RNG<:AbstractRNG} <: Updater
     pomdp::P
     resample::R
     max_frac_replaced::Float64

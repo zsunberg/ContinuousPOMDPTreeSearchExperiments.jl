@@ -104,7 +104,7 @@ function nogap_tag(b, ex)
 end
 
 
-immutable InevitableInit end 
+struct InevitableInit end 
 
 POMCPOW.init_N(m::InevitableInit, pomdp::LaserTagPOMDP, h::BeliefNode, a::Int) = h.node == 1 ? 0 : 1
 

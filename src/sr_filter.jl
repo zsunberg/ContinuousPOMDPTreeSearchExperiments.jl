@@ -1,4 +1,4 @@
-immutable ObsAdaptiveSRFilter{S} <: Updater
+struct ObsAdaptiveSRFilter{S} <: Updater
     pomdp::POMDP{S}
     resample::Any
     max_frac_replaced::Float64

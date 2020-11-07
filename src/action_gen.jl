@@ -1,5 +1,5 @@
 #=
-immutable GPSFirst
+struct GPSFirst
     rng::MersenneTwister
 end
 

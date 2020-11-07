@@ -1,4 +1,5 @@
-@with_kw type RadiusRandom <: Policy
+#=
+@with_kw struct RadiusRandom <: Policy
     radius::Float64     = 1.0
     rng::AbstractRNG    = Base.GLOBAL_RNG
 end
@@ -15,7 +16,7 @@ POMDPs.updater(p::RadiusRandom) = VoidUpdater()
 
 Base.rand(rng::AbstractRNG, rr::RadiusRandom) = rand_in_radius(rng, rr.radius)
 
-@with_kw type AdaptiveRadiusRandom <: Policy
+@with_kw struct AdaptiveRadiusRandom <: Policy
     max_radius::Float64     = 1.0
     to_zero_first::Bool     = true
     to_light_second::Bool   = true
@@ -43,7 +44,7 @@ function POMCPOW.next_action(gen::AdaptiveRadiusRandom, pomdp::POMDP, b, h::Beli
     =#
 end
 
-@with_kw type SimpleFeedback <: Policy
+@with_kw struct SimpleFeedback <: Policy
     gain::Float64 = 1.0
     max_radius::Float64 = 1.0
 end
@@ -61,7 +62,7 @@ POMDPs.action(p::SimpleFeedback, b::SymmetricNormal2) = clip_to_max(-p.gain*b.me
 POMDPs.action(p::SimpleFeedback, b) = clip_to_max(-p.gain*mean(b), p.max_radius)
 POMDPs.action(p::SimpleFeedback, o::Vec2) = clip_to_max(-p.gain*o, p.max_radius)
 
-immutable LightDarkLQRSolver <: Solver end
+struct LightDarkLQRSolver <: Solver end
 
 function POMDPs.solve(solver::LightDarkLQRSolver, pomdp::LightDark2D)
     A = eye(2)
@@ -70,14 +71,14 @@ function POMDPs.solve(solver::LightDarkLQRSolver, pomdp::LightDark2D)
     return LightDarkLQRPolicy(K)
 end
 
-immutable LightDarkLQRPolicy <: Policy
+struct LightDarkLQRPolicy <: Policy
     K::AbstractMatrix{Float64}
 end
 
 POMDPs.action(p::LightDarkLQRPolicy, s::Vec2) = -p.K*s
 POMDPs.action(p::LightDarkLQRPolicy, b) = -p.K*mean(b)
 
-immutable InfoGatherHeur <: Policy
+struct InfoGatherHeur <: Policy
     info_x::Float64
     std_thresh::Float64
     homing::Policy
@@ -86,7 +87,7 @@ immutable InfoGatherHeur <: Policy
 end
 
 # for now, mode can be :exploring or :homing
-immutable ModeAugmentedBelief{B}
+struct ModeAugmentedBelief{B}
     mode::Symbol
     b::B
 end
@@ -105,7 +106,7 @@ end
 
 POMDPs.updater(h::InfoGatherHeur) = InfoGatherUpdater(h.std_thresh, h.exploring_up, h.homing_up)
 
-immutable InfoGatherUpdater <: Updater
+struct InfoGatherUpdater <: Updater
     std_thresh::Float64
     exploring_up::Updater
     homing_up::Updater
@@ -128,4 +129,4 @@ function POMDPs.update(up::InfoGatherUpdater, b::ModeAugmentedBelief, a, o)
     end
 end
 
-
+=#

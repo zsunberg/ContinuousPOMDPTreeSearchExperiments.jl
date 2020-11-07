@@ -1,29 +1,29 @@
-__precompile__(true)
 module ContinuousPOMDPTreeSearchExperiments
 
-importall POMDPs
+using POMDPs
 using BasicPOMCP
 using POMCPOW
 using Parameters
-using LightDarkPOMDPs
+# using LightDarkPOMDPs
 using StaticArrays
-using POMDPToolbox
+using POMDPModelTools
 using ParticleFilters
 using ControlSystems
 using Distributions
-using LaserTag
-# import DESPOT
+# using LaserTag
 using ARDESPOT
 using QMDP
 using MCTS
 using DiscreteValueIteration
-using RecipesBase
-using SubHunt
+# using RecipesBase
+# using SubHunt
 
 using DataFrames
-using DataArrays
+# using DataArrays
 using ProgressMeter
 using CPUTime
+
+using Random
 
 # using VDPTag
 using VDPTag2
@@ -81,12 +81,12 @@ export
     GBMDPSolver
 
 
-include("simple_lightdark.jl")
-include("lqg_example.jl")
+# include("simple_lightdark.jl")
+# include("lqg_example.jl")
 
-include("policies.jl")
+# include("policies.jl")
 include("updaters.jl")
-include("belief_mdp.jl")
+# include("belief_mdp.jl")
 include("action_gen.jl")
 
 include("sr_filter.jl")
@@ -98,7 +98,7 @@ include("pomcpdpw.jl")
 
 n_children(h::BeliefNode) = length(h.children)
 
-immutable OneStepValue end
+struct OneStepValue end
 BasicPOMCP.estimate_value(o::OneStepValue, pomdp::POMDP, s, h, steps) = reward(pomdp, s)
 
 Base.srand(p::QMDPPolicy, i::Int) = p
